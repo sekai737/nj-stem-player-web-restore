@@ -1,0 +1,94 @@
+/**
+ * Progress bar container (Figma node 26:217) + scrubber (node 4:498)
+ */
+
+.transport-bar {
+  box-sizing: border-box;
+  box-shadow: none;
+}
+
+.transport-bar__play {
+  position: relative;
+  flex-shrink: 0;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+  line-height: 0;
+}
+
+.transport-bar__play:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.transport-bar__play-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+}
+
+.transport-scrubber {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.transport-scrubber__visual {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.transport-scrubber__track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: var(--transport-track-height, 4px);
+  transform: translateY(-50%);
+  border-radius: var(--transport-track-radius, 2px);
+  background: var(--slider-secondary);
+  overflow: hidden;
+}
+
+.transport-scrubber__elapsed {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--slider-primary);
+}
+
+.transport-scrubber__knob {
+  position: absolute;
+  top: 50%;
+  width: calc(var(--transport-knob-radius, 11px) * 2);
+  height: calc(var(--transport-knob-radius, 11px) * 2);
+  margin-left: calc(var(--transport-knob-radius, 11px) * -1);
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background: var(--slider-circle-primary);
+  border: var(--stroke-st-2) solid var(--stroke-primary);
+}
+
+.transport-scrubber__input {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+}
+
+.transport-scrubber__input:disabled {
+  cursor: not-allowed;
+}

@@ -1,0 +1,95 @@
+/* Stem control stack — Figma 121:434; scales with --fs-ui-scale */
+
+.fs-stem-stack {
+  --fs-stem-scale: var(--fs-ui-scale, 1);
+  --fs-stem-layout-w: calc(var(--fs-stem-design-w, 119px) * var(--fs-stem-scale));
+  --fs-stem-layout-h: calc(var(--fs-stem-design-h, 248px) * var(--fs-stem-scale));
+  --fs-stem-offset-x: calc(var(--fs-stem-offset-x-design, 450px) * var(--fs-stem-scale));
+  --fs-stem-offset-y: calc(var(--fs-stem-offset-top, 196px) * var(--fs-stem-scale));
+
+  position: absolute;
+  left: var(--fs-stem-offset-x);
+  top: var(--fs-stem-offset-y);
+  width: var(--fs-stem-layout-w);
+  height: var(--fs-stem-layout-h);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.fs-stem-stack__scale {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--fs-stem-gap, 24px);
+  width: var(--fs-stem-design-w, 119px);
+  height: var(--fs-stem-design-h, 248px);
+  transform: scale(var(--fs-stem-scale));
+  transform-origin: top left;
+}
+
+/* Control Button — 121:435 / 121:440 / 121:445 / 121:450 */
+.fs-stem-btn {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  width: var(--fs-stem-btn-width, 119px);
+  height: var(--fs-stem-btn-height, 44px);
+  gap: var(--fs-stem-icon-gap, 16px);
+  padding: var(--fs-stem-padding-y, 8px) var(--fs-stem-padding-x, 16px);
+  border: var(--stroke-st-2) solid var(--stroke-primary);
+  background: var(--gradient-member);
+}
+
+.fs-stem-btn__icon {
+  display: block;
+  flex-shrink: 0;
+  width: var(--fs-stem-icon-size, 24px);
+  height: var(--fs-stem-icon-size, 24px);
+  object-fit: contain;
+}
+
+.fs-stem-btn__labels {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: flex-end;
+  width: var(--fs-stem-labels-width, 43px);
+  gap: var(--fs-stem-solo-mute-gap, 8px);
+}
+
+.fs-stem-btn__sm {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.fs-stem-btn__sm--solo {
+  width: var(--fs-stem-solo-width, 14px);
+  height: var(--fs-stem-solo-mute-height, 28px);
+}
+
+.fs-stem-btn__sm--mute {
+  width: var(--fs-stem-mute-width, 20px);
+  height: var(--fs-stem-solo-mute-height, 28px);
+}
+
+.fs-stem-btn__sm:not(.fs-stem-btn__sm--on) {
+  opacity: 0.65;
+}
+
+.fs-stem-btn__sm img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.fs-stem-btn__sm:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}

@@ -1,0 +1,64 @@
+/**
+ * Language options box (Figma node 3:188)
+ * Single wrapper — inset outer stroke avoids border-box size drift.
+ */
+.language-options-box {
+  position: relative;
+  z-index: 30;
+  isolation: isolate;
+  display: flex;
+  flex-shrink: 0;
+  align-items: stretch;
+  gap: var(--spacing-sp-4);
+  box-sizing: border-box;
+  width: 212px;
+  height: 40px;
+  overflow: hidden;
+  border-radius: 36px;
+  background: var(--language-options-pill-primary);
+  box-shadow: inset 0 0 0 var(--stroke-st-2) var(--stroke-primary);
+}
+
+.language-options-box__option {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 68px;
+  width: 68px;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: var(--stroke-st-2) solid transparent;
+  border-radius: 25px;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.language-options-box__option--selected {
+  border-color: var(--stroke-primary);
+  background: var(--gradient-language-selected);
+}
+
+.language-options-box__option:disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+/** Fullscreen conversions panel — equal segments, no fixed 284px overflow */
+.language-options-box--fill {
+  width: 100%;
+  max-width: 100%;
+}
+
+.language-options-box--fill .language-options-box__option {
+  flex: 1 1 0;
+  width: auto;
+  min-width: 0;
+}

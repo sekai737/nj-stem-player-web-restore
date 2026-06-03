@@ -1,0 +1,190 @@
+/**
+ * COOL_FONT faces for track title (Figma Title 26:216, text 3:282).
+ * Family names mirror Figma: `COOL_FONT:Simplified`, etc.
+ *
+ * WOFF2s come from `npm run fonts:build` (COOL sources under Windows Fonts or
+ * fonts-source/cool-font); see public/fonts/README.md. Missing files = broken title rendering;
+ * the devtools Network tab will show 404 on the missing `cool-font-*.woff2` assets.
+ */
+
+/* ── @font-face — one slot per unique COOL_FONT style ─────────────────── */
+
+@font-face {
+  font-family: "COOL_FONT:Cloud";
+  src: url("/fonts/cool-font-cloud.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "COOL_FONT:Simplified";
+  src: url("/fonts/cool-font-simplified.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "COOL_FONT:Goop";
+  src: url("/fonts/cool-font-goop.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "COOL_FONT:Pixel";
+  src: url("/fonts/cool-font-pixel.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "COOL_FONT:Pix-Outlined";
+  src: url("/fonts/cool-font-pix-outlined.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "COOL_FONT:Distorted";
+  src: url("/fonts/cool-font-distorted.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "COOL_FONT:Fire";
+  src: url("/fonts/cool-font-fire.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "COOL_FONT:Fluid";
+  src: url("/fonts/cool-font-fluid.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "COOL_FONT:Regular";
+  src: url("/fonts/cool-font-regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "COOL_FONT:Structured";
+  src: url("/fonts/cool-font-structured.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── Layout / type — Figma MCP node 3:282 (Title 26:216) ──────────────── */
+
+/**
+ * Track title is not copy/selectable (`user-select` does not inherit — must target descendants).
+ * Lyrics + metadata use `.selectable-copy [data-copy-block]` in index.css.
+ */
+.title-cool-block,
+.title-cool-block * {
+  -webkit-user-select: none !important;
+  -moz-user-select: none;
+  user-select: none !important;
+  cursor: default;
+}
+
+.title-cool-block {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* Natural one-line width in Figma; max-width keeps long titles inside Title 26:216 (578px). */
+  width: max-content;
+  max-width: 100%;
+  line-height: 0;
+  font-size: 0;
+  font-family: "COOL_FONT:Cloud";
+  font-weight: 400;
+  font-style: normal;
+  font-synthesis: none;
+  color: var(--text-inverse);
+  /* Figma/MCP: text-box edge + trim (CSS Text 4); ignored where unsupported */
+  text-box-edge: cap alphabetic;
+  text-box-trim: trim-both;
+}
+
+.title-cool-line {
+  margin: 0;
+  /* Figma absolute text style: 96px, line-height normal, weight 400 */
+  font-size: 96px;
+  line-height: normal;
+  font-weight: 400;
+  font-style: normal;
+  font-synthesis: none;
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
+}
+
+.title-cool-glyph {
+  font-weight: 400;
+  font-style: normal;
+  font-synthesis: none;
+  line-height: normal;
+  /**
+   * Stroke on every glyph (incl. Pix-Outlined “e”) — see `--title-cool-stroke-width`.
+   * Cleaner than multi-offset text-shadow on per-letter COOL spans.
+   */
+  -webkit-text-stroke: var(--title-cool-stroke-width) var(--stroke-primary);
+  -webkit-text-fill-color: var(--text-inverse);
+  paint-order: stroke fill;
+  color: var(--text-inverse);
+}
+
+.title-cool-glyph--cloud {
+  font-family: "COOL_FONT:Cloud";
+}
+
+.title-cool-glyph--simplified {
+  font-family: "COOL_FONT:Simplified";
+}
+
+.title-cool-glyph--goop {
+  font-family: "COOL_FONT:Goop";
+}
+
+.title-cool-glyph--pixel {
+  font-family: "COOL_FONT:Pixel";
+}
+
+.title-cool-glyph--pix-outlined {
+  font-family: "COOL_FONT:Pix-Outlined";
+}
+
+.title-cool-glyph--distorted {
+  font-family: "COOL_FONT:Distorted";
+}
+
+.title-cool-glyph--fire {
+  font-family: "COOL_FONT:Fire";
+}
+
+.title-cool-glyph--fluid {
+  font-family: "COOL_FONT:Fluid";
+}
+
+.title-cool-glyph--regular {
+  font-family: "COOL_FONT:Regular";
+}
+
+.title-cool-glyph--structured {
+  font-family: "COOL_FONT:Structured";
+}

@@ -1,0 +1,35 @@
+/** Stem player — keep “Copied” toast visible (wrap must not clip). */
+
+.stem-lyrics-copy.selectable-copy-region-wrap,
+.stem-metadata-copy.selectable-copy-region-wrap {
+  position: relative;
+  overflow: visible;
+  z-index: 1;
+}
+
+.stem-lyrics-copy .selectable-copy-region {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.stem-lyrics-copy .selectable-copy-toast,
+.stem-metadata-copy .selectable-copy-toast {
+  z-index: 30;
+  font-size: 14px;
+  padding: 4px 10px;
+}
+
+/* Inside the lyrics pill (page shell uses overflow:hidden) */
+.stem-lyrics-copy .selectable-copy-toast {
+  top: var(--spacing-sp-8);
+  left: 50%;
+  bottom: auto;
+  transform: translateX(-50%);
+}
+
+/* Above track metadata strip */
+.stem-metadata-copy .selectable-copy-toast {
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+}

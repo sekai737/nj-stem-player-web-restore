@@ -1,0 +1,215 @@
+/* Now Playing Card — Figma 121:299; scales to 640/772 of header–footer band */
+
+.fs-player-card {
+  align-self: flex-start;
+  --fs-card-scale: var(--fs-ui-scale, 1);
+  --fs-card-layout-w: calc(var(--fs-card-design-w, 426px) * var(--fs-card-scale));
+  --fs-card-layout-h: calc(var(--fs-card-design-h, 640px) * var(--fs-card-scale));
+
+  position: relative;
+  flex-shrink: 0;
+  width: var(--fs-card-layout-w);
+  height: var(--fs-card-layout-h);
+  overflow: visible;
+  box-sizing: border-box;
+}
+
+.fs-player-card__scale {
+  position: relative;
+  width: var(--fs-card-design-w, 426px);
+  height: var(--fs-card-design-h, 640px);
+  transform: scale(var(--fs-card-scale));
+  transform-origin: top left;
+}
+
+/* Figma 120:298 — 426×640, r=16, 2px stroke, 4×4 hard shadow (no SVG mask artifacts) */
+.fs-player-card__frame {
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  background: var(--stem-container-secondary);
+  border: var(--stroke-st-2) solid var(--stroke-primary);
+  border-radius: var(--radius-cr-16);
+  box-shadow: var(--shadow-pop-4);
+  pointer-events: none;
+}
+
+.fs-player-card__inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+  max-width: var(--fs-card-inner-width, 360px);
+  max-height: var(--fs-card-inner-height, 567px);
+  flex-shrink: 0;
+}
+
+.fs-player-card__art {
+  display: block;
+  flex-shrink: 0;
+  width: var(--fs-card-art-size, 360px);
+  height: var(--fs-card-art-size, 360px);
+  max-width: 100%;
+  object-fit: cover;
+  border-radius: var(--radius-cr-16);
+}
+
+.fs-player-card__meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  white-space: nowrap;
+  max-width: var(--fs-card-meta-width, 190px);
+  flex-shrink: 0;
+}
+
+.fs-player-card__title {
+  margin: 0;
+  font-family: var(--font-swiss721-medium);
+  font-size: 32px;
+  font-weight: normal;
+  font-synthesis: none;
+  line-height: var(--fs-card-title-line-height, 38px);
+  color: var(--text-primary);
+}
+
+.fs-player-card__artist {
+  margin: 0;
+  margin-top: var(--fs-player-meta-artist-gap, 4px);
+  font-family: var(--font-swis721-roman);
+  font-size: 16px;
+  font-weight: normal;
+  font-synthesis: none;
+  line-height: 1;
+  color: var(--text-primary);
+}
+
+.fs-player-card__album {
+  margin: 0;
+  margin-top: var(--fs-player-meta-album-gap, 4px);
+  font-family: var(--font-swis721-roman);
+  font-size: 12px;
+  font-weight: normal;
+  font-synthesis: none;
+  line-height: 1;
+  color: var(--text-secondary);
+}
+
+.fs-player-card__transport {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.fs-player-card__play {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.fs-player-card__play:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.fs-player-card__play-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: var(--stroke-st-2) solid var(--stroke-primary);
+  background: var(--gradient-language-selected);
+}
+
+.fs-player-card__play-icon {
+  position: absolute;
+  left: 18px;
+  top: 16px;
+  z-index: 1;
+}
+
+.fs-player-card__progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--fs-card-progress-row-width, 332px);
+  max-width: 100%;
+}
+
+.fs-player-card__time {
+  flex-shrink: 0;
+  font-family: var(--font-swiss721-regular);
+  font-size: 11px;
+  font-weight: normal;
+  font-synthesis: none;
+  line-height: normal;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.fs-player-card__scrubber {
+  --fs-card-thumb-inset: calc(var(--fs-card-thumb-size, 16px) / 2);
+
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.fs-player-card__track {
+  position: absolute;
+  left: var(--fs-card-thumb-inset);
+  right: var(--fs-card-thumb-inset);
+  top: 50%;
+  height: 4px;
+  transform: translateY(-50%);
+  border-radius: 4px;
+  background: var(--slider-secondary);
+}
+
+.fs-player-card__elapsed {
+  position: absolute;
+  left: var(--fs-card-thumb-inset);
+  top: 50%;
+  max-width: calc(100% - var(--fs-card-thumb-size, 16px));
+  height: 4px;
+  transform: translateY(-50%);
+  border-radius: 4px;
+  background: var(--slider-primary);
+  pointer-events: none;
+}
+
+.fs-player-card__thumb {
+  position: absolute;
+  top: 50%;
+  width: var(--fs-card-thumb-size, 16px);
+  height: var(--fs-card-thumb-size, 16px);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.fs-player-card__thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.fs-player-card__scrubber input[type="range"] {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}

@@ -1,0 +1,48 @@
+/** Segmented Stems / Master toggle — matches language-options-box (Figma 3:188). */
+.playback-mode-toggle {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: stretch;
+  gap: var(--spacing-sp-4);
+  width: 100%;
+  height: 40px;
+  box-sizing: border-box;
+  overflow: hidden;
+  border-radius: 36px;
+  background: var(--language-options-pill-primary);
+  box-shadow: inset 0 0 0 var(--stroke-st-2) var(--stroke-primary);
+  pointer-events: auto;
+}
+
+.playback-mode-toggle__option {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 0;
+  min-width: 0;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: var(--stroke-st-2) solid transparent;
+  border-radius: 25px;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.playback-mode-toggle__option--selected {
+  border-color: var(--stroke-primary);
+  background: var(--gradient-language-selected);
+}
+
+.playback-mode-toggle__option:disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+  opacity: 0.5;
+}

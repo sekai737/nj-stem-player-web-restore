@@ -1,0 +1,185 @@
+{
+  "creator": {
+    "twitter": "https://x.com/",
+    "linktree": "https://linktr.ee/"
+  },
+  "releases": [
+    {
+      "id": "supernatural",
+      "title": "Supernatural",
+      "year": 2024,
+      "type": "Single",
+      "coverArt": "/covers/supernatural.svg",
+      "songs": [
+        {
+          "id": "supernatural-title",
+          "title": "Supernatural",
+          "durationSec": 198,
+          "bpm": 124,
+          "key": "F# minor",
+          "artwork": "/covers/supernatural.svg",
+          "stems": [
+            { "id": "vocals", "label": "Vocals", "src": "/stems/demo/vocals.mp3" },
+            { "id": "instruments", "label": "Other", "src": "/stems/demo/instruments.mp3" },
+            { "id": "drums", "label": "Drums", "src": "/stems/demo/drums.mp3" },
+            { "id": "bass", "label": "Bass", "src": "/stems/demo/bass.mp3" }
+          ],
+          "lyrics": [
+            {
+              "time": 0,
+              "en": "Drop your stems in public/stems to hear the full mix.",
+              "org": "스템 파일을 public/stems에 넣으면 재생됩니다.",
+              "rom": "seutem pail-eul public/stems-e neoeumyeon jaebaengdoemnida.",
+              "member": "group"
+            },
+            {
+              "time": 12,
+              "en": "Minji line placeholder — sync lyrics in catalog.json.",
+              "ko": "민지 파트 예시",
+              "rom": "minji pateu yesi",
+              "member": "minji"
+            },
+            {
+              "time": 28,
+              "en": "Hanni line placeholder.",
+              "ko": "하니 파트 예시",
+              "rom": "hani pateu yesi",
+              "member": "hanni"
+            },
+            {
+              "time": 44,
+              "en": "Danielle line placeholder.",
+              "ko": "다니엘 파트 예시",
+              "rom": "daniel pateu yesi",
+              "member": "danielle"
+            },
+            {
+              "time": 60,
+              "en": "Haerin line placeholder.",
+              "ko": "해린 파트 예시",
+              "rom": "haerin pateu yesi",
+              "member": "haerin"
+            },
+            {
+              "time": 76,
+              "en": "Hyein line placeholder.",
+              "ko": "혜인 파트 예시",
+              "rom": "hyein pateu yesi",
+              "member": "hyein"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "how-sweet",
+      "title": "How Sweet",
+      "year": 2024,
+      "type": "Single",
+      "coverArt": "/covers/how-sweet.svg",
+      "songs": [
+        {
+          "id": "how-sweet-title",
+          "title": "How Sweet",
+          "durationSec": 210,
+          "bpm": 118,
+          "key": "A major",
+          "artwork": "/covers/how-sweet.svg",
+          "stems": [
+            { "id": "vocals", "label": "Vocals", "src": "/stems/demo/vocals.mp3" },
+            { "id": "instruments", "label": "Instruments", "src": "/stems/demo/instruments.mp3" },
+            { "id": "drums", "label": "Drums", "src": "/stems/demo/drums.mp3" },
+            { "id": "bass", "label": "Bass", "src": "/stems/demo/bass.mp3" }
+          ],
+          "lyrics": [
+            {
+              "time": 0,
+              "en": "How Sweet — add timed lyrics per language here.",
+              "ko": "How Sweet — 가사 타임스탬프를 추가하세요.",
+              "rom": "How Sweet — gasa taimseutaempeureul chugahaseyo.",
+              "member": "group"
+            }
+          ]
+        },
+        {
+          "id": "bubble-gum",
+          "title": "Bubble Gum",
+          "durationSec": 205,
+          "bpm": 120,
+          "key": "G major",
+          "artwork": "/covers/how-sweet.svg",
+          "stems": [
+            { "id": "vocals", "label": "Vocals", "src": "/stems/demo/vocals.mp3" },
+            { "id": "instruments", "label": "Instruments", "src": "/stems/demo/instruments.mp3" },
+            { "id": "drums", "label": "Drums", "src": "/stems/demo/drums.mp3" },
+            { "id": "bass", "label": "Bass", "src": "/stems/demo/bass.mp3" }
+          ],
+          "lyrics": [
+            {
+              "time": 0,
+              "en": "Bubble Gum stem player slot.",
+              "ko": "Bubble Gum 스템 플레이어 슬롯.",
+              "rom": "Bubble Gum seutem peulleieo seullos.",
+              "member": "group"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "get-up",
+      "title": "Get Up",
+      "year": 2023,
+      "type": "EP",
+      "coverArt": "/covers/get-up.svg",
+      "songs": [
+        {
+          "id": "new-jeans",
+          "title": "New Jeans",
+          "durationSec": 185,
+          "bpm": 130,
+          "key": "D major",
+          "artwork": "/covers/get-up.svg",
+          "stems": [
+            { "id": "vocals", "label": "Vocals", "src": "/stems/demo/vocals.mp3" },
+            { "id": "instruments", "label": "Instruments", "src": "/stems/demo/instruments.mp3" },
+            { "id": "drums", "label": "Drums", "src": "/stems/demo/drums.mp3" },
+            { "id": "bass", "label": "Bass", "src": "/stems/demo/bass.mp3" }
+          ],
+          "lyrics": [
+            {
+              "time": 0,
+              "en": "Get Up EP — New Jeans.",
+              "ko": "Get Up EP — New Jeans.",
+              "rom": "Get Up EP — New Jeans.",
+              "member": "group"
+            }
+          ]
+        },
+        {
+          "id": "super-shy",
+          "title": "Super Shy",
+          "durationSec": 175,
+          "bpm": 125,
+          "key": "E minor",
+          "artwork": "/covers/get-up.svg",
+          "stems": [
+            { "id": "vocals", "label": "Vocals", "src": "/stems/demo/vocals.mp3" },
+            { "id": "instruments", "label": "Instruments", "src": "/stems/demo/instruments.mp3" },
+            { "id": "drums", "label": "Drums", "src": "/stems/demo/drums.mp3" },
+            { "id": "bass", "label": "Bass", "src": "/stems/demo/bass.mp3" }
+          ],
+          "lyrics": [
+            {
+              "time": 0,
+              "en": "Super Shy — wire up your separated stems.",
+              "ko": "Super Shy — 분리된 스템을 연결하세요.",
+              "rom": "Super Shy — bunlyeodoen seutemeul yeongyeolhaseyo.",
+              "member": "group"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

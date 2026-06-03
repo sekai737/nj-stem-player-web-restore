@@ -1,0 +1,13 @@
+node_modules
+dist
+fonts-source/*.ttf
+fonts-source/*.otf
+fonts-source/*.TTF
+fonts-source/*.OTF
+.DS_Store
+*.local
+.env
+.env.*
+
+# Removed LRC builder (manual ChatGPT workflow)
+lrc-builder/

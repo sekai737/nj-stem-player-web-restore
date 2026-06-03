@@ -1,0 +1,110 @@
+/**
+ * Figma Mock-up 2 — Primitives + Tokens
+ * @see docs/figma-design-tokens-audit.md
+ */
+:root {
+  /* Primitives — Colors */
+  --color-black: #000000;
+  --color-white: #ffffff;
+  --color-gray: #999999;
+  --color-gray-secondary: #666666;
+  --color-red: #f13600;
+  --color-green: #58fe33;
+  --color-yellow: #ffff26;
+  --color-green-light: #91e53e;
+  --color-blue: #a1cafe;
+  --color-blue-light: #c2e4fd;
+  --color-blue-dark: #01acfe;
+  --color-gray-light: #b3b3b3;
+  --color-star-pink: #fb87e4;
+  --color-star-green: #91e53e;
+
+  /* Primitives — Spacing */
+  --spacing-sp-2: 2px;
+  --spacing-sp-4: 4px;
+  --spacing-sp-8: 8px;
+  --spacing-sp-16: 16px;
+  --spacing-sp-24: 24px;
+  --spacing-sp-32: 32px;
+  --spacing-sp-48: 48px;
+  --radius-cr-16: 16px;
+
+  /* Primitives — Stroke width */
+  --stroke-st-1: 1px;
+  --stroke-st-2: 2px;
+  /**
+   * COOL track title (3:282) @ 96px — Figma ~2px outside stroke; centered `-webkit-text-stroke`
+   * reads thinner, so use a heavier width to match card/stem `st-2` weight in the design.
+   */
+  --title-cool-stroke-width: 4px;
+
+  /* Tokens — Color */
+  --stroke-primary: var(--color-black);
+  --main-container-primary: var(--color-white);
+  --text-primary: var(--color-black);
+  --text-secondary: var(--color-gray-secondary);
+  --text-inverse: var(--color-white);
+  --stem-container-primary: var(--color-yellow);
+  --stem-container-secondary: var(--color-white);
+  --stem-waveform-container: rgb(179 179 179 / 0.2);
+  --bg-primary: var(--color-blue-dark);
+  --bg-secondary: var(--color-blue-light);
+  --member-lyric-box-primary: var(--color-blue);
+  --member-lyric-box-secondary: var(--color-white);
+  --stem-solo-primary: var(--color-green);
+  --stem-mute-primary: var(--color-red);
+  --language-box-selected-primary: var(--color-green-light);
+  --language-box-selected-secondary: var(--color-white);
+  --language-options-pill-primary: #f2f2f2;
+  --language-box-default-primary: var(--language-options-pill-primary);
+  --slider-primary: var(--color-black);
+  --slider-secondary: var(--color-gray);
+  --slider-circle-primary: var(--color-white);
+  --play-pause-icon-primary: var(--color-white);
+  --star-pink-primary: var(--color-star-pink);
+  --star-pink-secondary: var(--color-white);
+  --star-green-primary: var(--color-star-green);
+  --star-green-secondary: var(--color-white);
+
+  /* Gradients — vertical 0% → 100% */
+  --gradient-page: linear-gradient(
+    180deg,
+    var(--bg-secondary) 0%,
+    var(--bg-primary) 100%
+  );
+  --gradient-stem: linear-gradient(
+    180deg,
+    var(--stem-container-secondary) 0%,
+    var(--stem-container-primary) 100%
+  );
+  /** Fullscreen Mode (Figma 120:93) — yellow top, white bottom (stops 53% / 100%) */
+  --gradient-fullscreen: linear-gradient(
+    to top,
+    var(--stem-container-secondary) 53%,
+    var(--stem-container-primary) 100%
+  );
+  --gradient-member: linear-gradient(
+    180deg,
+    var(--member-lyric-box-secondary) 0%,
+    var(--member-lyric-box-primary) 100%
+  );
+  --gradient-language-selected: linear-gradient(
+    180deg,
+    var(--language-box-selected-secondary) 0%,
+    var(--language-box-selected-primary) 100%
+  );
+  --gradient-star-pink: linear-gradient(
+    180deg,
+    var(--star-pink-secondary) 0%,
+    var(--star-pink-primary) 100%
+  );
+  --gradient-star-green: linear-gradient(
+    180deg,
+    var(--star-green-secondary) 0%,
+    var(--star-green-primary) 100%
+  );
+
+  /* Shadows */
+  --shadow-pop-4: var(--spacing-sp-4) var(--spacing-sp-4) 0 var(--stroke-primary);
+  --shadow-pop-2: var(--spacing-sp-2) var(--spacing-sp-2) 0 var(--stroke-primary);
+}

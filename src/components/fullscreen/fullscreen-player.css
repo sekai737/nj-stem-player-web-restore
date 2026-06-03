@@ -1,0 +1,389 @@
+/* Fullscreen Mode — Figma node 120:93; tokens from figma-tokens.css */
+
+.fs-player {
+  --fs-footer-h: 92px;
+  --fs-header-icon-h: 44px;
+  --fs-header-h: var(--fs-footer-h);
+  --fs-header-pad-y: calc((var(--fs-header-h) - var(--fs-header-icon-h)) / 2);
+  --fs-cluster-top: 158px;
+  --fs-cluster-shift-x: 52px;
+  --fs-cluster-playback-w: 569px;
+  --fs-cluster-volume-gap: 80px;
+  /* Shared scale for right-cluster UI (card 640/772, volume 404/640 of card) */
+  --fs-usable-v: calc(100vh - var(--fs-header-h) - var(--fs-footer-h));
+  --fs-ui-scale: min(1, calc(var(--fs-usable-v) / 772px));
+
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: var(--gradient-fullscreen);
+  color: var(--text-primary);
+  font-family: var(--font-swis721-roman);
+  overflow: hidden;
+}
+
+/* ── Header (120:261) ─────────────────────────────────── */
+
+.fs-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  box-sizing: border-box;
+  height: var(--fs-header-h);
+  padding-block: var(--fs-header-pad-y);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.fs-header a,
+.fs-header button,
+.fs-header [role="dialog"],
+.fs-header__menu,
+.fs-header__menu .fs-conversion-panel {
+  pointer-events: auto;
+}
+
+.fs-header__inner {
+  display: flex;
+  width: 100%;
+  max-width: 1800px;
+  height: var(--fs-header-icon-h);
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 60px;
+  margin: 0 auto;
+}
+
+.fs-header__icon-btn {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.fs-header__icon-btn img {
+  display: block;
+  width: var(--fs-header-icon-h);
+  height: var(--fs-header-icon-h);
+}
+
+.fs-header__icon-btn:hover {
+  opacity: 0.85;
+}
+
+.fs-header__title {
+  margin: 0;
+  text-align: center;
+}
+
+.fs-header__menu {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.fs-header__dropdown {
+  position: absolute;
+  top: calc(100% + var(--spacing-sp-8));
+  right: 0;
+  z-index: 120;
+  display: flex;
+  flex-direction: column;
+  min-width: 200px;
+  padding: var(--spacing-sp-8);
+  border: var(--stroke-st-2) solid var(--stroke-primary);
+  border-radius: var(--spacing-sp-16);
+  background: var(--main-container-primary);
+  box-shadow: none;
+}
+
+.fs-header__dropdown-item {
+  display: block;
+  width: 100%;
+  padding: var(--spacing-sp-12) var(--spacing-sp-16);
+  border: none;
+  border-radius: var(--spacing-sp-8);
+  background: transparent;
+  font-family: var(--font-swiss721-roman);
+  font-size: 16px;
+  color: var(--text-primary);
+  text-align: left;
+  cursor: pointer;
+}
+
+.fs-header__dropdown-item:hover {
+  background: var(--stem-waveform-container);
+}
+
+/* ── Main layout ──────────────────────────────────────── */
+
+.fs-player__main {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  min-height: 0;
+  gap: var(--spacing-sp-24);
+  padding: var(--fs-header-h) 60px var(--fs-footer-h);
+  max-width: 1800px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.fs-player__lyrics-col {
+  position: relative;
+  z-index: 11;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sp-16);
+  /* No top padding — main already offsets by --fs-header-h; extra pad caused uneven icon gaps */
+  padding: 0 0 var(--spacing-sp-32);
+}
+
+/* Right cluster (127:194) — Figma y=158, Frame 24 shift −52px */
+.fs-player__controls-col {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-start;
+}
+
+.fs-player__cluster {
+  flex-shrink: 0;
+  margin-top: calc((var(--fs-cluster-top) - var(--fs-header-h)) * var(--fs-ui-scale, 1));
+}
+
+.fs-player__cluster-rail {
+  display: flex;
+  align-items: flex-start;
+  gap: calc(var(--fs-cluster-volume-gap) * var(--fs-ui-scale, 1));
+  margin-left: calc(-1 * var(--fs-cluster-shift-x) * var(--fs-ui-scale, 1));
+  height: calc(640px * var(--fs-ui-scale, 1));
+}
+
+/* Frame 23 — card (0,0) + stems (450,196) */
+.fs-player__cluster-playback {
+  position: relative;
+  flex-shrink: 0;
+  width: calc(var(--fs-cluster-playback-w) * var(--fs-ui-scale, 1));
+  height: calc(640px * var(--fs-ui-scale, 1));
+}
+
+/* ── Footer (120:94) ─────────────────────────────────── */
+
+.fs-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--stem-container-primary);
+  border-top: var(--stroke-st-2) solid var(--stroke-primary);
+  pointer-events: none;
+}
+
+.fs-footer__pill,
+.fs-footer__send {
+  pointer-events: auto;
+}
+
+.fs-footer__pill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sp-16);
+  width: min(1494px, calc(100% - 96px));
+  background: var(--main-container-primary);
+  border: var(--stroke-st-2) solid var(--stroke-primary);
+}
+
+.fs-footer__text {
+  margin: 0;
+  font-family: var(--font-swis721-roman);
+  font-size: 24px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fs-footer__send {
+  flex-shrink: 0;
+}
+
+/* ── Queue / conversion panels (reuse prior tokens) ─── */
+
+.fs-panel-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 110;
+  border: none;
+  background: rgb(0 0 0 / 0.15);
+  cursor: default;
+}
+
+.fs-header__menu .fs-conversion-panel {
+  position: absolute;
+  top: calc(100% + var(--spacing-sp-8));
+  right: 0;
+  z-index: 121;
+  box-sizing: border-box;
+  width: min(320px, 90vw);
+  min-width: 280px;
+  padding: var(--spacing-sp-16);
+  border-radius: var(--spacing-sp-16);
+  background: var(--main-container-primary);
+  border: var(--stroke-st-2) solid var(--stroke-primary);
+  box-shadow: none;
+  font-family: var(--font-swis721-roman);
+  font-size: 16px;
+  color: var(--color-black);
+}
+
+.fs-conversion-panel__title {
+  margin: 0 0 var(--spacing-sp-16);
+  font-family: var(--font-swiss721-medium);
+  font-size: 16px;
+  font-weight: normal;
+  color: var(--color-black);
+}
+
+.fs-conversion-panel__section {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  gap: var(--spacing-sp-8);
+  margin-bottom: var(--spacing-sp-16);
+}
+
+.fs-conversion-panel__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sp-4);
+  margin-bottom: var(--spacing-sp-8);
+  font-family: var(--font-swis721-roman);
+  font-size: 16px;
+  color: var(--color-black);
+}
+
+.fs-conversion-panel__field > span {
+  font-family: var(--font-swis721-roman);
+  color: var(--color-black);
+}
+
+.fs-conversion-panel__section--playback {
+  margin-bottom: var(--spacing-sp-16);
+}
+
+.fs-conversion-panel__field select {
+  width: 100%;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: var(--stroke-st-1) solid var(--stroke-primary);
+  font-family: var(--font-swis721-roman);
+  font-size: 16px;
+  color: var(--color-black);
+  background: var(--main-container-primary);
+}
+
+.fs-conversion-panel__hint {
+  margin: var(--spacing-sp-8) 0 0;
+  font-family: var(--font-swis721-roman);
+  font-size: 14px;
+  color: var(--color-black);
+  opacity: 0.65;
+}
+
+.fs-queue-panel {
+  position: fixed;
+  left: var(--spacing-sp-48);
+  top: var(--fs-header-h);
+  bottom: var(--fs-footer-h);
+  z-index: 111;
+  width: min(360px, 85vw);
+  padding: var(--spacing-sp-24) var(--spacing-sp-16);
+  background: var(--main-container-primary);
+  border: var(--stroke-st-2) solid var(--stroke-primary);
+  box-shadow: var(--shadow-pop-4);
+  overflow-y: auto;
+}
+
+.fs-queue-panel__title {
+  margin: 0 0 var(--spacing-sp-16);
+  font-family: var(--font-swis721-bold);
+  font-size: 18px;
+}
+
+.fs-queue-panel__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.fs-queue-panel__item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sp-16);
+  width: 100%;
+  padding: 10px var(--spacing-sp-8);
+  border: none;
+  border-radius: var(--spacing-sp-8);
+  background: transparent;
+  color: var(--text-primary);
+  text-align: left;
+  cursor: pointer;
+}
+
+.fs-queue-panel__item:hover {
+  background: var(--stem-waveform-container);
+}
+
+.fs-queue-panel__item--active {
+  background: var(--gradient-member);
+}
+
+.fs-queue-panel__art {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--spacing-sp-8);
+  object-fit: cover;
+}
+
+.fs-queue-panel__name {
+  font-size: 15px;
+}
+
+@media (max-width: 1200px) {
+  .fs-player__main {
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .fs-player__controls-col {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  .fs-player__cluster {
+    flex-wrap: wrap;
+    justify-content: center;
+    height: auto;
+  }
+
+  .fs-player__cluster-rail {
+    margin-left: 0;
+  }
+
+}

@@ -1,0 +1,31 @@
+.volume-control__slider-wrap {
+  position: relative;
+}
+
+.volume-control__tooltip {
+  position: absolute;
+  bottom: calc(100% + var(--volume-tooltip-offset-y, 6px));
+  left: var(--volume-tooltip-left, 50%);
+  z-index: 20;
+  transform: translateX(-50%);
+  box-sizing: border-box;
+  padding: var(--volume-tooltip-padding-y, 2px) var(--volume-tooltip-padding-x, 8px);
+  border: var(--stroke-st-2) solid var(--stroke-primary);
+  border-radius: 8px;
+  background: var(--main-container-primary);
+  box-shadow: none;
+  font-family: var(--font-swiss721-regular);
+  font-size: 12px;
+  font-weight: normal;
+  font-synthesis: none;
+  line-height: normal;
+  color: var(--text-primary);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.12s ease-out;
+}
+
+.volume-control__tooltip--visible {
+  opacity: 1;
+}

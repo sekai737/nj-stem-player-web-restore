@@ -1,0 +1,52 @@
+/**
+ * Licensed web fonts — run `npm run fonts:build` to generate public/fonts/*.woff2
+ * @see docs/figma-design-tokens-audit.md
+ *
+ * One @font-face per Figma style (unique family name) so the browser never
+ * synthesizes or mismatches weights.
+ */
+
+/* Swis721 BT Roman */
+@font-face {
+  font-family: Swis721BTRoman;
+  src: url("/fonts/swis721-bt-roman.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Swis721 BT Bold */
+@font-face {
+  font-family: Swis721BTBold;
+  src: url("/fonts/swis721-bt-bold.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Swis721 Lt BT Light — fullscreen lyric bubbles / timestamps (Figma 120:174) */
+@font-face {
+  font-family: Swis721LtBTLight;
+  src: url("/fonts/SWIS721_LT_BT_LIGHT.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Swiss 721 Regular */
+@font-face {
+  font-family: Swiss721Regular;
+  src: url("/fonts/swiss-721-regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Swiss 721 Medium */
+@font-face {
+  font-family: Swiss721Medium;
+  src: url("/fonts/swiss-721-medium.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}

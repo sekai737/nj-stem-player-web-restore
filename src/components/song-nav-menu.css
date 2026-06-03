@@ -1,0 +1,4 @@
+/** Stem player song menu (SongNavMenu) — border only, no pop shadow */
+.song-nav-menu.figma-surface {
+  box-shadow: none;
+}

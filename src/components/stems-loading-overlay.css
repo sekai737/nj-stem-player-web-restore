@@ -1,0 +1,4 @@
+/** Loading / error card — figma-surface border fill, no pop shadow */
+.stems-loading__panel.figma-surface {
+  box-shadow: none;
+}

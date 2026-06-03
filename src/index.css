@@ -1,0 +1,248 @@
+@import "./styles/figma-tokens.css";
+@import "./styles/fonts.css";
+@import "./styles/cool-title-fonts.css";
+@import "./styles/typography.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply box-border;
+  }
+
+  html,
+  body,
+  #root {
+    @apply min-h-full;
+  }
+
+  body {
+    @apply m-0 text-content-primary;
+    font-family: var(--font-dm-sans);
+    background:
+      radial-gradient(circle at 8% 10%, rgba(255, 214, 234, 0.95) 0%, transparent 30%),
+      radial-gradient(circle at 85% 6%, rgba(184, 228, 255, 0.9) 0%, transparent 28%),
+      radial-gradient(circle at 92% 85%, rgba(216, 201, 255, 0.65) 0%, transparent 30%),
+      linear-gradient(135deg, #fff8f2 0%, #fff0f8 46%, #eef8ff 100%);
+    background-attachment: fixed;
+  }
+
+  /* Stem player shell — class on body (Layout bare) and inner wrapper */
+  body.figma-player,
+  .figma-player {
+    background: var(--color-blue-dark);
+    font-family: var(--font-swis721-roman);
+    font-synthesis: none;
+  }
+
+  /* Catalog / home — DM Sans via Tailwind font-sans on body (not .figma-player) */
+  body:not(.figma-player) {
+    font-family: var(--font-dm-sans);
+  }
+
+  button {
+    font-family: inherit;
+  }
+}
+
+@layer components {
+  .nj-pop-card {
+    @apply border-2 border-white/80 bg-white/80 backdrop-blur-xl;
+    border-radius: 2rem;
+    box-shadow: 0 18px 45px rgba(232, 77, 154, 0.16);
+  }
+
+  .figma-surface {
+    @apply border-st border-stroke-primary bg-surface-primary;
+    box-shadow: var(--shadow-pop-4);
+  }
+
+  .figma-title-shadow {
+    text-shadow: var(--spacing-sp-4) var(--spacing-sp-4) 0 var(--stroke-primary);
+  }
+
+  @keyframes lyric-slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .lyrics-lines-enter {
+    animation: lyric-slide-up 0.32s ease-out;
+  }
+
+  /**
+   * Stem container typography — Jersey 10, st-1 text stroke, token fills
+   * @see docs/figma-design-tokens-audit.md
+   */
+  .stem-type-label {
+    font-family: var(--font-jersey);
+    font-size: 48px;
+    font-weight: 400;
+    font-style: normal;
+    font-synthesis: none;
+    line-height: normal;
+    color: var(--text-inverse);
+    -webkit-text-stroke-width: var(--stroke-st-1);
+    -webkit-text-stroke-color: var(--stroke-primary);
+    paint-order: stroke fill;
+  }
+
+  .stem-type-solo-mute {
+    font-family: var(--font-jersey);
+    font-size: 64px;
+    font-weight: 400;
+    font-style: normal;
+    font-synthesis: none;
+    line-height: normal;
+    color: var(--text-inverse);
+    -webkit-text-stroke-width: var(--stroke-st-1);
+    -webkit-text-stroke-color: var(--stroke-primary);
+    paint-order: stroke fill;
+  }
+
+  .stem-volume-slider-horizontal {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 8px;
+    width: 69px;
+    max-width: 100%;
+    background: transparent;
+  }
+
+  .stem-volume-slider-horizontal::-webkit-slider-runnable-track {
+    height: 4px;
+    border-radius: 2px;
+    background: var(--slider-secondary);
+  }
+
+  .stem-volume-slider-horizontal::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 8px;
+    height: 8px;
+    margin-top: -2px;
+    border-radius: 50%;
+    background: var(--slider-circle-primary);
+    border: var(--stroke-st-1) solid var(--stroke-primary);
+  }
+
+  .stem-volume-slider-horizontal::-moz-range-track {
+    height: 4px;
+    border-radius: 2px;
+    background: var(--slider-secondary);
+  }
+
+  .stem-volume-slider-horizontal::-moz-range-thumb {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--slider-circle-primary);
+    border: var(--stroke-st-1) solid var(--stroke-primary);
+  }
+
+}
+
+/**
+ * Selection — unlayered (after Tailwind) so overrides apply reliably.
+ * Use .selectable-copy on lyrics + song metadata wrappers only.
+ */
+html,
+body,
+#root {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.selectable-copy {
+  cursor: text;
+}
+
+.selectable-copy [data-copy-block] {
+  -webkit-user-select: text !important;
+  user-select: text !important;
+  cursor: text;
+}
+
+.selectable-copy-region-wrap {
+  position: relative;
+  min-width: 0;
+}
+
+.selectable-copy-region {
+  min-height: 0;
+}
+
+/** Post-copy flash on the exact highlighted range (CSS Highlight API). */
+::highlight(copy-feedback) {
+  background-color: rgb(145 229 62 / 0.5);
+  color: inherit;
+}
+
+/** Fallback when Highlight API is unavailable. */
+.selectable-copy-range-feedback {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  pointer-events: none;
+}
+
+.selectable-copy-range-feedback__rect {
+  position: fixed;
+  border-radius: 2px;
+  background-color: rgb(145 229 62 / 0.5);
+  pointer-events: none;
+}
+
+.selectable-copy-toast {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 6px);
+  transform: translateX(-50%);
+  padding: 2px 8px;
+  border-radius: 8px;
+  border: var(--stroke-st-2) solid var(--stroke-primary);
+  background: var(--main-container-primary);
+  box-shadow: none;
+  font-family: var(--font-swis721-roman);
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--text-primary);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.selectable-copy-region-wrap[data-copied] .selectable-copy-toast,
+.selectable-copy-region-wrap:has([data-copied]) .selectable-copy-toast {
+  opacity: 1;
+}
+
+/** Header home / menu / fullscreen — 44×44 Figma icons (node 1:58) */
+.figma-header-icon {
+  display: block;
+  flex-shrink: 0;
+  max-width: none;
+}
+
+.figma-header-icon img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+}
+
+input,
+textarea,
+select,
+[contenteditable="true"]:not([contenteditable="false"]) {
+  -webkit-user-select: text !important;
+  user-select: text !important;
+  cursor: auto;
+}

@@ -1,0 +1,114 @@
+/**
+ * Meter plot slots inside Meters Box (Figma node 26:215) — 273×768 in Frame 11 (26:212).
+ * Outer panel: main-container-primary + st-2 + cr-16 (figma-surface, no pop shadow).
+ * Each plot: stem-waveform-container well + st-2 stroke + cr-16.
+ */
+
+.meter-panel.figma-surface {
+  box-shadow: none;
+}
+.meter-plot-slot {
+  position: relative;
+  min-height: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  border-radius: var(--radius-cr-16);
+  border: var(--stroke-st-2) solid var(--stroke-primary);
+  background: var(--stem-waveform-container);
+}
+
+/** Meter theme drop-down (Figma node 73:897) — top-left of Meters Box */
+.meter-theme-dropdown {
+  position: absolute;
+  box-sizing: border-box;
+  pointer-events: auto;
+  z-index: 20;
+}
+
+.meter-theme-dropdown__trigger {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.meter-theme-dropdown__trigger:focus-visible {
+  outline: 2px solid var(--bg-primary);
+  outline-offset: 2px;
+  border-radius: 50%;
+}
+
+.meter-theme-dropdown__trigger--open .meter-theme-dropdown__icon-wrap {
+  box-shadow: none;
+}
+
+.meter-theme-dropdown__icon-wrap {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+}
+
+.meter-theme-dropdown__icon {
+  display: block;
+  width: 24px;
+  height: 24px;
+  max-width: none;
+}
+
+.meter-theme-dropdown__menu.figma-surface {
+  position: absolute;
+  top: calc(100% + var(--spacing-sp-4));
+  left: 0;
+  min-width: 120px;
+  margin: 0;
+  padding: var(--spacing-sp-4);
+  list-style: none;
+  box-sizing: border-box;
+  border-radius: var(--radius-cr-16);
+  border: var(--stroke-st-2) solid var(--stroke-primary);
+  background: var(--main-container-primary);
+  box-shadow: none;
+}
+
+.meter-theme-dropdown__option {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: var(--spacing-sp-4) var(--spacing-sp-8);
+  box-sizing: border-box;
+  border: var(--stroke-st-2) solid transparent;
+  border-radius: 25px;
+  background: transparent;
+  color: var(--text-primary);
+  font-family: Swiss721Regular, sans-serif;
+  font-size: 16px;
+  font-weight: normal;
+  line-height: normal;
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.meter-theme-dropdown__option:hover {
+  background: var(--stem-waveform-container);
+}
+
+.meter-theme-dropdown__option:focus-visible {
+  outline: 2px solid var(--bg-primary);
+  outline-offset: 1px;
+}
+
+.meter-theme-dropdown__option--selected {
+  border-color: var(--stroke-primary);
+  background: var(--gradient-language-selected);
+  font-family: Swiss721Medium, sans-serif;
+}

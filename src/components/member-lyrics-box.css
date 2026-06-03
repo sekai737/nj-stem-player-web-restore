@@ -1,0 +1,50 @@
+/**
+ * Member Lyrics Box (Figma node 3:54)
+ * Height 40 · px 24 · py 4 · gap 8 · radius 60 · width grows with name
+ */
+.member-lyrics-box,
+.member-lyrics-box * {
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: default;
+}
+
+.member-lyrics-box {
+  position: relative;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  width: max-content;
+  max-width: 100%;
+  height: 40px;
+  gap: var(--spacing-sp-8);
+  padding: var(--spacing-sp-4) var(--spacing-sp-24);
+  border-radius: 60px;
+  background: var(--gradient-member);
+  box-shadow: inset 0 0 0 var(--stroke-st-2) var(--stroke-primary);
+}
+
+.member-lyrics-box__portrait {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.member-lyrics-box__spinner {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+}
+
+.member-lyrics-box__name {
+  flex-shrink: 0;
+  white-space: nowrap;
+  line-height: normal;
+}
+
+/** Hide icon + name only; pill background stays visible and keeps layout size */
+.member-lyrics-box__content--hidden {
+  visibility: hidden;
+}

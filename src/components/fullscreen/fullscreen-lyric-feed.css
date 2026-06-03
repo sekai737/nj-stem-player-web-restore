@@ -1,0 +1,249 @@
+/* Fullscreen chat lyrics — Figma 120:170 / 120:176 / 120:173 */
+
+.fs-lyric-feed {
+  --fs-lyric-feed-name-size: 24px;
+  --fs-lyric-edge-inset: 60px;
+  --fs-lyric-name-inset: 96px;
+
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.fs-lyric-feed__scroll {
+  flex: 1;
+  overflow-x: hidden;
+  overflow-y: auto;
+  /* Room for pop shadow + border on active bubble (not clipped by scroll or footer) */
+  padding: 0 var(--spacing-sp-4) var(--spacing-sp-8) 0;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.fs-lyric-feed__copy {
+  min-height: min-content;
+}
+
+.fs-lyric-feed__copy .selectable-copy-region {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-height: min-content;
+}
+
+/* Toast sits above a tall scroll area — pin it under the header so it stays visible */
+.fs-lyric-feed .selectable-copy-region-wrap .selectable-copy-toast {
+  position: fixed;
+  top: calc(var(--fs-header-h) + var(--spacing-sp-16));
+  left: clamp(120px, 32vw, 42%);
+  bottom: auto;
+  transform: translateX(-50%);
+  z-index: 130;
+  font-size: 14px;
+  padding: 4px 10px;
+}
+
+.fs-lyric-feed__scroll::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.fs-lyric-feed__status {
+  margin: var(--spacing-sp-24) 0;
+  font-family: var(--font-swis721-roman);
+  font-size: 24px;
+  line-height: normal;
+  color: var(--text-secondary);
+}
+
+.fs-lyric-message {
+  margin-bottom: 32px;
+}
+
+/* Pull first member lyric up after right-side opener / guest block */
+.fs-lyric-message--right + .fs-lyric-message:not(.fs-lyric-message--right) {
+  margin-top: calc(-1 * (var(--fs-lyric-feed-name-size, 24px) + var(--spacing-sp-8)));
+}
+
+.fs-lyric-message:last-child {
+  margin-bottom: var(--spacing-sp-4);
+}
+
+.fs-lyric-message--enter {
+  animation: fs-message-in 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Right side (sekai opener, Pharrell Williams, etc.) — 60px gap to Now Playing card */
+.fs-lyric-message--right,
+.fs-lyric-message--song-title {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  align-self: flex-end;
+  max-width: 100%;
+  margin-right: var(--fs-lyric-edge-inset);
+  margin-left: auto;
+}
+
+.fs-lyric-message--right .fs-lyric-message__sender,
+.fs-lyric-message--song-title .fs-lyric-message__sender {
+  order: 0;
+  justify-content: flex-end;
+  margin: 0 var(--fs-lyric-name-inset) var(--spacing-sp-8) 0;
+}
+
+.fs-lyric-message--right .fs-lyric-message__row,
+.fs-lyric-message--song-title .fs-lyric-message__row {
+  order: 1;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+}
+
+.fs-lyric-message--right .fs-lyric-bubble,
+.fs-lyric-message--song-title .fs-lyric-bubble {
+  background: var(--main-container-primary);
+  border-top-left-radius: var(--spacing-sp-24);
+  border-top-right-radius: 0;
+}
+
+.fs-lyric-message__emoji-text {
+  font-size: 26px;
+  line-height: 1;
+}
+
+.fs-lyric-message__avatar--emoji {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  line-height: 1;
+  background: var(--main-container-primary);
+  border: var(--stroke-st-2) solid var(--stroke-primary);
+}
+
+.fs-lyric-message__avatar--icon img {
+  object-fit: contain;
+  padding: 6px;
+}
+
+.fs-lyric-message__sender {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sp-8);
+  margin: 0 0 var(--spacing-sp-8) var(--fs-lyric-name-inset);
+  font-family: var(--font-swis721-roman);
+  font-size: var(--fs-lyric-feed-name-size, 24px);
+  font-weight: normal;
+  line-height: 1;
+}
+
+.fs-lyric-message__emoji {
+  display: block;
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+}
+
+.fs-lyric-message__emoji-row {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: var(--spacing-sp-4);
+}
+
+.fs-lyric-message__row {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--spacing-sp-24);
+}
+
+.fs-lyric-message__avatar {
+  flex-shrink: 0;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.fs-lyric-message__avatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.fs-lyric-bubble {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0;
+  padding: var(--spacing-sp-16) var(--spacing-sp-32);
+  border: var(--stroke-st-2) solid var(--stroke-primary);
+  border-radius: var(--spacing-sp-24);
+  border-top-left-radius: 0;
+  background: var(--gradient-language-selected);
+  text-align: left;
+  cursor: pointer;
+}
+
+.fs-lyric-bubble[role="button"] {
+  cursor: pointer;
+}
+
+.fs-lyric-bubble--active {
+  box-shadow: var(--shadow-pop-4);
+}
+
+.fs-lyric-bubble[role="button"] .fs-lyric-bubble__line {
+  cursor: pointer;
+}
+
+.fs-lyric-bubble__line {
+  margin: 0;
+  font-family: var(--font-swis721-light);
+  font-size: 32px;
+  font-weight: normal;
+  line-height: normal;
+  color: var(--text-primary);
+}
+
+.fs-lyric-bubble__line--kr {
+  font-family: var(--font-noto-kr-light);
+}
+
+.fs-lyric-bubble__line--jp {
+  font-family: var(--font-noto-jp-light);
+}
+
+.fs-lyric-bubble__line + .fs-lyric-bubble__line {
+  margin-top: 0;
+}
+
+.fs-lyric-message__time {
+  flex-shrink: 0;
+  font-family: var(--font-swis721-light);
+  font-size: 24px;
+  font-weight: normal;
+  line-height: normal;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+@keyframes fs-message-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 1200px) {
+  .fs-lyric-feed__scroll {
+    max-height: 40vh;
+  }
+}

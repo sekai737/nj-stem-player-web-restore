@@ -1,0 +1,120 @@
+/* Volume Slider — Figma 120:241; scales with card via --fs-ui-scale (404/640 of card) */
+
+.fs-volume {
+  --fs-volume-scale: var(--fs-ui-scale, 1);
+  --fs-volume-layout-w: calc(var(--fs-volume-design-w, 68px) * var(--fs-volume-scale));
+  --fs-volume-layout-h: calc(var(--fs-volume-design-h, 404px) * var(--fs-volume-scale));
+  /* y=118 in 640px cluster — aligns with card top (121:299 y=0) */
+  --fs-volume-offset: calc(var(--fs-volume-offset-top, 118px) * var(--fs-volume-scale));
+
+  flex-shrink: 0;
+  align-self: flex-start;
+  width: var(--fs-volume-layout-w);
+  height: var(--fs-volume-layout-h);
+  margin-top: var(--fs-volume-offset);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.fs-volume__scale {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--fs-volume-gap, 16px);
+  box-sizing: border-box;
+  width: var(--fs-volume-design-w, 68px);
+  height: var(--fs-volume-design-h, 404px);
+  padding: var(--fs-volume-padding-y, 24px) var(--fs-volume-padding-x, 16px);
+  border: var(--stroke-st-2) solid var(--stroke-primary);
+  border-radius: var(--fs-volume-radius, 37px);
+  background: var(--main-container-primary);
+  transform: scale(var(--fs-volume-scale));
+  transform-origin: top left;
+}
+
+.fs-volume__label {
+  flex-shrink: 0;
+  min-height: var(--fs-volume-label-height, 19px);
+  font-family: var(--font-swiss721-regular);
+  font-size: var(--fs-volume-label-size, 16px);
+  font-weight: normal;
+  font-synthesis: none;
+  line-height: normal;
+  text-align: center;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.fs-volume__track-wrap {
+  position: relative;
+  flex-shrink: 0;
+  width: var(--fs-volume-track-width, 8px);
+  height: var(--fs-volume-track-height, 288px);
+}
+
+.fs-volume__track {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--fs-volume-track-radius, 4px);
+  background: var(--slider-secondary);
+  pointer-events: none;
+}
+
+.fs-volume__fill {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: var(--fs-volume-track-radius, 4px);
+  background: var(--slider-primary);
+  pointer-events: none;
+}
+
+.fs-volume__thumb {
+  position: absolute;
+  left: 50%;
+  width: var(--fs-volume-thumb-size, 24px);
+  height: var(--fs-volume-thumb-size, 24px);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.fs-volume__thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.fs-volume__input {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  z-index: 1;
+  width: var(--fs-volume-thumb-size, 24px);
+  height: 100%;
+  margin: 0;
+  transform: translateX(-50%);
+  writing-mode: vertical-lr;
+  direction: rtl;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.fs-volume__mute {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--fs-volume-icon-width, 24px);
+  height: var(--fs-volume-icon-height, 17px);
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.fs-volume__mute img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
