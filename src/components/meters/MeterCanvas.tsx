@@ -1,5 +1,30 @@
 import { useEffect, useRef } from "react";
+import { METER_PLOT_CORNER_RADIUS_PX } from "../../meters/meterSettings";
 import { getMeterSnapshot } from "../../meters/meterStore";
+
+function clipMeterPlotCorners(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+): void {
+  const r = Math.min(METER_PLOT_CORNER_RADIUS_PX, width / 2, height / 2);
+  ctx.beginPath();
+  if (typeof ctx.roundRect === "function") {
+    ctx.roundRect(0, 0, width, height, r);
+  } else {
+    ctx.moveTo(r, 0);
+    ctx.lineTo(width - r, 0);
+    ctx.quadraticCurveTo(width, 0, width, r);
+    ctx.lineTo(width, height - r);
+    ctx.quadraticCurveTo(width, height, width - r, height);
+    ctx.lineTo(r, height);
+    ctx.quadraticCurveTo(0, height, 0, height - r);
+    ctx.lineTo(0, r);
+    ctx.quadraticCurveTo(0, 0, r, 0);
+    ctx.closePath();
+  }
+  ctx.clip();
+}
 
 interface MeterCanvasProps {
   className?: string;
@@ -44,7 +69,10 @@ export default function MeterCanvas({ className = "", draw }: MeterCanvasProps) 
         const ctx = canvas.getContext("2d");
         if (ctx) {
           ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          ctx.save();
+          clipMeterPlotCorners(ctx, w, h);
           drawRef.current(ctx, w, h, dpr);
+          ctx.restore();
           void getMeterSnapshot().version;
         }
       }
@@ -58,7 +86,7 @@ export default function MeterCanvas({ className = "", draw }: MeterCanvasProps) 
   return (
     <canvas
       ref={canvasRef}
-      className={`block h-full w-full ${className}`}
+      className={`meter-plot-canvas block h-full w-full ${className}`}
       aria-hidden
     />
   );

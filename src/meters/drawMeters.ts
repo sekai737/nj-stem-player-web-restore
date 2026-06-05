@@ -6,7 +6,6 @@ import {
 } from "./meterStore";
 import {
   applyDisplayGamma,
-  freqToLogY,
   interpolateSpectrumAtHz,
   melNormToHz,
   softCompressDisplay,
@@ -171,10 +170,14 @@ export function drawSpectrogram(
     for (let px = 0; px < renderW; px++) {
       const pxFromRight = renderW - 1 - px;
       const norm = sampleSpectrogram(snap, binF, pxFromRight, renderW);
+      const o = (py * renderW + px) * 4;
+      if (norm < 0.002) {
+        data[o + 3] = 0;
+        continue;
+      }
       const age = pxFromRight / Math.max(1, renderW - 1);
       const alpha = 1 - fade * age * 0.85;
       const { r, g, b } = spectrogramNormToColor(norm, lut);
-      const o = (py * renderW + px) * 4;
       data[o] = r;
       data[o + 1] = g;
       data[o + 2] = b;
@@ -192,32 +195,55 @@ export function drawSpectrogram(
   const offCtx = spectrogramScratchCanvas.getContext("2d");
   if (offCtx) {
     offCtx.putImageData(img, 0, 0);
-    ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(spectrogramScratchCanvas, plotX, plotY, plotW, plotH);
     ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    ctx.drawImage(spectrogramScratchCanvas, plotX, plotY, plotW, plotH);
   }
-
-  ctx.strokeStyle = theme.grid;
-  ctx.lineWidth = 0.5;
-  [100, 500, 1000, 2000, 5000, 10000, 15000].forEach((freq) => {
-    if (freq > nyquist) return;
-    const y = plotY + freqToLogY(freq, plotH, 20, nyquist);
-    ctx.beginPath();
-    ctx.moveTo(plotX, y);
-    ctx.lineTo(plotX + plotW, y);
-    ctx.stroke();
-  });
-
-  ctx.strokeStyle = theme.gridStrong;
-  ctx.beginPath();
-  ctx.moveTo(plotX + plotW - 0.5, plotY);
-  ctx.lineTo(plotX + plotW - 0.5, plotY + plotH);
-  ctx.stroke();
 
   ctx.fillStyle = theme.textMuted;
   ctx.font = `normal 8px ${theme.fontRegular}`;
   ctx.textAlign = "right";
   ctx.fillText(`${snap.spectrogramFftSize} FFT`, plotX + plotW - 4, h - 5);
+}
+
+function strokeSpectrumCurve(
+  ctx: CanvasRenderingContext2D,
+  points: { x: number; y: number }[],
+): void {
+  ctx.beginPath();
+  points.forEach((p, i) => {
+    if (i === 0) ctx.moveTo(p.x, p.y);
+    else ctx.lineTo(p.x, p.y);
+  });
+  ctx.stroke();
+}
+
+function spectrumGradientAtX(
+  ctx: CanvasRenderingContext2D,
+  plotX: number,
+  plotW: number,
+  theme: MeterVisualTokens,
+): CanvasGradient {
+  const g = ctx.createLinearGradient(plotX, 0, plotX + plotW, 0);
+  g.addColorStop(0, theme.spectrumBarLow);
+  g.addColorStop(0.32, theme.spectrumBarMid);
+  g.addColorStop(0.62, theme.spectrumBarHigh);
+  g.addColorStop(1, theme.spectrumLine);
+  return g;
+}
+
+function mixHex(a: string, b: string, t: number): string {
+  const parse = (hex: string) => [
+    parseInt(hex.slice(1, 3), 16),
+    parseInt(hex.slice(3, 5), 16),
+    parseInt(hex.slice(5, 7), 16),
+  ] as const;
+  const [r0, g0, b0] = parse(a);
+  const [r1, g1, b1] = parse(b);
+  const r = Math.round(r0 + (r1 - r0) * t);
+  const g = Math.round(g0 + (g1 - g0) * t);
+  const bch = Math.round(b0 + (b1 - b0) * t);
+  return `rgb(${r},${g},${bch})`;
 }
 
 export function drawSpectrum(
@@ -233,7 +259,7 @@ export function drawSpectrum(
     h,
     theme,
     "Spectrum",
-    `Mel · ${METER_SETTINGS.spectrumTiltDbPerOct} dB`,
+    `Mel · ${METER_SETTINGS.spectrumTiltDbPerOct} dB · M/S`,
   );
 
   const nyquist = snap.sampleRate * 0.5;
@@ -247,32 +273,25 @@ export function drawSpectrum(
     return softCompressDisplay(raw, 0.5) * displayScale;
   };
 
-  const mix = (a: string, b: string, t: number): string => {
-    const parse = (hex: string) => [
-      parseInt(hex.slice(1, 3), 16),
-      parseInt(hex.slice(3, 5), 16),
-      parseInt(hex.slice(5, 7), 16),
-    ] as const;
-    const [r0, g0, b0] = parse(a);
-    const [r1, g1, b1] = parse(b);
-    const r = Math.round(r0 + (r1 - r0) * t);
-    const g = Math.round(g0 + (g1 - g0) * t);
-    const bch = Math.round(b0 + (b1 - b0) * t);
-    return `rgba(${r},${g},${bch},${METER_SETTINGS.spectrumBarOpacity})`;
-  };
-
-  for (let px = 0; px < plotW; px++) {
-    const t = px / Math.max(1, plotW - 1);
-    const norm = applyDisplayGamma(spectrumNormAt(t), 1.2);
-    const barH = norm * plotH * 0.92;
-    const hzAt = melNormToHz(t, minHz, maxHz);
-    const bandT = hzAt / maxHz;
-    const barColor =
-      bandT < 0.5
-        ? mix(theme.spectrumBarLow, theme.spectrumBarMid, bandT * 2)
-        : mix(theme.spectrumBarMid, theme.spectrumBarHigh, (bandT - 0.5) * 2);
-    ctx.fillStyle = barColor;
-    ctx.fillRect(plotX + px, plotY + plotH - barH, 1, barH);
+  /** Style "Both" — thin bars; color from horizontal freq gradient (kept from minimeters bar pass). */
+  if (METER_SETTINGS.spectrumStyleBoth) {
+    ctx.globalAlpha = METER_SETTINGS.spectrumBarOpacity;
+    for (let px = 0; px < plotW; px++) {
+      const t = px / Math.max(1, plotW - 1);
+      const norm = applyDisplayGamma(spectrumNormAt(t), 1.2);
+      const barH = norm * plotH * 0.92;
+      const barColor =
+        t < 0.32
+          ? theme.spectrumBarLow
+          : t < 0.62
+            ? mixHex(theme.spectrumBarLow, theme.spectrumBarMid, (t - 0.32) / 0.3)
+            : t < 0.85
+              ? mixHex(theme.spectrumBarMid, theme.spectrumBarHigh, (t - 0.62) / 0.23)
+              : mixHex(theme.spectrumBarHigh, theme.spectrumLine, (t - 0.85) / 0.15);
+      ctx.fillStyle = barColor;
+      ctx.fillRect(plotX + px, plotY + plotH - barH, 1, barH);
+    }
+    ctx.globalAlpha = 1;
   }
 
   const curvePoints: { x: number; y: number }[] = [];
@@ -294,26 +313,23 @@ export function drawSpectrum(
   ctx.lineTo(plotX + plotW, plotY + plotH);
   ctx.lineTo(plotX, plotY + plotH);
   ctx.closePath();
-  ctx.fillStyle = theme.spectrumFill;
-  ctx.fill();
-
-  ctx.strokeStyle = theme.spectrumLine;
-  ctx.lineWidth = 1.5;
-  ctx.beginPath();
-  curvePoints.forEach((p, i) => {
-    if (i === 0) ctx.moveTo(p.x, p.y);
-    else ctx.lineTo(p.x, p.y);
-  });
-  ctx.stroke();
-
-  ctx.strokeStyle = theme.grid;
-  for (let db = 0; db >= -60; db -= 12) {
-    const y = plotY + plotH - ((db + 60) / 60) * plotH;
-    ctx.beginPath();
-    ctx.moveTo(plotX, y);
-    ctx.lineTo(plotX + plotW, y);
-    ctx.stroke();
+  if (METER_SETTINGS.spectrumStyleBoth) {
+    /** Minimeters-style fill — horizontal gradient under the trace. */
+    ctx.fillStyle = spectrumGradientAtX(ctx, plotX, plotW, theme);
+    ctx.globalAlpha = 0.92;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+  } else {
+    ctx.fillStyle = theme.spectrumFill;
+    ctx.fill();
   }
+
+  ctx.strokeStyle = theme.spectrumFill;
+  ctx.lineWidth = 2;
+  strokeSpectrumCurve(ctx, curvePoints);
+  ctx.strokeStyle = theme.spectrumLine;
+  ctx.lineWidth = 1.25;
+  strokeSpectrumCurve(ctx, curvePoints);
 }
 
 export function drawStereo(
@@ -340,22 +356,6 @@ export function drawStereo(
   const cy = scopeY + scopeH;
   const radius = Math.min(scopeW * 0.48, scopeH * 0.92);
   const pointSize = METER_SETTINGS.scopePointSize;
-
-  ctx.strokeStyle = theme.grid;
-  ctx.lineWidth = 0.6;
-  for (let ring = 1; ring <= 4; ring++) {
-    const r = (radius * ring) / 4;
-    ctx.beginPath();
-    ctx.arc(cx, cy, r, Math.PI, 0, true);
-    ctx.stroke();
-  }
-  for (let i = 0; i <= 8; i++) {
-    const angle = Math.PI - (Math.PI * i) / 8;
-    ctx.beginPath();
-    ctx.moveTo(cx, cy);
-    ctx.lineTo(cx + Math.cos(angle) * radius, cy - Math.sin(angle) * radius);
-    ctx.stroke();
-  }
 
   const count = snap.lissajousCount;
   const stride = LISSAJOUS_STRIDE;
@@ -442,13 +442,6 @@ function drawBipolarBandWave(
   ctx.font = `normal 9px ${theme.fontMedium}`;
   ctx.textAlign = "left";
   ctx.fillText(label, plotX + 4, plotY + 11);
-
-  ctx.strokeStyle = theme.grid;
-  ctx.lineWidth = 0.5;
-  ctx.beginPath();
-  ctx.moveTo(plotX, centerY);
-  ctx.lineTo(plotX + plotW, centerY);
-  ctx.stroke();
 
   for (let i = 0; i < filled - 1; i++) {
     const idx0 = (start + i) % WAVEFORM_BUCKETS;

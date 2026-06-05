@@ -67,6 +67,9 @@ export function useStemEngine(song: Song | undefined) {
     raf: number;
   } | null>(null);
   const loadIdRef = useRef(0);
+  const songLoadKey = song
+    ? `${song.id}:${song.stems.map((stem) => stem.src).join("|")}:${song.masterSrc ?? ""}`
+    : "";
 
   const channels = usePlayerStore((s) => s.channels);
   const fullscreenOpen = usePlayerStore((s) => s.fullscreenOpen);
@@ -216,7 +219,7 @@ export function useStemEngine(song: Song | undefined) {
           try {
             let res: Response;
             try {
-              res = await fetch(publicAssetUrl(stem.src));
+              res = await fetch(publicAssetUrl(stem.src!));
             } catch {
               throw new Error(`Network error loading ${stem.label}`);
             }
@@ -301,7 +304,7 @@ export function useStemEngine(song: Song | undefined) {
       }
     }
   }, [
-    song,
+    songLoadKey,
     ensureContext,
     stopSources,
     setCurrentTime,

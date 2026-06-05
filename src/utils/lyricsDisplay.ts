@@ -4,6 +4,8 @@ import type {
   LyricLineVisualState,
   MergedLyricLine,
 } from "../types/lyricsPlus";
+import type { FullscreenLyricsSettings } from "../types/fullscreenLyrics";
+import { isSameLyricText } from "./fullscreenLyrics";
 
 const PAUSE_RE = /^[♪…\.]+$/u;
 
@@ -178,5 +180,43 @@ export function applyLanguageTab(mode: "org" | "rom" | "en"): Partial<LyricsView
       };
     default:
       return { displayMode: "original", convert: false };
+  }
+}
+
+/** Fullscreen synced lyric column — one or more text blocks per line. */
+export function renderLyricTextBlocks(
+  line: MergedLyricLine,
+  settings: FullscreenLyricsSettings,
+): string[] {
+  const org = line.original?.trim();
+  const rom = line.romanized?.trim();
+  const en = line.translation?.trim();
+
+  const pushDistinct = (...layers: (string | undefined)[]): string[] => {
+    const out: string[] = [];
+    for (const layer of layers) {
+      const text = layer?.trim();
+      if (!text) continue;
+      if (out.some((existing) => isSameLyricText(existing, text))) continue;
+      out.push(text);
+    }
+    return out;
+  };
+
+  switch (settings.displayMode) {
+    case "original":
+      return org ? [org] : [];
+    case "romanized":
+      return rom ? [rom] : org ? [org] : [];
+    case "translated":
+      return en ? [en] : org ? [org] : [];
+    case "original-plus-romanized":
+      return pushDistinct(org, rom);
+    case "original-plus-translation":
+      return pushDistinct(org, en);
+    case "original-plus-romanized-plus-translation":
+      return pushDistinct(org, rom, en);
+    default:
+      return org ? [org] : [];
   }
 }

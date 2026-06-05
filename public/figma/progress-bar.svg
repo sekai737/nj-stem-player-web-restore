@@ -1,0 +1,11 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 1281 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Progress bar">
+<g id="Remaining bar">
+<rect y="10" width="1281" height="4" rx="2" fill="var(--fill-0, #666666)"/>
+</g>
+<g id="Elapsed bar">
+<rect y="10" width="444" height="4" rx="2" fill="var(--fill-0, black)"/>
+</g>
+<circle id="Ellipse 23" cx="444" cy="12" r="11" fill="var(--fill-0, white)" stroke="var(--stroke-0, black)" stroke-width="2"/>
+</g>
+</svg>

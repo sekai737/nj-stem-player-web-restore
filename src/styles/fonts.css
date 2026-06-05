@@ -1,42 +1,18 @@
 /**
- * Licensed web fonts — run `npm run fonts:build` to generate public/fonts/*.woff2
- * @see docs/figma-design-tokens-audit.md
+ * Licensed web fonts — Swiss 721 + Noto Sans (public/fonts)
+ * @see public/fonts/README.md
  *
  * One @font-face per Figma style (unique family name) so the browser never
  * synthesizes or mismatches weights.
+ *
+ * Noto faces use unicode-range so Latin/English never picks Noto (those files
+ * still contain Latin glyphs). Korean/Japanese use LyricText spans + these faces.
  */
-
-/* Swis721 BT Roman */
-@font-face {
-  font-family: Swis721BTRoman;
-  src: url("/fonts/swis721-bt-roman.woff2") format("woff2");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-/* Swis721 BT Bold */
-@font-face {
-  font-family: Swis721BTBold;
-  src: url("/fonts/swis721-bt-bold.woff2") format("woff2");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-/* Swis721 Lt BT Light — fullscreen lyric bubbles / timestamps (Figma 120:174) */
-@font-face {
-  font-family: Swis721LtBTLight;
-  src: url("/fonts/SWIS721_LT_BT_LIGHT.woff2") format("woff2");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
 
 /* Swiss 721 Regular */
 @font-face {
   font-family: Swiss721Regular;
-  src: url("/fonts/swiss-721-regular.woff2") format("woff2");
+  src: url("/fonts/Swiss-721-Regular.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -45,8 +21,55 @@
 /* Swiss 721 Medium */
 @font-face {
   font-family: Swiss721Medium;
-  src: url("/fonts/swiss-721-medium.woff2") format("woff2");
+  src: url("/fonts/Swiss-721-Medium.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
+}
+
+/* Swiss 721 Light — fullscreen lyric bubbles / timestamps */
+@font-face {
+  font-family: Swiss721Light;
+  src: url("/fonts/Swiss-721-Light.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Hangul + hanja (Korean lyric runs) */
+@font-face {
+  font-family: NotoSansKRRegular;
+  src: url("/fonts/NotoSansKR-Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+1100-11FF, U+3130-318F, U+AC00-D7AF, U+A960-A97F, U+D7B0-D7FF, U+4E00-9FFF;
+}
+
+@font-face {
+  font-family: NotoSansKRLight;
+  src: url("/fonts/NotoSansKR-Light.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+1100-11FF, U+3130-318F, U+AC00-D7AF, U+A960-A97F, U+D7B0-D7FF, U+4E00-9FFF;
+}
+
+/* Kana + kanji (Japanese lyric runs) */
+@font-face {
+  font-family: NotoSansJPRegular;
+  src: url("/fonts/NotoSansJP-Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+3040-309F, U+30A0-30FF, U+4E00-9FFF;
+}
+
+@font-face {
+  font-family: NotoSansJPLight;
+  src: url("/fonts/NotoSansJP-Light.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+3040-309F, U+30A0-30FF, U+4E00-9FFF;
 }

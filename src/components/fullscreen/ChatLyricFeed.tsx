@@ -6,7 +6,7 @@ import { FIGMA_FULLSCREEN as FS } from "../../figma/fullscreenLayout";
 import { getActiveMergedLyricIndex } from "../../utils/lyricsDisplay";
 import { formatFullscreenChatSongTitle } from "../../utils/displayTrackTitle";
 import { formatLyricTimestamp, getLyricBubbleLines } from "../../utils/fullscreenLyrics";
-import { lyricLineClass } from "../../utils/lyricScriptFont";
+import LyricText from "../LyricText";
 import { hasDisplayableLyricContent } from "../../utils/mergeLyrics";
 import type { LyricLanguage } from "../../types";
 import type { MergedLyricLine } from "../../types/lyricsPlus";
@@ -200,12 +200,8 @@ export default function ChatLyricFeed({
                     onKeyDown={(e) => seekFromBubbleKey(e, line.time, onSeek)}
                   >
                     {bubbleLines.map((text, i) => (
-                      <p
-                        key={`${line.id}-${i}`}
-                        className={lyricLineClass("fs-lyric-bubble__line", text)}
-                        data-copy-block
-                      >
-                        {text}
+                      <p key={`${line.id}-${i}`} className="fs-lyric-bubble__line" data-copy-block>
+                        <LyricText text={text} />
                       </p>
                     ))}
                   </div>

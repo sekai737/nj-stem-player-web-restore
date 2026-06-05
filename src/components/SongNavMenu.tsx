@@ -134,12 +134,24 @@ export default function SongNavMenu({
         <div className="my-1 border-t border-black/10" />
         <button
           type="button"
-          disabled={downloading || stems.length === 0}
+          disabled={downloadBusy || stems.length === 0}
           className={itemClass}
-          onClick={() => void handleDownload()}
+          onClick={() => void handleDownloadStems()}
         >
-          {downloading ? "Building ZIP…" : "Download Stems (.zip)"}
+          {downloadingStems
+            ? stemsZipProgress ?? "Building ZIP…"
+            : "Download Stems (.zip)"}
         </button>
+        {midiSrc && (
+          <button
+            type="button"
+            disabled={downloadBusy}
+            className={itemClass}
+            onClick={() => void handleDownloadMidi()}
+          >
+            {downloadingMidi ? "Downloading…" : "Download MIDI"}
+          </button>
+        )}
         {downloadError && (
           <p className="px-4 py-2 text-xs font-semibold text-stem-mute">{downloadError}</p>
         )}

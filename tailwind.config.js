@@ -8,10 +8,9 @@ export default {
         sans: ["DM Sans", "system-ui", "sans-serif"],
         /* Figma stem player — one family per licensed face (see typography.css) */
         jersey: ['"Jersey 10"', "sans-serif"],
-        swis721: ["Swis721BTRoman", "sans-serif"],
-        "swis721-bold": ["Swis721BTBold", "sans-serif"],
         swiss721: ["Swiss721Regular", "sans-serif"],
         "swiss721-medium": ["Swiss721Medium", "sans-serif"],
+        "swiss721-light": ["Swiss721Light", "sans-serif"],
       },
       colors: {
         stroke: {

@@ -10,7 +10,7 @@ export function slugify(text: string): string {
 }
 
 function stemFilename(songSlug: string, stem: StemTrack): string {
-  const base = stem.src.split("/").pop() ?? `${stem.id}.flac`;
+  const base = stem.src?.split("/").pop() ?? `${stem.id}.flac`;
   const ext = base.includes(".") ? base.slice(base.lastIndexOf(".")) : ".flac";
   return `${songSlug}-${stem.id}${ext}`;
 }
@@ -74,7 +74,7 @@ export async function downloadSongStems(
     for (let i = 0; i < total; i++) {
       const stem = stems[i]!;
       onProgress?.(`Downloading ${i + 1}/${total}: ${stem.label}…`);
-      const blob = await fetchAsset(stem.src);
+      const blob = await fetchAsset(stem.src!);
       zip.file(stemFilename(songSlug, stem), blob);
     }
   }

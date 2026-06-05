@@ -94,7 +94,9 @@ const FONTS = {
   fontRegular: "Swiss721Regular, sans-serif",
 } as const;
 
-const PLOT_WELL = "rgb(179 179 179 / 0.2)";
+/** Opaque match for `--stem-waveform-container` on `--main-container-primary` (white). */
+const WELL_RGB: [number, number, number] = [240, 240, 240];
+const PLOT_WELL = "rgb(240 240 240)";
 const TEXT = "#000000";
 const TEXT_MUTED = "#999999";
 const CORR_TROUGH = "rgba(0, 0, 0, 0.08)";
@@ -112,7 +114,7 @@ const MAGMA_LUT_STOPS: [number, number, number][] = [
 ];
 
 const GREEN_LUT: [number, number, number][] = [
-  [255, 255, 255],
+  WELL_RGB,
   [240, 255, 230],
   [210, 255, 180],
   [180, 250, 120],
@@ -123,7 +125,7 @@ const GREEN_LUT: [number, number, number][] = [
 ];
 
 const BLUE_LUT: [number, number, number][] = [
-  [255, 255, 255],
+  WELL_RGB,
   [230, 245, 255],
   [194, 228, 253],
   [161, 202, 254],
@@ -134,7 +136,7 @@ const BLUE_LUT: [number, number, number][] = [
 ];
 
 const YELLOW_LUT: [number, number, number][] = [
-  [255, 255, 255],
+  WELL_RGB,
   [255, 255, 235],
   [255, 255, 180],
   [255, 255, 100],
@@ -145,7 +147,7 @@ const YELLOW_LUT: [number, number, number][] = [
 ];
 
 const PINK_LUT: [number, number, number][] = [
-  [255, 255, 255],
+  WELL_RGB,
   [255, 235, 245],
   [255, 200, 225],
   [255, 150, 200],
@@ -156,7 +158,7 @@ const PINK_LUT: [number, number, number][] = [
 ];
 
 const PURPLE_LUT: [number, number, number][] = [
-  [255, 255, 255],
+  WELL_RGB,
   [245, 235, 255],
   [230, 200, 255],
   [200, 150, 255],
@@ -199,7 +201,7 @@ function makeTokens(
 }
 
 export const METER_VISUAL_THEMES: Record<MeterVisualThemeId, MeterVisualTokens> = {
-  /** Dark panel + magma heatmap + cyan/pink (original EasyMeter-style look) */
+  /** Dark panel + minimeters-style spectrum (magenta→orange→yellow bars, cyan FFT line) */
   default: makeTokens(
     MAGMA_LUT_STOPS,
     "#5ce1ff",
@@ -208,15 +210,16 @@ export const METER_VISUAL_THEMES: Record<MeterVisualThemeId, MeterVisualTokens> 
     "#ff6eb4",
     "rgba(90, 200, 255, 0.22)",
     {
-      plotWell: "#0a0812",
-      text: "rgba(200, 240, 255, 0.92)",
+      plotWell: "#0c0a14",
+      text: "rgba(255, 110, 180, 0.95)",
       textMuted: "rgba(140, 180, 210, 0.55)",
-      grid: "rgba(120, 201, 255, 0.14)",
-      gridStrong: "rgba(120, 201, 255, 0.28)",
+      grid: "rgba(120, 201, 255, 0.12)",
+      gridStrong: "rgba(92, 225, 255, 0.42)",
       spectrumLine: "#5ce1ff",
-      spectrumBarLow: "#9b4dff",
-      spectrumBarMid: "#3ecf8e",
-      spectrumBarHigh: "#5ce1ff",
+      spectrumFill: "rgba(48, 120, 200, 0.55)",
+      spectrumBarLow: "#7b2cbf",
+      spectrumBarMid: "#ff6b35",
+      spectrumBarHigh: "#ffd166",
       correlationTrough: "rgba(0, 0, 0, 0.4)",
     },
   ),
@@ -266,6 +269,7 @@ export function getMeterVisualTokens(id: MeterVisualThemeId): MeterVisualTokens 
   return METER_VISUAL_THEMES[id];
 }
 
+/** Default theme on load — Figma blue meter preset. */
 export const DEFAULT_METER_VISUAL_THEME_ID: MeterVisualThemeId = "blue";
 
 export const METER_THEME_LABELS: Record<MeterVisualThemeId, string> = {

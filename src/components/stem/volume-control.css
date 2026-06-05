@@ -1,5 +1,6 @@
 .volume-control__slider-wrap {
   position: relative;
+  overflow: visible;
 }
 
 .volume-control__tooltip {

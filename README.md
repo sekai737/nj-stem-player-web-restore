@@ -2,14 +2,12 @@
 
 Interactive fan stem player based on the product spec: browse releases → pick a song → mix separated stems with synced lyrics and member indicators.
 
-**Figma mockup:** [NewJeans Stem Player (Mock-up 2)](https://www.figma.com/design/gTWpAWp0lSWVlTCNIoqfP3/NewJeans-Stem-Player--Mock-up-2-?node-id=0-1)
-
-**Project path (restored):** `C:\Users\Athony\.cursor\projects\empty-window\nj-stem-player-web`
+**Figma mockup:** [NewJeans Stem Player (Mock-up 2)](https://www.figma.com/design/gTWpAWp0lSWVlTCNIoqfP3/NewJeans-Stem-Player--Mock-up-2-?node-id=1-58)
 
 ## Stack
 
 - React + Vite + TypeScript
-- Tailwind CSS v3 + PostCSS
+- Tailwind CSS v4
 - React Router (3-page flow)
 - Zustand (playback + mixer state)
 - Web Audio API (synced multi-stem playback)
@@ -17,11 +15,13 @@ Interactive fan stem player based on the product spec: browse releases → pick 
 
 ## Quick start
 
-```bash
-cd nj-stem-player-web
+```powershell
+cd "G:\1 - Work\NJ Stem Player"
 npm install
 npm run dev
 ```
+
+Optional: keep master `.lrc` files in `Lyrics\` and copy into `public\lyrics\` when you update them.
 
 ### Troubleshooting (Windows)
 

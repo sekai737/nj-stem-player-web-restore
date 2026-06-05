@@ -1,7 +1,27 @@
 import raw from "./catalog.json";
-import type { Catalog, Release, Song } from "../types";
+import type { Catalog, Release, RemixCategory, RemixItem, Song } from "../types";
+import { enrichSong } from "../utils/stemPaths";
 
 export const catalog = raw as Catalog;
+
+const enrichedSongCache = new Map<string, Song>();
+
+/** Default cover filename: `{title}_album_cover.jpg` under /public/covers. */
+export function albumCoverPath(title: string): string {
+  return `/covers/${encodeURIComponent(`${title}_album_cover.jpg`)}`;
+}
+
+export function getReleaseCoverArt(release: Release): string {
+  return release.coverArt ?? albumCoverPath(release.title);
+}
+
+export function getSongArtwork(song: Song, release: Release): string {
+  return song.artwork ?? getReleaseCoverArt(release);
+}
+
+export function getRemixCoverArt(remix: RemixItem, release: Release): string {
+  return remix.coverArt ?? getReleaseCoverArt(release);
+}
 
 export function getReleases(): Release[] {
   return [...catalog.releases].sort((a, b) => b.year - a.year);
@@ -12,11 +32,44 @@ export function getRelease(releaseId: string): Release | undefined {
 }
 
 export function getSong(releaseId: string, songId: string): Song | undefined {
-  return getRelease(releaseId)?.songs.find((s) => s.id === songId);
+  const cacheKey = `${releaseId}/${songId}`;
+  const cached = enrichedSongCache.get(cacheKey);
+  if (cached) return cached;
+
+  const song = getRelease(releaseId)?.songs.find((s) => s.id === songId);
+  if (!song) return undefined;
+
+  const enriched = enrichSong(releaseId, song);
+  enrichedSongCache.set(cacheKey, enriched);
+  return enriched;
+}
+
+/** Base tracks shown in the song carousel (excludes remix-only entries). */
+export function getSelectableSongs(release: Release): Song[] {
+  return release.songs.filter((song) => !song.isRemix);
+}
+
+export function getRemixesForSong(releaseId: string, songId: string): RemixItem[] {
+  return getSong(releaseId, songId)?.remixes ?? [];
+}
+
+export function groupRemixesByCategory(
+  remixes: RemixItem[],
+): Record<RemixCategory, RemixItem[]> {
+  return {
+    official: remixes.filter((remix) => remix.category === "official"),
+    sekai: remixes.filter((remix) => remix.category === "sekai"),
+  };
 }
 
 export function getSongIndex(release: Release, songId: string): number {
-  return release.songs.findIndex((s) => s.id === songId);
+  const songs = getSelectableSongs(release);
+  const directIndex = songs.findIndex((s) => s.id === songId);
+  if (directIndex >= 0) return directIndex;
+
+  const parentSong = release.songs.find((song) => song.remixes?.some((remix) => remix.songId === songId));
+  if (!parentSong) return -1;
+  return songs.findIndex((s) => s.id === parentSong.id);
 }
 
 export type SongLocation = { releaseId: string; songId: string };
@@ -32,24 +85,26 @@ export function getAdjacentSong(
   if (releaseIndex < 0) return undefined;
 
   const release = releases[releaseIndex]!;
+  const songs = getSelectableSongs(release);
   const songIndex = getSongIndex(release, songId);
   if (songIndex < 0) return undefined;
 
   if (direction === "next") {
-    if (songIndex < release.songs.length - 1) {
-      return { releaseId, songId: release.songs[songIndex + 1]!.id };
+    if (songIndex < songs.length - 1) {
+      return { releaseId, songId: songs[songIndex + 1]!.id };
     }
     const nextRelease = releases[releaseIndex + 1];
-    const first = nextRelease?.songs[0];
+    const first = nextRelease ? getSelectableSongs(nextRelease)[0] : undefined;
     if (!first) return undefined;
     return { releaseId: nextRelease.id, songId: first.id };
   }
 
   if (songIndex > 0) {
-    return { releaseId, songId: release.songs[songIndex - 1]!.id };
+    return { releaseId, songId: songs[songIndex - 1]!.id };
   }
   const prevRelease = releases[releaseIndex - 1];
-  const last = prevRelease?.songs.at(-1);
+  const prevSongs = prevRelease ? getSelectableSongs(prevRelease) : [];
+  const last = prevSongs.at(-1);
   if (!prevRelease || !last) return undefined;
   return { releaseId: prevRelease.id, songId: last.id };
 }

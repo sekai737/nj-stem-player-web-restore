@@ -1,6 +1,8 @@
 import type { LyricLanguage } from "../types";
 import type { MergedLyricLine, TranslationDisplay } from "../types/lyricsPlus";
 
+export type FullscreenLyricMode = "org" | "rom" | "en" | "all";
+
 export interface LyricBubbleDisplayOptions {
   translationDisplay: TranslationDisplay;
 }

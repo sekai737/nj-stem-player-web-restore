@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { LyricLanguage, SongLrcFiles } from "../types";
+import type { SongLrcFiles } from "../types";
 import type { LyricLine } from "../types";
 import { parseLrc } from "../utils/lrcParser";
 import { usePlayerStore } from "../store/playerStore";

@@ -1,69 +1,35 @@
 /**
- * Figma BG Elements (1:66) — ALL-STAR 700px in fixed glyph boxes (MCP + export).
- * Parent Stem Player layer applies the same scale() as UI content (see StemPlayerPage).
+ * Figma BG Elements (1:66) — COOL_FONT:Goop, gray glyphs, screen blend @ 50%.
+ * Rendered in PlayerViewportBackground directly above the page gradient so
+ * `mix-blend-mode: screen` interacts with the gradient (no isolating wrapper).
  */
-@font-face {
-  font-family: AllStar;
-  src: url("/fonts/ALL-STAR.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-  font-display: block;
-}
 
+/*
+ * No z-index / isolation on the gradient or decor wrappers: a stacking context
+ * would force the glyphs to blend against transparency instead of the gradient.
+ * Paint order (gradient first, decor second) is set by DOM order alone.
+ */
 .bg-elements {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  overflow: visible;
-}
-
-.bg-decor-star {
-  position: absolute;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: visible;
-}
-
-.bg-decor-star__inner {
-  display: flex;
-  flex: none;
-  align-items: center;
-  justify-content: center;
-  transform-origin: center center;
-}
-
-.bg-decor-star__glyph-box {
-  display: flex;
-  flex: none;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: center;
   overflow: hidden;
-  word-break: break-word;
-  line-height: 0;
 }
 
+/* Figma 1:67–1:73 — COOL_FONT:Goop, colors/gray (#666), opacity 50%, screen */
 .bg-decor-star__glyph {
+  position: absolute;
   display: block;
-  flex: none;
-  font-family: AllStar, sans-serif;
-  font-size: 700px;
+  margin: 0;
+  font-family: "COOL_FONT:Goop", sans-serif;
   font-weight: 400;
   font-style: normal;
-  line-height: normal;
+  font-synthesis: none;
+  line-height: 1;
   white-space: nowrap;
-  -webkit-text-stroke: var(--stroke-st-2) var(--stroke-primary);
-  paint-order: stroke fill;
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.bg-decor-star--pink .bg-decor-star__glyph {
-  background-image: var(--gradient-star-pink);
-}
-
-.bg-decor-star--green .bg-decor-star__glyph {
-  background-image: var(--gradient-star-green);
+  color: var(--color-gray-secondary);
+  opacity: 0.5;
+  mix-blend-mode: screen;
+  transform-origin: center center;
+  will-change: transform;
 }

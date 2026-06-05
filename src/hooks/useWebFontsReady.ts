@@ -6,21 +6,19 @@ import { COOL_TITLE_FONT_FAMILIES, coolTitleFontHrefForFamily } from "../figma/c
  * Sizes match the text styles in typography.css.
  */
 export const LICENSED_FONT_SPECS = [
-  "normal 24px Swis721BTBold",
-  "normal 24px Swis721BTRoman",
-  "normal 16px Swis721BTRoman",
   "normal 24px Swiss721Medium",
   "normal 16px Swiss721Medium",
-  "normal 16px Swiss721Regular",
   "normal 48px Swiss721Medium",
-  "normal 32px Swis721LtBTLight",
-  "normal 24px Swis721LtBTLight",
-  "normal 24px NotoSansKR-VF",
-  "normal 16px NotoSansKR-VF",
-  "normal 24px NotoSansJPRegular",
-  "normal 16px NotoSansJPRegular",
+  "normal 16px Swiss721Regular",
+  "normal 24px Swiss721Regular",
+  "normal 32px Swiss721Light",
+  "normal 24px Swiss721Light",
+  "normal 24px NotoSansKRRegular",
+  "normal 16px NotoSansKRRegular",
   "normal 32px NotoSansKRLight",
   "normal 24px NotoSansKRLight",
+  "normal 24px NotoSansJPRegular",
+  "normal 16px NotoSansJPRegular",
   "normal 32px NotoSansJPLight",
   "normal 24px NotoSansJPLight",
 ] as const;
@@ -35,9 +33,13 @@ export const COOL_TITLE_FONT_SPECS = COOL_TITLE_FONT_FAMILIES.map(
   (family) => `normal 96px ${JSON.stringify(family)}` as const,
 );
 
+/** Figma BG Elements (1:66) — COOL_FONT:Goop @ 700px */
+export const BG_DECOR_FONT_SPECS = ['normal 700px "COOL_FONT:Goop"'] as const;
+
 export const STEM_PLAYER_FONT_SPECS = [
   ...PLAYER_FONT_SPECS,
   ...COOL_TITLE_FONT_SPECS,
+  ...BG_DECOR_FONT_SPECS,
 ] as const;
 
 function areStemPlayerFontsLoaded(): boolean {
@@ -64,7 +66,7 @@ export function useWebFontsReady(): boolean {
       const failed = results.filter((r) => r.status === "rejected");
       if (failed.length > 0 && import.meta.env.DEV) {
         console.warn(
-          "[fonts] Some faces failed to load. Run `npm run fonts:build` and ensure public/fonts/*.woff2 exist.",
+          "[fonts] Some faces failed to load. Ensure public/fonts/*.woff2 exist.",
           failed,
         );
       }

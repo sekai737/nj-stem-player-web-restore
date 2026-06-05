@@ -17,6 +17,8 @@ PATH_MARKERS = [
     r"C:\Users\Athony\.cursor\projects\empty-window\nj-stem-player-web",
     r"C:/Users/Athony/.cursor/projects/empty-window/nj-stem-player-web",
     r"e:\1 - Work\NJ Stem Player\nj-stem-player-web",
+    r"G:/1 - Work/NJ Stem Player",
+    r"G:/1 - Work/NJ Stem Player/nj-stem-player-web",
     r"E:/1 - Work/NJ Stem Player/nj-stem-player-web",
 ]
 

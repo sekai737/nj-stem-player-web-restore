@@ -1,0 +1,8 @@
+.slider-knob {
+  display: block;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  border-radius: 50%;
+  background: var(--slider-circle-primary);
+  border: var(--stroke-st-2) solid var(--stroke-primary);
+}

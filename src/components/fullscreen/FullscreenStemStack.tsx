@@ -1,7 +1,7 @@
 import type { CSSProperties, MouseEvent } from "react";
 import { figmaAssets } from "../../figma/assets";
 import { FIGMA_FULLSCREEN as FS } from "../../figma/fullscreenLayout";
-import { fullscreenSoloIconSvg, muteIconSvg } from "../../figma/stemAssets";
+import { fullscreenMuteIconSvg, fullscreenSoloIconSvg } from "../../figma/stemAssets";
 import type { StemId } from "../../types";
 import { usePlayerStore } from "../../store/playerStore";
 import "./fullscreen-stem-stack.css";
@@ -72,8 +72,8 @@ function SoloMuteButton({
       ? fullscreenSoloIconSvg.clicked
       : fullscreenSoloIconSvg.default
     : active
-      ? muteIconSvg.clicked
-      : muteIconSvg.default;
+      ? fullscreenMuteIconSvg.clicked
+      : fullscreenMuteIconSvg.default;
 
   return (
     <button

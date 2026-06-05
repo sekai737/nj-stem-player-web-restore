@@ -50,6 +50,7 @@
   flex-shrink: 0;
   width: var(--fs-volume-track-width, 8px);
   height: var(--fs-volume-track-height, 288px);
+  overflow: visible;
 }
 
 .fs-volume__track {
@@ -75,12 +76,11 @@
   left: 50%;
   width: var(--fs-volume-thumb-size, 24px);
   height: var(--fs-volume-thumb-size, 24px);
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   pointer-events: none;
 }
 
-.fs-volume__thumb img {
-  display: block;
+.fs-volume__thumb .slider-knob {
   width: 100%;
   height: 100%;
 }

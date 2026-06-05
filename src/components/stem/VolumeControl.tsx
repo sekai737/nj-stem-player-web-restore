@@ -3,6 +3,7 @@ import type { StemId } from "../../types";
 import { figmaAssets } from "../../figma/assets";
 import { FIGMA } from "../../figma/layout";
 import { clampStemVolume, usePlayerStore } from "../../store/playerStore";
+import SliderKnob from "../SliderKnob";
 import "./volume-control.css";
 
 const S = FIGMA.stems;
@@ -121,14 +122,11 @@ export default function VolumeControl({ stemId, label, disabled = false }: Volum
             borderRadius: 2,
           }}
         />
-        <img
-          src={figmaAssets.sliderKnob}
-          alt=""
+        <SliderKnob
+          size={S.sliderKnobSize}
           className="pointer-events-none absolute"
           style={{
-            width: S.sliderKnobSize,
-            height: S.sliderKnobSize,
-            top: 0,
+            top: (S.sliderHeight - S.sliderKnobSize) / 2,
             left: knobLeft,
           }}
         />

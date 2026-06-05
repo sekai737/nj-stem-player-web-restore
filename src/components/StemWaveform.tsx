@@ -1,7 +1,15 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
 import WaveSurfer from "wavesurfer.js";
+import {
+  disableWaveSurferProgress,
+  GGD_WAVESURFER_OPTIONS,
+  setPlayheadPosition,
+} from "../audio/ggdMediaPlayer";
+import { getStemWaveformTraceColor } from "../figma/stemWaveformTokens";
 import type { StemId } from "../types";
 import { usePlayerStore } from "../store/playerStore";
+import { FIGMA } from "../figma/layout";
+import "./ggd-waveform.css";
 
 interface StemWaveformProps {
   stemId: StemId;
@@ -9,64 +17,65 @@ interface StemWaveformProps {
   src: string;
   onSeek: (time: number) => void;
   disabled?: boolean;
+  /** Catalog duration — playhead works before decode finishes. */
+  fallbackDurationSec?: number;
 }
 
-const WAVE_COLOR = "rgba(0, 0, 0, 0.35)";
-const WAVE_PROGRESS = "#000000";
-const WAVE_HEIGHT = 80;
+const WAVE_HEIGHT = FIGMA.stems.waveformHeight;
 
-export default function StemWaveform({ stemId, src, onSeek, disabled = false }: StemWaveformProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
+export default function StemWaveform({
+  stemId,
+  src,
+  onSeek,
+  disabled = false,
+  fallbackDurationSec = 0,
+}: StemWaveformProps) {
+  const outerRef = useRef<HTMLDivElement>(null);
+  const playheadRef = useRef<HTMLDivElement>(null);
+  const waveformRef = useRef<HTMLDivElement>(null);
   const wsRef = useRef<WaveSurfer | null>(null);
-  const currentTime = usePlayerStore((s) => s.currentTime);
-  const duration = usePlayerStore((s) => s.duration);
+  const storeDuration = usePlayerStore((s) => s.duration);
   const peaks = usePlayerStore((s) => s.stemPeaks[stemId]);
   const stemsLoading = usePlayerStore((s) => s.stemsLoading);
   const [isLoading, setIsLoading] = useState(true);
 
+  const duration = storeDuration > 0 ? storeDuration : fallbackDurationSec;
+
   useEffect(() => {
-    if (!containerRef.current || stemsLoading) return;
+    if (!waveformRef.current || stemsLoading) return;
 
     setIsLoading(true);
 
+    const traceColor = getStemWaveformTraceColor();
     const ws = WaveSurfer.create({
-      container: containerRef.current,
+      container: waveformRef.current,
       height: WAVE_HEIGHT,
-      waveColor: WAVE_COLOR,
-      progressColor: WAVE_PROGRESS,
-      cursorColor: WAVE_PROGRESS,
-      barWidth: 2,
-      barGap: 2,
-      normalize: true,
-      interact: !disabled,
+      waveColor: traceColor,
+      progressColor: traceColor,
+      ...GGD_WAVESURFER_OPTIONS,
+      interact: false,
     });
 
-    const onReady = () => setIsLoading(false);
+    const onReady = () => {
+      disableWaveSurferProgress(waveformRef.current);
+      setIsLoading(false);
+    };
+    const onRedraw = () => disableWaveSurferProgress(waveformRef.current);
     const onError = (err: unknown) => {
       console.warn("[waveform]", stemId, err);
       setIsLoading(false);
     };
 
-    const onInteraction = () => {
-      if (!disabled) onSeek(ws.getCurrentTime());
-    };
-    const onDoubleClick = () => {
-      if (disabled) return;
-      onSeek(0);
-      ws.seekTo(0);
-    };
-
     ws.on("ready", onReady);
     ws.on("error", onError);
-    ws.on("interaction", onInteraction);
-    ws.on("dblclick", onDoubleClick);
-
+    ws.on("redraw", onRedraw);
     wsRef.current = ws;
 
     const load = async () => {
       try {
-        if (peaks && peaks.length > 0 && duration > 0) {
-          await ws.load("", [peaks], duration);
+        const loadDuration = storeDuration > 0 ? storeDuration : fallbackDurationSec;
+        if (peaks && peaks.length > 0 && loadDuration > 0) {
+          await ws.load("", [peaks], loadDuration);
           return;
         }
         if (/\.flac$/i.test(src)) {
@@ -84,40 +93,91 @@ export default function StemWaveform({ stemId, src, onSeek, disabled = false }: 
     return () => {
       ws.un("ready", onReady);
       ws.un("error", onError);
-      ws.un("interaction", onInteraction);
-      ws.un("dblclick", onDoubleClick);
+      ws.un("redraw", onRedraw);
       ws.destroy();
       wsRef.current = null;
     };
-  }, [src, stemId, peaks, duration, stemsLoading, onSeek, disabled]);
+  }, [src, stemId, peaks, storeDuration, fallbackDurationSec, stemsLoading]);
 
+  /**
+   * GGD updateTimeline() — direct DOM playhead position, snapped to whole pixels.
+   */
   useEffect(() => {
-    const ws = wsRef.current;
-    if (!ws || !duration || isLoading) return;
-    const progress = currentTime / duration;
-    if (Math.abs(ws.getCurrentTime() - currentTime) > 0.15) {
-      ws.seekTo(Math.min(1, Math.max(0, progress)));
-    }
-  }, [currentTime, duration, isLoading]);
+    if (!duration) return;
+
+    let active = true;
+    let frame = 0;
+
+    const updatePlayhead = () => {
+      const time = usePlayerStore.getState().currentTime;
+      setPlayheadPosition(playheadRef.current, outerRef.current, time / duration);
+    };
+
+    const tick = () => {
+      if (!active) return;
+      updatePlayhead();
+      frame = requestAnimationFrame(tick);
+    };
+
+    const observer =
+      outerRef.current &&
+      new ResizeObserver(() => {
+        updatePlayhead();
+      });
+    if (observer && outerRef.current) observer.observe(outerRef.current);
+
+    frame = requestAnimationFrame(tick);
+    return () => {
+      active = false;
+      cancelAnimationFrame(frame);
+      observer?.disconnect();
+    };
+  }, [duration]);
+
+  const seekFromClientX = (clientX: number) => {
+    if (disabled || !duration || !outerRef.current) return;
+    const rect = outerRef.current.getBoundingClientRect();
+    const ratio = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+    onSeek(ratio * duration);
+  };
+
+  const handleClick = (event: MouseEvent<HTMLDivElement>) => {
+    seekFromClientX(event.clientX);
+  };
+
+  const handleDoubleClick = (event: MouseEvent<HTMLDivElement>) => {
+    if (disabled) return;
+    event.preventDefault();
+    onSeek(0);
+    setPlayheadPosition(playheadRef.current, outerRef.current, 0);
+  };
 
   return (
     <div
-      className={`relative w-full overflow-hidden rounded-cr bg-stem-waveform ${disabled ? "opacity-60" : ""}`}
+      ref={outerRef}
+      id={`progress-bar-outer-${stemId}`}
+      className={`ggd-waveform progress-bar-outer ${disabled ? "ggd-waveform--disabled" : ""}`}
       style={{ height: WAVE_HEIGHT }}
+      role="slider"
+      aria-label={`${stemId} waveform`}
+      aria-valuemin={0}
+      aria-valuemax={duration || 0}
+      aria-disabled={disabled}
+      onClick={handleClick}
+      onDoubleClick={handleDoubleClick}
     >
+      {/* Progress bar for track position — GGD: width-only updates on #progress-bar-inner */}
+      <div ref={playheadRef} id={`progress-bar-inner-${stemId}`} className="progress-bar-inner" />
+
+      <div className="wave-set visible" aria-hidden>
+        <div ref={waveformRef} className="waveform visible" />
+      </div>
+
       {isLoading && (
-        <div
-          className="absolute inset-0 z-10 flex items-center justify-center"
-          role="status"
-          aria-label="Loading waveform"
-        >
-          <div
-            className="size-5 animate-spin rounded-full border-2 border-content-secondary/25 border-t-content-primary"
-            aria-hidden
-          />
+        <div className="ggd-waveform__loading" role="status" aria-label="Loading waveform">
+          <div className="ggd-waveform__spinner" aria-hidden />
         </div>
       )}
-      <div ref={containerRef} className="size-full" />
     </div>
   );
 }

@@ -33,7 +33,7 @@ node scripts/generate-demo-stems.mjs
 ## Dev server
 
 ```powershell
-cd C:\Users\Athony\.cursor\projects\empty-window\nj-stem-player-web
+cd "G:\1 - Work\NJ Stem Player"
 npm install
 npm run dev
 ```

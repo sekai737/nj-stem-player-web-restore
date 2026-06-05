@@ -43,7 +43,7 @@ export const MEMBERS: Record<
   pharrell: {
     name: "Pharrell Williams",
     emoji: "🎤",
-    portrait: "/members/pharrell-portrait.png",
+    portrait: "/members/portrait-pharrell.png",
     emojiIcon: "/members/pharrell-microphone.png",
   },
 };

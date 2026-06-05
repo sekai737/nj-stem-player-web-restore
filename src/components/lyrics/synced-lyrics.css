@@ -114,7 +114,7 @@
 .synced-lyrics__message {
   margin: 0;
   text-align: center;
-  font-family: var(--font-swis721-roman);
+  font-family: var(--font-swiss721-regular);
   font-size: 16px;
   opacity: 0.55;
 }

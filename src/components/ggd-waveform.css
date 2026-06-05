@@ -1,0 +1,87 @@
+/**
+ * GGD product-page media player (ggd.co theme.css).
+ * Matches #progress-bar-outer / #progress-bar-inner / .wave-set / .waveform
+ */
+.ggd-waveform.progress-bar-outer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: var(--radius-cr-16);
+  background: var(--stem-waveform-container);
+  cursor: pointer;
+  user-select: none;
+}
+
+.ggd-waveform--disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/*
+ * #progress-bar-inner — 4px playhead.
+ * Solid bar snapped to whole pixels (not border-right on fractional % width).
+ */
+.ggd-waveform .progress-bar-inner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--stem-waveform-playhead-width);
+  height: 100%;
+  z-index: 10;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: var(--stem-waveform-playhead);
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+/* #ggd-player .controls #progress-bar-outer .wave-set */
+.ggd-waveform .wave-set {
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* #ggd-player .controls #progress-bar-outer .wave-set .waveform.visible */
+.ggd-waveform .waveform {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Suppress WaveSurfer v7 built-in progress/cursor (GGD uses #progress-bar-inner only) */
+.ggd-waveform .waveform > div::part(progress),
+.ggd-waveform .waveform > div::part(cursor) {
+  display: none !important;
+}
+
+.ggd-waveform__loading {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ggd-waveform__spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgb(0 0 0 / 0.15);
+  border-top-color: var(--text-primary);
+  border-radius: 50%;
+  animation: ggd-waveform-spin 0.8s linear infinite;
+}
+
+@keyframes ggd-waveform-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

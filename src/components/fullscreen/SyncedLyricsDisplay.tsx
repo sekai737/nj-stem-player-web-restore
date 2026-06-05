@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef } from "react";
+import LyricText from "../LyricText";
 import { MEMBERS } from "../../data/members";
 import {
   getActiveMergedLyricIndex,
@@ -56,7 +57,8 @@ export default function SyncedLyricsDisplay({
           <p className="fs-lyrics__message">No lyrics for this track.</p>
         ) : (
           lines.map((line, index) => {
-            const visual = getLyricLineVisualState(index, activeIndex);
+            const distance = index - activeIndex;
+            const visual = getLyricLineVisualState(distance, true);
             const isActive = index === activeIndex;
             const blocks = renderLyricTextBlocks(line, settings);
             const member = MEMBERS[line.member];
@@ -72,7 +74,7 @@ export default function SyncedLyricsDisplay({
                 )}
                 {blocks.map((text, i) => (
                   <p key={`${line.id}-${i}`} className="fs-lyric-line__text">
-                    {text}
+                    <LyricText text={text} />
                   </p>
                 ))}
               </div>

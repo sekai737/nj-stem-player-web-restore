@@ -1,5 +1,5 @@
 /**
- * Ensures lyric Noto WOFF2 files exist under public/fonts/ with Figma filenames.
+ * Ensures lyric Noto WOFF2 files exist under public/fonts/ with canonical filenames.
  * Copies from @fontsource when a file is missing or not a valid WOFF2.
  * Skips overwrite when an existing file is already valid WOFF2.
  */
@@ -14,19 +14,19 @@ const OUT_DIR = join(ROOT, "public", "fonts");
 const COPIES = [
   {
     src: "@fontsource/noto-sans-kr/files/noto-sans-kr-korean-400-normal.woff2",
-    out: "NOTOSANSKR-VF.woff2",
-  },
-  {
-    src: "@fontsource/noto-sans-jp/files/noto-sans-jp-japanese-400-normal.woff2",
-    out: "NOTOSANSJP-REGULAR.woff2",
-  },
-  {
-    src: "@fontsource/noto-sans-jp/files/noto-sans-jp-japanese-300-normal.woff2",
-    out: "NOTOSANSJP-LIGHT.woff2",
+    out: "NotoSansKR-Regular.woff2",
   },
   {
     src: "@fontsource/noto-sans-kr/files/noto-sans-kr-korean-300-normal.woff2",
-    out: "noto-sans-kr-light.woff2",
+    out: "NotoSansKR-Light.woff2",
+  },
+  {
+    src: "@fontsource/noto-sans-jp/files/noto-sans-jp-japanese-400-normal.woff2",
+    out: "NotoSansJP-Regular.woff2",
+  },
+  {
+    src: "@fontsource/noto-sans-jp/files/noto-sans-jp-japanese-300-normal.woff2",
+    out: "NotoSansJP-Light.woff2",
   },
 ];
 

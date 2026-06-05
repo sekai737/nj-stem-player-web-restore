@@ -125,6 +125,8 @@ interface PlayerStore {
   stemPeaks: Partial<Record<StemId, number[]>>;
   menuOpen: boolean;
   fullscreenOpen: boolean;
+  /** Fullscreen playback: true = separated stems, false = pre-mixed master when available. */
+  fullscreenUseStems: boolean;
   fullscreenTvMode: boolean;
   fullscreenShowLyrics: boolean;
   fullscreenShowConversionPanel: boolean;
@@ -170,6 +172,7 @@ export const usePlayerStore = create<PlayerStore>((set) => ({
   stemPeaks: {},
   menuOpen: false,
   fullscreenOpen: false,
+  fullscreenUseStems: true,
   fullscreenTvMode: false,
   fullscreenShowLyrics: true,
   fullscreenShowConversionPanel: false,

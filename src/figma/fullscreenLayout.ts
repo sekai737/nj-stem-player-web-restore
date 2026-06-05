@@ -56,6 +56,8 @@ export const FIGMA_FULLSCREEN = {
       width: 569,
       height: 640,
       cardToStemGap: 24,
+      /** Master mix — card only (426); stems column (24 + 119) collapses */
+      masterWidth: 426,
     },
     /** Gap Frame 23 end (569) → volume (649) */
     volumeGap: 80,
@@ -77,9 +79,9 @@ export const FIGMA_FULLSCREEN = {
     radiusLead: 22,
     radiusRest: 25,
     iconSize: 24,
-    labelsWidth: 43,
-    soloWidth: 14,
-    muteWidth: 20,
+    labelsWidth: 45,
+    soloWidth: 16,
+    muteWidth: 21,
     soloMuteHeight: 28,
     soloMuteGap: 8,
   },

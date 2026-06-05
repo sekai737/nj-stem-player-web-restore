@@ -8,6 +8,7 @@
   --fs-cluster-top: 158px;
   --fs-cluster-shift-x: 52px;
   --fs-cluster-playback-w: 569px;
+  --fs-cluster-playback-w-master: 426px;
   --fs-cluster-volume-gap: 80px;
   /* Shared scale for right-cluster UI (card 640/772, volume 404/640 of card) */
   --fs-usable-v: calc(100vh - var(--fs-header-h) - var(--fs-footer-h));
@@ -18,7 +19,7 @@
   z-index: 100;
   background: var(--gradient-fullscreen);
   color: var(--text-primary);
-  font-family: var(--font-swis721-roman);
+  font-family: var(--font-swiss721-regular);
   overflow: hidden;
 }
 
@@ -111,7 +112,7 @@
   border: none;
   border-radius: var(--spacing-sp-8);
   background: transparent;
-  font-family: var(--font-swiss721-roman);
+  font-family: var(--font-swiss721-regular);
   font-size: 16px;
   color: var(--text-primary);
   text-align: left;
@@ -177,6 +178,11 @@
   height: calc(640px * var(--fs-ui-scale, 1));
 }
 
+/* Master mix — collapse stem column; card keeps 80px gap to volume (Figma Frame 24) */
+.fs-player__cluster-playback--master {
+  width: calc(var(--fs-cluster-playback-w-master) * var(--fs-ui-scale, 1));
+}
+
 /* ── Footer (120:94) ─────────────────────────────────── */
 
 .fs-footer {
@@ -210,7 +216,7 @@
 
 .fs-footer__text {
   margin: 0;
-  font-family: var(--font-swis721-roman);
+  font-family: var(--font-swiss721-regular);
   font-size: 24px;
   color: var(--text-secondary);
   white-space: nowrap;
@@ -220,6 +226,18 @@
 
 .fs-footer__send {
   flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.fs-footer__send:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
 }
 
 /* ── Queue / conversion panels (reuse prior tokens) ─── */
@@ -246,7 +264,7 @@
   background: var(--main-container-primary);
   border: var(--stroke-st-2) solid var(--stroke-primary);
   box-shadow: none;
-  font-family: var(--font-swis721-roman);
+  font-family: var(--font-swiss721-regular);
   font-size: 16px;
   color: var(--color-black);
 }
@@ -273,13 +291,13 @@
   flex-direction: column;
   gap: var(--spacing-sp-4);
   margin-bottom: var(--spacing-sp-8);
-  font-family: var(--font-swis721-roman);
+  font-family: var(--font-swiss721-regular);
   font-size: 16px;
   color: var(--color-black);
 }
 
 .fs-conversion-panel__field > span {
-  font-family: var(--font-swis721-roman);
+  font-family: var(--font-swiss721-regular);
   color: var(--color-black);
 }
 
@@ -292,7 +310,7 @@
   padding: 6px 8px;
   border-radius: 6px;
   border: var(--stroke-st-1) solid var(--stroke-primary);
-  font-family: var(--font-swis721-roman);
+  font-family: var(--font-swiss721-regular);
   font-size: 16px;
   color: var(--color-black);
   background: var(--main-container-primary);
@@ -300,7 +318,7 @@
 
 .fs-conversion-panel__hint {
   margin: var(--spacing-sp-8) 0 0;
-  font-family: var(--font-swis721-roman);
+  font-family: var(--font-swiss721-regular);
   font-size: 14px;
   color: var(--color-black);
   opacity: 0.65;
@@ -322,7 +340,7 @@
 
 .fs-queue-panel__title {
   margin: 0 0 var(--spacing-sp-16);
-  font-family: var(--font-swis721-bold);
+  font-family: var(--font-swiss721-medium);
   font-size: 18px;
 }
 

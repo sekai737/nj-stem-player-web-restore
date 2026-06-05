@@ -1,0 +1,137 @@
+/**
+ * Stem page lyric carousel — track slides up; preview pushes main out.
+ * Preview size uses scale (not font-size transitions) for smoother motion.
+ */
+
+.stem-lyrics-carousel {
+  --stem-lyric-main-h: 28px;
+  --stem-lyric-preview-h: 20px;
+  --stem-lyric-gap: 4px;
+  --stem-lyric-step-y: calc(var(--stem-lyric-main-h) + var(--stem-lyric-gap));
+  --stem-lyric-preview-scale: 0.667;
+  --stem-lyric-view-h: calc(var(--stem-lyric-step-y) + var(--stem-lyric-preview-h));
+  --stem-lyric-duration: 0.5s;
+  --stem-lyric-ease: cubic-bezier(0.3, 0, 0, 1);
+
+  width: 100%;
+  overflow: visible;
+}
+
+.stem-lyrics-carousel__viewport {
+  position: relative;
+  width: 100%;
+  min-height: var(--stem-lyric-view-h);
+  overflow: visible;
+}
+
+.stem-lyrics-carousel__track {
+  position: relative;
+  width: 100%;
+  will-change: transform;
+  transition: transform var(--stem-lyric-duration) var(--stem-lyric-ease);
+}
+
+.stem-lyrics-carousel--instant .stem-lyrics-carousel__track,
+.stem-lyrics-carousel--instant .stem-lyrics-carousel__item {
+  transition: none !important;
+}
+
+.stem-lyrics-carousel__item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  margin: 0;
+  text-align: center;
+  transform-origin: center top;
+  font-family: var(--font-swiss721-regular);
+  font-size: 24px;
+  line-height: var(--stem-lyric-main-h);
+  font-weight: normal;
+  font-synthesis: none;
+  color: var(--text-primary);
+  transition:
+    transform var(--stem-lyric-duration) var(--stem-lyric-ease),
+    opacity var(--stem-lyric-duration) var(--stem-lyric-ease),
+    color var(--stem-lyric-duration) var(--stem-lyric-ease);
+}
+
+.stem-lyrics-carousel__item--rest-main {
+  z-index: 2;
+  transform: translate3d(0, 0, 0) scale(1);
+  opacity: 1;
+  color: var(--text-primary);
+}
+
+.stem-lyrics-carousel__item--rest-preview {
+  z-index: 1;
+  transform: translate3d(0, var(--stem-lyric-step-y), 0) scale(var(--stem-lyric-preview-scale));
+  opacity: 1;
+  color: var(--text-secondary);
+}
+
+.stem-lyrics-carousel__item--push-out {
+  z-index: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+  opacity: 1;
+  color: var(--text-primary);
+}
+
+.stem-lyrics-carousel__item--push-promote {
+  z-index: 2;
+  transform: translate3d(0, var(--stem-lyric-step-y), 0) scale(var(--stem-lyric-preview-scale));
+  opacity: 1;
+  color: var(--text-secondary);
+}
+
+.stem-lyrics-carousel__item--push-in {
+  z-index: 1;
+  transform: translate3d(0, calc(var(--stem-lyric-step-y) * 2), 0) scale(var(--stem-lyric-preview-scale));
+  opacity: 0;
+  color: var(--text-secondary);
+}
+
+.stem-lyrics-carousel--push-active .stem-lyrics-carousel__item--push-out {
+  opacity: 0;
+}
+
+.stem-lyrics-carousel--push-active .stem-lyrics-carousel__item--push-promote {
+  transform: translate3d(0, var(--stem-lyric-step-y), 0) scale(1);
+  color: var(--text-primary);
+}
+
+.stem-lyrics-carousel--push-active .stem-lyrics-carousel__item--push-in {
+  opacity: 1;
+}
+
+.stem-lyrics-carousel--intro-pending .stem-lyrics-carousel__item--rest-preview {
+  opacity: 0;
+}
+
+.stem-lyrics-carousel__item--intro {
+  z-index: 2;
+  transform: translate3d(0, 8px, 0) scale(1);
+  opacity: 0;
+}
+
+.stem-lyrics-carousel--intro-active .stem-lyrics-carousel__item--intro {
+  transform: translate3d(0, 0, 0) scale(1);
+  opacity: 1;
+}
+
+.stem-lyrics-carousel--intro-active .stem-lyrics-carousel__item--rest-preview {
+  transform: translate3d(0, var(--stem-lyric-step-y), 0) scale(var(--stem-lyric-preview-scale));
+  opacity: 1;
+}
+
+.stem-lyrics-carousel .synced-lyrics__idling {
+  justify-content: center;
+  min-height: var(--stem-lyric-main-h);
+}
+
+.stem-lyrics-panel__line {
+  width: 100%;
+  margin: 0;
+  break-words: word-break;
+}

@@ -8,10 +8,16 @@ interface StemContainerProps {
   stems: StemTrack[];
   onSeek: (time: number) => void;
   disabled?: boolean;
+  durationSec?: number;
 }
 
 /** Figma frame: Stem container (node 2:400) — 1495×608, 4 rows × 128px + 32px gaps */
-export default function StemContainer({ stems, onSeek, disabled = false }: StemContainerProps) {
+export default function StemContainer({
+  stems,
+  onSeek,
+  disabled = false,
+  durationSec = 0,
+}: StemContainerProps) {
   return (
     <div
       className="flex flex-col"
@@ -22,7 +28,13 @@ export default function StemContainer({ stems, onSeek, disabled = false }: StemC
       }}
     >
       {stems.map((stem) => (
-        <StemRow key={stem.id} stem={stem} onSeek={onSeek} disabled={disabled} />
+        <StemRow
+          key={stem.id}
+          stem={stem}
+          onSeek={onSeek}
+          disabled={disabled}
+          durationSec={durationSec}
+        />
       ))}
     </div>
   );

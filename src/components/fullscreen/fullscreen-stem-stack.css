@@ -12,7 +12,7 @@
   top: var(--fs-stem-offset-y);
   width: var(--fs-stem-layout-w);
   height: var(--fs-stem-layout-h);
-  overflow: hidden;
+  overflow: visible;
   box-sizing: border-box;
 }
 
@@ -69,12 +69,12 @@
 }
 
 .fs-stem-btn__sm--solo {
-  width: var(--fs-stem-solo-width, 14px);
+  width: var(--fs-stem-solo-width, 16px);
   height: var(--fs-stem-solo-mute-height, 28px);
 }
 
 .fs-stem-btn__sm--mute {
-  width: var(--fs-stem-mute-width, 20px);
+  width: var(--fs-stem-mute-width, 21px);
   height: var(--fs-stem-solo-mute-height, 28px);
 }
 

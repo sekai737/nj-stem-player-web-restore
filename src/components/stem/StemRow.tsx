@@ -9,10 +9,16 @@ interface StemRowProps {
   stem: StemTrackData;
   onSeek: (time: number) => void;
   disabled?: boolean;
+  durationSec?: number;
 }
 
 /** Figma frame: Stem Row (node 2:282) — 1495×128 */
-export default function StemRow({ stem, onSeek, disabled = false }: StemRowProps) {
+export default function StemRow({
+  stem,
+  onSeek,
+  disabled = false,
+  durationSec = 0,
+}: StemRowProps) {
   const stemId = stem.id as StemId;
 
   return (
@@ -26,10 +32,11 @@ export default function StemRow({ stem, onSeek, disabled = false }: StemRowProps
     >
       <StemTrack
         stemId={stemId}
-        src={stem.src}
+        src={stem.src!}
         onSeek={onSeek}
         disabled={disabled}
         ariaLabel={stem.label}
+        durationSec={durationSec}
       />
       <VolumeControl stemId={stemId} label={stem.label} disabled={disabled} />
     </div>

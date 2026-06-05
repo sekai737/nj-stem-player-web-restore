@@ -1,7 +1,7 @@
 /**
  * Figma BG Elements (1:66) in Stem Player (1:58).
  * Bounding boxes from MCP metadata; transforms + glyph boxes from design export.
- * Fills: Color/star-pink-* and Color/star-green-* (Star Pink / Star Green gradients).
+ * Typography: COOL_FONT:Goop 700px, colors/gray (#666), opacity 50%, mix-blend-screen.
  */
 export const BG_ELEMENTS_FRAME = {
   left: 0,

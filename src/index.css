@@ -33,8 +33,14 @@
   body.figma-player,
   .figma-player {
     background: var(--color-blue-dark);
-    font-family: var(--font-swis721-roman);
+    font-family: var(--font-swiss721-regular);
     font-synthesis: none;
+    font-style: normal;
+  }
+
+  body.figma-player *,
+  .figma-player * {
+    font-style: normal;
   }
 
   /* Catalog / home — DM Sans via Tailwind font-sans on body (not .figma-player) */
@@ -61,21 +67,6 @@
 
   .figma-title-shadow {
     text-shadow: var(--spacing-sp-4) var(--spacing-sp-4) 0 var(--stroke-primary);
-  }
-
-  @keyframes lyric-slide-up {
-    from {
-      opacity: 0;
-      transform: translateY(12px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .lyrics-lines-enter {
-    animation: lyric-slide-up 0.32s ease-out;
   }
 
   /**
@@ -210,7 +201,7 @@ body,
   border: var(--stroke-st-2) solid var(--stroke-primary);
   background: var(--main-container-primary);
   box-shadow: none;
-  font-family: var(--font-swis721-roman);
+  font-family: var(--font-swiss721-regular);
   font-size: 12px;
   line-height: 1.2;
   color: var(--text-primary);

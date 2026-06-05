@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { getReleaseCoverArt, getSelectableSongs } from "../data/catalog";
 import type { Release } from "../types";
 
 interface ReleaseCardProps {
@@ -6,10 +7,12 @@ interface ReleaseCardProps {
 }
 
 export default function ReleaseCard({ release }: ReleaseCardProps) {
+  const songCount = getSelectableSongs(release).length;
+
   return (
     <article className="group flex gap-4 rounded-3xl bg-nj-card p-4 shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-lg hover:ring-nj-pink/30">
       <img
-        src={release.coverArt}
+        src={getReleaseCoverArt(release)}
         alt=""
         className="h-28 w-28 shrink-0 rounded-2xl object-cover shadow-inner ring-1 ring-black/5"
       />
@@ -20,7 +23,7 @@ export default function ReleaseCard({ release }: ReleaseCardProps) {
           </p>
           <h2 className="truncate text-xl font-bold text-nj-ink">{release.title}</h2>
           <p className="mt-1 text-sm text-nj-muted">
-            {release.songs.length} song{release.songs.length === 1 ? "" : "s"}
+            {songCount} song{songCount === 1 ? "" : "s"}
           </p>
         </div>
         <Link

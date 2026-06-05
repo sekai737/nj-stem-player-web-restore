@@ -16,6 +16,7 @@ import {
 } from "../../utils/lyricsDisplay";
 import type { LyricsViewSettings, MergedLyricLine } from "../../types/lyricsPlus";
 import { usePlayerStore } from "../../store/playerStore";
+import LyricText from "../LyricText";
 import LyricIdlingIndicator from "./LyricIdlingIndicator";
 import "./synced-lyrics.css";
 
@@ -257,11 +258,11 @@ export default function SyncedLyricsDisplay({
                           className={`synced-lyrics__primary ${isFocused ? "lyric-line-main" : "lyric-line-preview"}`}
                           style={textStyle}
                         >
-                          {primary}
+                          <LyricText text={primary} />
                         </p>
                         {secondary && (
                           <p className="synced-lyrics__secondary lyric-line-preview" style={textStyle}>
-                            {secondary}
+                            <LyricText text={secondary} />
                           </p>
                         )}
                       </>

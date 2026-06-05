@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import SliderKnob from "../SliderKnob";
 import { figmaAssets } from "../../figma/assets";
 import { FIGMA_FULLSCREEN as FS } from "../../figma/fullscreenLayout";
 import { displayTrackTitle, PLAYER_ARTIST_NAME } from "../../utils/displayTrackTitle";
@@ -11,6 +12,7 @@ interface FullscreenPlayerCardProps {
   artwork: string;
   title: string;
   releaseTitle: string;
+  releaseType: string;
   year: number;
   isInstrumental?: boolean;
   isPlaying: boolean;
@@ -29,6 +31,7 @@ export default function FullscreenPlayerCard({
   artwork,
   title,
   releaseTitle,
+  releaseType,
   year,
   isInstrumental = false,
   isPlaying,
@@ -109,7 +112,7 @@ export default function FullscreenPlayerCard({
             {PLAYER_ARTIST_NAME}
           </p>
           <p className="fs-player-card__album" data-node-id="121:318">
-            {releaseTitle} · {year}
+            {releaseTitle} {releaseType} · {year}
             {isInstrumental ? " · (Instrumental)" : ""}
           </p>
         </div>
@@ -140,7 +143,7 @@ export default function FullscreenPlayerCard({
               <>
                 <span className="fs-player-card__play-ring" aria-hidden data-node-id="121:312" />
                 <img
-                  className="fs-player-card__play-icon"
+                  className="fs-player-card__play-icon fs-player-card__play-icon--pause"
                   src={figmaAssets.pause}
                   alt=""
                   width={PC.playIconWidth}
@@ -150,13 +153,18 @@ export default function FullscreenPlayerCard({
                 />
               </>
             ) : (
-              <img
-                src={figmaAssets.fullscreenPlay}
-                alt=""
-                width={PC.playSize}
-                height={PC.playSize}
-                draggable={false}
-              />
+              <>
+                <span className="fs-player-card__play-ring" aria-hidden />
+                <img
+                  className="fs-player-card__play-icon fs-player-card__play-icon--play"
+                  src={figmaAssets.play}
+                  alt=""
+                  width={PC.playIconWidth}
+                  height={PC.playIconHeight}
+                  draggable={false}
+                  data-node-id="121:309"
+                />
+              </>
             )}
           </button>
           <FigmaIconButton
@@ -195,13 +203,7 @@ export default function FullscreenPlayerCard({
               aria-hidden
               data-node-id="121:322"
             >
-              <img
-                src={figmaAssets.sliderKnob}
-                alt=""
-                width={PC.progressThumbSize}
-                height={PC.progressThumbSize}
-                draggable={false}
-              />
+              <SliderKnob size={PC.progressThumbSize} />
             </div>
             <input
               type="range"

@@ -1,25 +1,36 @@
-import { useMemo } from "react";
+import { useMemo, type CSSProperties } from "react";
 import { MEMBERS } from "../data/members";
 import { LYRICS_FIGMA } from "../figma/lyricsLayout";
 import { FIGMA } from "../figma/layout";
 import { useLyrics } from "../hooks/useLyrics";
 import { shouldShowMemberLyrics, getActiveLyricIndex, getNextLyric } from "../utils/lyrics";
-import type { SongLrcFiles } from "../types";
+import { isPauseLine } from "../utils/lyricsDisplay";
+import type { LyricLine, SongLrcFiles } from "../types";
 import { usePlayerStore } from "../store/playerStore";
 import LanguageOptionsBox from "./LanguageOptionsBox";
 import MemberLyricsBox from "./MemberLyricsBox";
 import SelectableCopyRegion from "./SelectableCopyRegion";
-import { lyricLineClass } from "../utils/lyricScriptFont";
+import StemLyricsCarousel from "./StemLyricsCarousel";
 import "./selectable-copy-stem.css";
+import "./stem-lyrics-panel.css";
+
+const LONG_PAUSE_SEC = 8;
 
 interface LyricPanelProps {
   lrc?: SongLrcFiles;
   fontsReady?: boolean;
 }
 
+function findNextSungTime(lyrics: LyricLine[], fromIndex: number): number | null {
+  for (let i = fromIndex + 1; i < lyrics.length; i++) {
+    if (!isPauseLine(lyrics[i]?.text)) return lyrics[i]!.time;
+  }
+  return null;
+}
+
 /**
  * Figma lyrics column (node 26:214) — active line + one preview below.
- * Fullscreen uses lyrics-plus synced display separately.
+ * Carousel motion on line advance; fadeDo on first paint / seek snap.
  */
 export default function LyricPanel({ lrc, fontsReady = true }: LyricPanelProps) {
   const currentTime = usePlayerStore((s) => s.currentTime);
@@ -36,11 +47,24 @@ export default function LyricPanel({ lrc, fontsReady = true }: LyricPanelProps) 
   const memberSource = showMember && active ? active : lines[1] ?? lines[0];
   const member = memberSource ? MEMBERS[memberSource.member] : MEMBERS.group;
 
-  const lyricKey = error ? "error" : loading ? "loading" : `${activeIndex}-${active?.text ?? ""}`;
+  const pauseDurationSec =
+    active && activeIndex >= 0
+      ? (findNextSungTime(lines, activeIndex) ?? 0) - active.time
+      : 0;
+  const showIdling =
+    Boolean(active) &&
+    isPauseLine(active.text) &&
+    pauseDurationSec >= LONG_PAUSE_SEC &&
+    currentTime >= active.time;
+  const idlingProgress =
+    showIdling && pauseDurationSec > 0
+      ? (currentTime - active!.time) / pauseDurationSec
+      : 0;
+  const idlingDelayMs = showIdling ? (pauseDurationSec * 1000) / 3 : 0;
 
   return (
     <section
-      className="figma-surface flex shrink-0 items-center"
+      className="figma-surface flex shrink-0 items-center overflow-visible"
       style={{
         width: FIGMA.titleRow.lyricsWidth,
         height: FIGMA.titleRow.lyricsHeight,
@@ -62,39 +86,28 @@ export default function LyricPanel({ lrc, fontsReady = true }: LyricPanelProps) 
 
       <SelectableCopyRegion
         copyLabel="Lyrics"
-        className="stem-lyrics-copy flex min-w-0 flex-1 flex-col items-center justify-center text-center"
-        regionClassName="flex min-h-0 w-full flex-col items-center justify-center overflow-hidden text-center"
+        className="stem-lyrics-copy flex min-w-0 flex-1 flex-col items-center justify-center overflow-visible text-center"
+        regionClassName="flex w-full flex-col items-center justify-center overflow-visible text-center"
       >
         {loading ? (
-          <p className="lyric-line-main" data-copy-block>
+          <p className="lyric-line-main stem-lyrics-panel__line" data-copy-block>
             Loading lyrics…
           </p>
         ) : error ? (
-          <p className="lyric-line-preview" data-copy-block>
+          <p className="lyric-line-preview stem-lyrics-panel__line" data-copy-block>
             {error}
           </p>
         ) : active ? (
-          <div
-            key={lyricKey}
-            className="lyrics-lines-enter flex w-full flex-col items-center justify-center"
-          >
-            <p
-              className={`${lyricLineClass("lyric-line-main", active.text)} mb-0 w-full break-words`}
-              data-copy-block
-            >
-              {active.text}
-            </p>
-            {next ? (
-              <p
-                className={`${lyricLineClass("lyric-line-preview", next.text)} mt-0 w-full break-words`}
-                data-copy-block
-              >
-                {next.text}
-              </p>
-            ) : null}
-          </div>
+          <StemLyricsCarousel
+            lines={lines}
+            activeIndex={activeIndex}
+            next={next}
+            showIdling={showIdling}
+            idlingProgress={idlingProgress}
+            idlingDelayMs={idlingDelayMs}
+          />
         ) : (
-          <p className="lyric-line-preview" data-copy-block>
+          <p className="lyric-line-preview stem-lyrics-panel__line" data-copy-block>
             {lines.length > 0 ? "…" : "No lyrics for this language."}
           </p>
         )}

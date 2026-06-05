@@ -4,15 +4,14 @@ import { FIGMA } from "../../figma/layout";
 const { width: FRAME_W, height: FRAME_H } = FIGMA.frame;
 const stars = FIGMA.smallStars;
 
-/** Figma Stem Player frame (1:58) — gradient base + small-stars under UI. */
+/**
+ * Small-stars overlay inside the 1920px player shell.
+ * z-0 keeps it above the fixed gradient + decor (shell is its own context) but
+ * under the main UI content (z-[1]).
+ */
 export default function PlayerBackground() {
   return (
-    <div className="pointer-events-none absolute inset-0" aria-hidden>
-      <img
-        src={figmaAssets.background}
-        alt=""
-        className="absolute inset-0 size-full object-cover"
-      />
+    <div className="pointer-events-none absolute inset-0 z-0" aria-hidden>
       <img
         src={figmaAssets.smallStars}
         alt=""

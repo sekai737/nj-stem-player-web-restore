@@ -1,9 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import Layout from "../components/Layout";
 import LyricPanel from "../components/LyricPanel";
 import MeterPanel from "../components/meters/MeterPanel";
 import PlayerBackground from "../components/stem-player/PlayerBackground";
+import PlayerViewportBackground from "../components/stem-player/PlayerViewportBackground";
 import PlayerHeader from "../components/stem-player/PlayerHeader";
 import SongTitleBlock from "../components/stem-player/SongTitleBlock";
 import StemContainer from "../components/stem/StemContainer";
@@ -26,7 +27,10 @@ export default function StemPlayerPage() {
   const { releaseId, songId } = useParams();
   const navigate = useNavigate();
   const release = releaseId ? getRelease(releaseId) : undefined;
-  const song = releaseId && songId ? getSong(releaseId, songId) : undefined;
+  const song = useMemo(
+    () => (releaseId && songId ? getSong(releaseId, songId) : undefined),
+    [releaseId, songId],
+  );
   const scale = usePlayerScale();
   const fontsReady = useWebFontsReady();
   const scaledContentRef = useRef<HTMLDivElement>(null);
@@ -84,6 +88,7 @@ export default function StemPlayerPage() {
 
   return (
     <Layout bare>
+      <PlayerViewportBackground fontsReady={fontsReady} />
       <FullscreenPlayer
         open={fullscreenOpen}
         onClose={() => setFullscreenOpen(false)}
@@ -99,14 +104,14 @@ export default function StemPlayerPage() {
         hasNext={hasNext}
       />
       <div
-        className="relative h-full w-full max-w-[1920px]"
+        className="relative z-[1] h-full w-full max-w-[1920px]"
         aria-hidden={fullscreenOpen}
         style={fullscreenOpen ? { visibility: "hidden" } : undefined}
       >
         <PlayerBackground />
 
         <div
-          className="flex h-full w-full items-start justify-center overflow-hidden"
+          className="relative z-[1] flex h-full w-full items-start justify-center overflow-hidden"
           style={{
             paddingTop: FIGMA.inset.y,
             paddingBottom: FIGMA.inset.y,
@@ -138,13 +143,12 @@ export default function StemPlayerPage() {
             onNext={() => goToAdjacent("next")}
           />
 
-          {/* Frame 10 — title + lyrics (Figma 26:207); gap Title→Lyrics = 48 (26:214 x=610 − Title w=562) */}
+          {/* Frame 10 — Track Info Container (Figma 26:207) */}
           <div
             className="absolute z-10 flex items-start"
             style={{
               left: FIGMA.titleRow.left,
               top: FIGMA.contentRowTop,
-              gap: FIGMA.titleRow.gap,
             }}
           >
             <SongTitleBlock
@@ -176,7 +180,12 @@ export default function StemPlayerPage() {
             >
               <StemsLoadingOverlay songTitle={song.title} />
               <div className={stemsLoading ? "pointer-events-none select-none opacity-50" : ""}>
-                <StemContainer stems={song.stems} onSeek={seek} disabled={stemsLoading} />
+                <StemContainer
+                  stems={song.stems}
+                  onSeek={seek}
+                  disabled={stemsLoading}
+                  durationSec={duration || song.durationSec}
+                />
               </div>
             </div>
 

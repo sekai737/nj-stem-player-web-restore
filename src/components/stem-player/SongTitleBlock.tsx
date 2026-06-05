@@ -2,7 +2,7 @@ import { figmaAssets } from "../../figma/assets";
 import { coolTitleGlyphClassForIndex, splitTitleGlyphs } from "../../figma/coolTitleStyle";
 import { FIGMA } from "../../figma/layout";
 import { displayTrackTitle } from "../../utils/displayTrackTitle";
-import { formatTime } from "../../utils/time";
+import { formatTrackMetadata } from "../../utils/formatTrackMetadata";
 import SelectableCopyRegion from "../SelectableCopyRegion";
 import "../selectable-copy-stem.css";
 
@@ -16,12 +16,8 @@ interface SongTitleBlockProps {
 }
 
 /**
- * Figma Title (26:216) — dev-mode absolute frames (MCP): 3:314, 3:280 fixed;
- * track title (3:282) is vertically centered in the 22…108px band for even NP↔title / title↔metadata gaps.
+ * Figma Title (26:216) — flex-col items-start; Title mr-[-16px] toward lyrics.
  */
-/** Figma-centered COOL title (3:282) — reference layout; all other tracks left-align to NP + metadata. */
-const SUPERNATURAL_TITLE_SONG_ID = "supernatural-title";
-
 export default function SongTitleBlock({
   releaseId: _releaseId,
   songId,
@@ -32,46 +28,35 @@ export default function SongTitleBlock({
 }: SongTitleBlockProps) {
   const glyphs = splitTitleGlyphs(displayTrackTitle(title));
   const stack = FIGMA.titleRow.titleStack;
-  const useSupernaturalTitleLayout = songId === SUPERNATURAL_TITLE_SONG_ID;
   const isInstrumental = songId.endsWith("-instrumental");
-  const trackTitleFrame = useSupernaturalTitleLayout
-    ? stack.trackTitleSlot
-    : {
-        left: stack.nowPlaying.left,
-        top: stack.trackTitleSlot.top,
-        width: FIGMA.titleRow.titleWidth,
-        height: stack.trackTitleSlot.height,
-      };
 
   return (
     <div
-      className="relative shrink-0"
+      className="flex shrink-0 flex-col items-start justify-center"
+      data-node-id="26:216"
+      data-name="Title"
       style={{
         width: FIGMA.titleRow.titleWidth,
         height: FIGMA.titleRow.titleHeight,
+        marginRight: -FIGMA.titleRow.titleLyricsOverlap,
       }}
     >
       <img
         src={figmaAssets.nowPlaying}
         alt=""
-        className="absolute block max-w-none"
+        className="block max-w-none shrink-0"
         data-node-id="3:314"
         data-name="Now Playing"
         style={{
-          left: stack.nowPlaying.left,
-          top: stack.nowPlaying.top,
           width: stack.nowPlaying.width,
           height: stack.nowPlaying.height,
         }}
       />
 
       <div
-        className={`absolute flex items-center overflow-visible ${
-          useSupernaturalTitleLayout ? "justify-center" : "justify-start"
-        }`}
+        className="flex shrink-0 items-center justify-start overflow-visible"
         data-node-id="3:282"
         data-name="Title display name"
-        style={trackTitleFrame}
       >
         <div className="title-cool-block shrink-0">
           <p className="title-cool-line">
@@ -86,20 +71,14 @@ export default function SongTitleBlock({
 
       <SelectableCopyRegion
         copyLabel="Track metadata"
-        className="stem-metadata-copy absolute min-w-0"
+        className="stem-metadata-copy min-w-full shrink-0"
         data-node-id="3:280"
-        style={{
-          left: stack.metadata.left,
-          top: stack.metadata.top,
-          width: stack.metadata.width,
-          height: stack.metadata.height,
-        }}
-        regionClassName="flex h-full min-h-0 w-full min-w-0 items-center"
+        style={{ width: "min-content", maxWidth: "100%" }}
+        regionClassName="flex min-h-0 w-full min-w-0 items-center"
       >
         <div className="title-metadata-block">
           <p className="title-track-metadata text-content-primary" data-copy-block>
-            {formatTime(durationSec)}  ·  {keyLabel}  ·  {bpm} BPM
-            {isInstrumental ? "  ·  (Instrumental)" : ""}
+            {formatTrackMetadata(durationSec, keyLabel, bpm, { instrumental: isInstrumental })}
           </p>
         </div>
       </SelectableCopyRegion>

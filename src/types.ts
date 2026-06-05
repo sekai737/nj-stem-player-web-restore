@@ -17,7 +17,7 @@ export interface StemTrack {
   id: StemId;
   label: string;
   /** Path under /public, e.g. /stems/supernatural/supernatural-vocals.flac */
-  src: string;
+  src?: string;
 }
 
 /** Paths to per-language `.lrc` files under /public. */
@@ -33,19 +33,44 @@ export interface LyricLine {
   member: MemberId;
 }
 
+export type RemixCategory = "official" | "sekai";
+
+/** Remix variant browsable from the song selection page. */
+export interface RemixItem {
+  id: string;
+  title: string;
+  /** Where the remix is from — e.g. "AAA2024" or "sekai" (lowercase). */
+  source: string;
+  category: RemixCategory;
+  /** Catalog song id within the same release; opens the stem player when selected. */
+  songId: string;
+  coverArt?: string;
+  durationSec?: number;
+}
+
 export interface Song {
   id: string;
   title: string;
   durationSec: number;
   bpm: number;
   key: string;
-  artwork: string;
+  /** Omit to use release cover: /covers/{release.title}_album_cover.jpg */
+  artwork?: string;
+  /** Omit to use /stems/{releaseId}/{slug}-{stem}.flac (see stemSlug). */
   stems: StemTrack[];
-  /** When set, Download Stems (.zip) packs these files; `[0]` is the pre-mixed master for fullscreen. */
+  /** Pre-mixed master for fullscreen; auto-derived as {slug}-master.flac when using stem convention. */
+  masterSrc?: string;
+  /** When set, Download Stems (.zip) packs these paths instead of `stems`. */
   stemsZipFiles?: string[];
   /** Path under /public, e.g. /midi/supernatural/supernatural-title.mid */
   midi?: string;
+  /** Filename prefix when it differs from release id (e.g. shared stems across remixes). */
+  stemSlug?: string;
   lrc?: SongLrcFiles;
+  /** Omit from the main song carousel; reachable via remix list only. */
+  isRemix?: boolean;
+  /** Remix variants associated with this base track. */
+  remixes?: RemixItem[];
 }
 
 export interface Release {
@@ -53,7 +78,8 @@ export interface Release {
   title: string;
   year: number;
   type: ReleaseType;
-  coverArt: string;
+  /** Omit to use /covers/{title}_album_cover.jpg */
+  coverArt?: string;
   songs: Song[];
 }
 

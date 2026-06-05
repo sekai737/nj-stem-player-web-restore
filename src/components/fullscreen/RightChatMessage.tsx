@@ -1,7 +1,7 @@
 import { forwardRef, type KeyboardEvent } from "react";
 import { FIGMA_FULLSCREEN as FS } from "../../figma/fullscreenLayout";
 import { formatLyricTimestamp } from "../../utils/fullscreenLyrics";
-import { lyricLineClass } from "../../utils/lyricScriptFont";
+import LyricText from "../LyricText";
 import "./fullscreen-lyric-feed.css";
 
 export interface RightChatMessageProps {
@@ -73,7 +73,7 @@ const RightChatMessage = forwardRef<HTMLElement, RightChatMessageProps>(function
         {useEmojiAvatar && emoji ? (
           <div
             className="fs-lyric-message__avatar fs-lyric-message__avatar--emoji"
-            style={{ width: avatarSize, height: avatarSize }}
+            style={{ height: avatarSize }}
             aria-hidden
           >
             {emoji}
@@ -81,7 +81,7 @@ const RightChatMessage = forwardRef<HTMLElement, RightChatMessageProps>(function
         ) : portrait ? (
           <div
             className={`fs-lyric-message__avatar${avatarClassName ? ` ${avatarClassName}` : ""}`}
-            style={{ width: avatarSize, height: avatarSize }}
+            style={{ height: avatarSize }}
           >
             <img
               src={portrait}
@@ -100,12 +100,8 @@ const RightChatMessage = forwardRef<HTMLElement, RightChatMessageProps>(function
           onKeyDown={(e) => seekFromBubbleKey(e, time, onSeek)}
         >
           {lines.map((text, i) => (
-            <p
-              key={`${time}-${i}`}
-              className={lyricLineClass("fs-lyric-bubble__line", text)}
-              data-copy-block
-            >
-              {text}
+            <p key={`${time}-${i}`} className="fs-lyric-bubble__line" data-copy-block>
+              <LyricText text={text} />
             </p>
           ))}
         </div>

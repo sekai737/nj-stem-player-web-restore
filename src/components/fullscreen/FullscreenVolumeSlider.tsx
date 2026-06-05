@@ -1,4 +1,5 @@
 import type { CSSProperties, MouseEvent } from "react";
+import SliderKnob from "../SliderKnob";
 import { figmaAssets } from "../../figma/assets";
 import { FIGMA_FULLSCREEN as FS } from "../../figma/fullscreenLayout";
 import { usePlayerStore } from "../../store/playerStore";
@@ -20,13 +21,7 @@ export default function FullscreenVolumeSlider() {
 
   const pct = Math.round(volume * 100);
   const fillPct = muted ? 0 : pct;
-  const thumbTop = Math.max(
-    0,
-    Math.min(
-      V.trackHeight - V.thumbSize,
-      V.trackHeight - (fillPct / 100) * V.trackHeight - V.thumbSize / 2,
-    ),
-  );
+  const thumbCenterY = V.trackHeight - (fillPct / 100) * V.trackHeight;
 
   const volumeVars = {
     "--fs-volume-design-w": `${V.width}px`,
@@ -68,17 +63,11 @@ export default function FullscreenVolumeSlider() {
           />
           <div
             className="fs-volume__thumb"
-            style={{ top: thumbTop }}
+            style={{ top: thumbCenterY }}
             aria-hidden
             data-node-id="120:234"
           >
-            <img
-              src={figmaAssets.sliderKnob}
-              alt=""
-              width={V.thumbSize}
-              height={V.thumbSize}
-              draggable={false}
-            />
+            <SliderKnob size={V.thumbSize} />
           </div>
           <input
             type="range"

@@ -42,8 +42,8 @@ export default function Layout({ children, footer = true, bare = false }: Layout
       {footer && (
         <footer className="mt-10 flex items-end justify-between gap-4 border-t border-black/5 pt-4">
           <CreatorLinks
-            youtube={catalog.creator.youtube}
-            links={catalog.creator.links}
+            twitter={catalog.creator.twitter}
+            linktree={catalog.creator.linktree}
           />
         </footer>
       )}

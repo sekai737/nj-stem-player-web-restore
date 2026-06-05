@@ -53,7 +53,7 @@
 
 .fs-lyric-feed__status {
   margin: var(--spacing-sp-24) 0;
-  font-family: var(--font-swis721-roman);
+  font-family: var(--font-swiss721-regular);
   font-size: 24px;
   line-height: normal;
   color: var(--text-secondary);
@@ -129,12 +129,13 @@
   padding: 6px;
 }
 
+/* Figma 120:176 — sender name Swiss 721 Regular 24px */
 .fs-lyric-message__sender {
   display: flex;
   align-items: center;
   gap: var(--spacing-sp-8);
   margin: 0 0 var(--spacing-sp-8) var(--fs-lyric-name-inset);
-  font-family: var(--font-swis721-roman);
+  font-family: var(--font-swiss721-regular);
   font-size: var(--fs-lyric-feed-name-size, 24px);
   font-weight: normal;
   line-height: 1;
@@ -155,6 +156,7 @@
   gap: var(--spacing-sp-4);
 }
 
+/* Figma 120:180 — avatar + bubble group, then timestamp */
 .fs-lyric-message__row {
   display: flex;
   align-items: flex-end;
@@ -174,9 +176,11 @@
   object-fit: cover;
 }
 
+/* Figma 120:173 — shrink-to-fit bubble, not full-row stretch */
 .fs-lyric-bubble {
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
   gap: 0;
   margin: 0;
   padding: var(--spacing-sp-16) var(--spacing-sp-32);
@@ -200,21 +204,26 @@
   cursor: pointer;
 }
 
+/* Figma 120:174 — Swiss 721 Light 32px */
 .fs-lyric-bubble__line {
   margin: 0;
-  font-family: var(--font-swis721-light);
+  font-family: var(--font-swiss721-light);
   font-size: 32px;
   font-weight: normal;
   line-height: normal;
   color: var(--text-primary);
 }
 
-.fs-lyric-bubble__line--kr {
+.fs-lyric-bubble__line .lyric-run--kr {
   font-family: var(--font-noto-kr-light);
 }
 
-.fs-lyric-bubble__line--jp {
+.fs-lyric-bubble__line .lyric-run--jp {
   font-family: var(--font-noto-jp-light);
+}
+
+.fs-lyric-bubble__line .lyric-run--latin {
+  font-family: var(--font-swiss721-light);
 }
 
 .fs-lyric-bubble__line + .fs-lyric-bubble__line {
@@ -223,7 +232,7 @@
 
 .fs-lyric-message__time {
   flex-shrink: 0;
-  font-family: var(--font-swis721-light);
+  font-family: var(--font-swiss721-light);
   font-size: 24px;
   font-weight: normal;
   line-height: normal;

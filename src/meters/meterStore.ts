@@ -6,7 +6,11 @@ import {
   gainToDb,
   smoothSpectrum,
 } from "./dsp";
-import { METER_SETTINGS } from "./meterSettings";
+import {
+  METER_SETTINGS,
+  SPECTRUM_DB_MAX,
+  SPECTRUM_DB_MIN,
+} from "./meterSettings";
 import {
   bandEnergiesFromSpectrum,
   getBandBounds,
@@ -262,13 +266,21 @@ export function processMeterFrame(bus: MeterBus, isPlaying: boolean): void {
   analyserSpectrum.getByteFrequencyData(freqByteSpectrum);
   let peak = 0;
   for (let i = 0; i < spectrumFftBins; i++) {
-    const norm = byteFreqToNorm(freqByteSpectrum[i]);
+    const norm = byteFreqToNorm(
+      freqByteSpectrum[i],
+      SPECTRUM_DB_MIN,
+      SPECTRUM_DB_MAX,
+    );
     spectrumScratch[i] = norm;
     peak = Math.max(peak, norm);
   }
   applySpectrumTilt(spectrumScratch, sampleRate, METER_SPECTRUM_FFT_SIZE);
   peakLevel = peak;
-  smoothSpectrum(spectrumSmooth, spectrumScratch, METER_SETTINGS.spectrumSmoothing);
+  smoothSpectrum(
+    spectrumSmooth,
+    spectrumScratch,
+    METER_SETTINGS.spectrumDisplaySmoothing,
+  );
   spectrum.set(spectrumSmooth);
 
   if (peak > 0.03) {

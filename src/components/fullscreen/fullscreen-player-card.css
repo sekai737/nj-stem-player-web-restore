@@ -71,6 +71,7 @@
   font-family: var(--font-swiss721-medium);
   font-size: 32px;
   font-weight: normal;
+  font-style: normal;
   font-synthesis: none;
   line-height: var(--fs-card-title-line-height, 38px);
   color: var(--text-primary);
@@ -79,9 +80,10 @@
 .fs-player-card__artist {
   margin: 0;
   margin-top: var(--fs-player-meta-artist-gap, 4px);
-  font-family: var(--font-swis721-roman);
+  font-family: var(--font-swiss721-regular);
   font-size: 16px;
   font-weight: normal;
+  font-style: normal;
   font-synthesis: none;
   line-height: 1;
   color: var(--text-primary);
@@ -90,9 +92,10 @@
 .fs-player-card__album {
   margin: 0;
   margin-top: var(--fs-player-meta-album-gap, 4px);
-  font-family: var(--font-swis721-roman);
+  font-family: var(--font-swiss721-regular);
   font-size: 12px;
   font-weight: normal;
+  font-style: normal;
   font-synthesis: none;
   line-height: 1;
   color: var(--text-secondary);
@@ -132,9 +135,17 @@
 
 .fs-player-card__play-icon {
   position: absolute;
+  z-index: 1;
+}
+
+.fs-player-card__play-icon--pause {
   left: 18px;
   top: 16px;
-  z-index: 1;
+}
+
+.fs-player-card__play-icon--play {
+  left: 20px;
+  top: 16px;
 }
 
 .fs-player-card__progress {
@@ -144,6 +155,7 @@
   flex-shrink: 0;
   width: var(--fs-card-progress-row-width, 332px);
   max-width: 100%;
+  overflow: visible;
 }
 
 .fs-player-card__time {
@@ -164,6 +176,7 @@
   flex-shrink: 0;
   display: flex;
   align-items: center;
+  overflow: visible;
 }
 
 .fs-player-card__track {
@@ -198,8 +211,7 @@
   pointer-events: none;
 }
 
-.fs-player-card__thumb img {
-  display: block;
+.fs-player-card__thumb .slider-knob {
   width: 100%;
   height: 100%;
 }

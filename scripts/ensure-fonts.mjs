@@ -1,6 +1,6 @@
 /**
  * Ensures public/fonts/*.woff2 exist before dev/build.
- * Noto: copied from @fontsource. Swis721/Swiss: fonts:build when missing.
+ * Noto: copied from @fontsource when missing. Swiss 721: fonts:build when missing.
  */
 import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
@@ -11,18 +11,17 @@ import { syncNotoFonts } from "./sync-noto-fonts.mjs";
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const OUT_DIR = join(ROOT, "public", "fonts");
 
-const LICENSED_REQUIRED = [
-  "swis721-bt-roman.woff2",
-  "swis721-bt-bold.woff2",
-  "swiss-721-regular.woff2",
-  "swiss-721-medium.woff2",
+const SWISS_REQUIRED = [
+  "Swiss-721-Regular.woff2",
+  "Swiss-721-Medium.woff2",
+  "Swiss-721-Light.woff2",
 ];
 
 const NOTO_REQUIRED = [
-  "NOTOSANSKR-VF.woff2",
-  "NOTOSANSJP-REGULAR.woff2",
-  "NOTOSANSJP-LIGHT.woff2",
-  "noto-sans-kr-light.woff2",
+  "NotoSansKR-Regular.woff2",
+  "NotoSansKR-Light.woff2",
+  "NotoSansJP-Regular.woff2",
+  "NotoSansJP-Light.woff2",
 ];
 
 function isValidWoff2(path) {
@@ -53,13 +52,13 @@ if (missingNoto.length > 0) {
   process.exit(1);
 }
 
-const missingLicensed = LICENSED_REQUIRED.filter((name) => !isValidWoff2(join(OUT_DIR, name)));
-if (missingLicensed.length === 0) {
+const missingSwiss = SWISS_REQUIRED.filter((name) => !isValidWoff2(join(OUT_DIR, name)));
+if (missingSwiss.length === 0) {
   process.exit(0);
 }
 
 console.log(
-  `Missing or corrupt web font(s): ${missingLicensed.join(", ")}\nRunning fonts:build (see public/fonts/README.md)…`,
+  `Missing or corrupt web font(s): ${missingSwiss.join(", ")}\nRunning fonts:build (see public/fonts/README.md)…`,
 );
 const result = spawnSync(process.execPath, ["scripts/build-fonts.mjs"], {
   cwd: ROOT,

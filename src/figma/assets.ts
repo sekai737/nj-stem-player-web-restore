@@ -18,7 +18,6 @@ export const figmaAssets = {
   nextSong: "/figma/next-song.svg",
   progressBar: "/figma/progress-bar.svg",
   volume: "/figma/volume.svg",
-  sliderKnob: "/figma/slider-knob.svg",
 
   dropDown: "/figma/drop-down.svg",
   meterText: "/figma/meter-text.svg",

@@ -15,6 +15,7 @@ interface StemTrackProps {
   disabled?: boolean;
   /** For accessibility only (label is rendered as SVG). */
   ariaLabel: string;
+  durationSec?: number;
 }
 
 function SoloMuteButton({
@@ -48,15 +49,14 @@ function SoloMuteButton({
       title={title}
       aria-label={title}
       aria-pressed={active}
-      className="relative flex shrink-0 items-center justify-center disabled:cursor-not-allowed disabled:opacity-50"
+      className="relative flex shrink-0 items-center justify-center overflow-visible disabled:cursor-not-allowed disabled:opacity-50"
       style={{ width: boxWidth, height: S.soloMuteHeight }}
     >
       <img
         src={icon.src}
         alt=""
-        width={icon.width}
-        height={icon.height}
-        className="max-h-full max-w-full object-contain"
+        className="block shrink-0 object-contain"
+        style={{ width: icon.width, height: icon.height }}
         draggable={false}
       />
     </button>
@@ -70,15 +70,18 @@ export default function StemTrack({
   onSeek,
   disabled = false,
   ariaLabel,
+  durationSec = 0,
 }: StemTrackProps) {
   const toggleMute = usePlayerStore((s) => s.toggleMute);
   const toggleSolo = usePlayerStore((s) => s.toggleSolo);
   const ch = usePlayerStore((s) => s.channels[stemId]);
   const labelArt = stemLabelSvg[stemId];
 
+  const labelDisplayWidth = Math.round((labelArt.width * S.labelHeight) / labelArt.height);
+
   return (
     <div
-      className="relative flex shrink-0 items-center overflow-hidden border-st border-stroke-primary shadow-pop-4"
+      className="relative flex shrink-0 items-center border-st border-stroke-primary shadow-pop-4"
       style={{
         width: S.trackWidth,
         height: S.trackHeight,
@@ -91,31 +94,30 @@ export default function StemTrack({
       }}
     >
       <div
-        className="pointer-events-none absolute inset-0 bg-figma-stem"
+        className="pointer-events-none absolute inset-0 overflow-hidden"
         style={{ borderRadius: S.trackRadius }}
         aria-hidden
-      />
-      <img
-        src={figmaAssets.stemTrack}
-        alt=""
-        className="pointer-events-none absolute inset-0 size-full object-cover"
-        style={{ borderRadius: S.trackRadius }}
-        aria-hidden
-        onError={(e) => {
-          (e.target as HTMLImageElement).style.display = "none";
-        }}
-      />
+      >
+        <div className="absolute inset-0 bg-figma-stem" />
+        <img
+          src={figmaAssets.stemTrack}
+          alt=""
+          className="absolute inset-0 size-full object-cover"
+          onError={(e) => {
+            (e.target as HTMLImageElement).style.display = "none";
+          }}
+        />
+      </div>
 
       <div
-        className="relative z-10 flex shrink-0 items-center"
+        className="relative z-10 flex shrink-0 items-center justify-start overflow-visible"
         style={{ width: S.labelWidth, height: S.labelHeight }}
       >
         <img
           src={labelArt.src}
           alt={ariaLabel}
-          width={labelArt.width}
-          height={labelArt.height}
-          className="max-h-full max-w-full object-contain object-left"
+          className="block shrink-0 object-left"
+          style={{ height: S.labelHeight, width: labelDisplayWidth }}
           draggable={false}
         />
       </div>
@@ -124,7 +126,13 @@ export default function StemTrack({
         className="relative z-10 min-w-0 flex-1"
         style={{ height: S.waveformHeight }}
       >
-        <StemWaveform stemId={stemId} src={src} onSeek={onSeek} disabled={disabled} />
+        <StemWaveform
+          stemId={stemId}
+          src={src}
+          onSeek={onSeek}
+          disabled={disabled}
+          fallbackDurationSec={durationSec}
+        />
       </div>
 
       <div

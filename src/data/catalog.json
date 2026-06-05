@@ -8,66 +8,81 @@
       "id": "supernatural",
       "title": "Supernatural",
       "year": 2024,
-      "type": "Single",
-      "coverArt": "/covers/supernatural.svg",
+      "type": "EP",
       "songs": [
         {
           "id": "supernatural-title",
           "title": "Supernatural",
-          "durationSec": 198,
-          "bpm": 124,
-          "key": "F# minor",
-          "artwork": "/covers/supernatural.svg",
+          "durationSec": 191,
+          "bpm": 109,
+          "key": "Bbm",
           "stems": [
-            { "id": "vocals", "label": "Vocals", "src": "/stems/demo/vocals.mp3" },
-            { "id": "instruments", "label": "Other", "src": "/stems/demo/instruments.mp3" },
-            { "id": "drums", "label": "Drums", "src": "/stems/demo/drums.mp3" },
-            { "id": "bass", "label": "Bass", "src": "/stems/demo/bass.mp3" }
+            { "id": "vocals", "label": "Vocals" },
+            { "id": "instruments", "label": "Other" },
+            { "id": "drums", "label": "Drums" },
+            { "id": "bass", "label": "Bass" }
           ],
-          "lyrics": [
+          "lrc": {
+            "org": "/lyrics/supernatural-org.lrc",
+            "rom": "/lyrics/supernatural-rom.lrc",
+            "en": "/lyrics/supernatural-en.lrc"
+          },
+          "remixes": [
             {
-              "time": 0,
-              "en": "Drop your stems in public/stems to hear the full mix.",
-              "org": "스템 파일을 public/stems에 넣으면 재생됩니다.",
-              "rom": "seutem pail-eul public/stems-e neoeumyeon jaebaengdoemnida.",
-              "member": "group"
+              "id": "supernatural-winter-ver",
+              "title": "Supernatural (Winter ver.)",
+              "source": "AAA2024",
+              "category": "official",
+              "songId": "supernatural-winter-ver",
+              "durationSec": 191
             },
             {
-              "time": 12,
-              "en": "Minji line placeholder — sync lyrics in catalog.json.",
-              "ko": "민지 파트 예시",
-              "rom": "minji pateu yesi",
-              "member": "minji"
-            },
-            {
-              "time": 28,
-              "en": "Hanni line placeholder.",
-              "ko": "하니 파트 예시",
-              "rom": "hani pateu yesi",
-              "member": "hanni"
-            },
-            {
-              "time": 44,
-              "en": "Danielle line placeholder.",
-              "ko": "다니엘 파트 예시",
-              "rom": "daniel pateu yesi",
-              "member": "danielle"
-            },
-            {
-              "time": 60,
-              "en": "Haerin line placeholder.",
-              "ko": "해린 파트 예시",
-              "rom": "haerin pateu yesi",
-              "member": "haerin"
-            },
-            {
-              "time": 76,
-              "en": "Hyein line placeholder.",
-              "ko": "혜인 파트 예시",
-              "rom": "hyein pateu yesi",
-              "member": "hyein"
+              "id": "supernatural-sekai-remix",
+              "title": "Supernatural",
+              "source": "sekai",
+              "category": "sekai",
+              "songId": "supernatural-sekai-remix",
+              "durationSec": 191
             }
           ]
+        },
+        {
+          "id": "supernatural-winter-ver",
+          "title": "Supernatural (Winter ver.)",
+          "durationSec": 191,
+          "bpm": 109,
+          "key": "Bbm",
+          "isRemix": true,
+          "stems": [
+            { "id": "vocals", "label": "Vocals" },
+            { "id": "instruments", "label": "Other" },
+            { "id": "drums", "label": "Drums" },
+            { "id": "bass", "label": "Bass" }
+          ],
+          "lrc": {
+            "org": "/lyrics/supernatural-org.lrc",
+            "rom": "/lyrics/supernatural-rom.lrc",
+            "en": "/lyrics/supernatural-en.lrc"
+          }
+        },
+        {
+          "id": "supernatural-sekai-remix",
+          "title": "Supernatural",
+          "durationSec": 191,
+          "bpm": 109,
+          "key": "Bbm",
+          "isRemix": true,
+          "stems": [
+            { "id": "vocals", "label": "Vocals" },
+            { "id": "instruments", "label": "Other" },
+            { "id": "drums", "label": "Drums" },
+            { "id": "bass", "label": "Bass" }
+          ],
+          "lrc": {
+            "org": "/lyrics/supernatural-org.lrc",
+            "rom": "/lyrics/supernatural-rom.lrc",
+            "en": "/lyrics/supernatural-en.lrc"
+          }
         }
       ]
     },
@@ -75,8 +90,7 @@
       "id": "how-sweet",
       "title": "How Sweet",
       "year": 2024,
-      "type": "Single",
-      "coverArt": "/covers/how-sweet.svg",
+      "type": "EP",
       "songs": [
         {
           "id": "how-sweet-title",
@@ -84,7 +98,6 @@
           "durationSec": 210,
           "bpm": 118,
           "key": "A major",
-          "artwork": "/covers/how-sweet.svg",
           "stems": [
             { "id": "vocals", "label": "Vocals", "src": "/stems/demo/vocals.mp3" },
             { "id": "instruments", "label": "Instruments", "src": "/stems/demo/instruments.mp3" },
@@ -107,7 +120,6 @@
           "durationSec": 205,
           "bpm": 120,
           "key": "G major",
-          "artwork": "/covers/how-sweet.svg",
           "stems": [
             { "id": "vocals", "label": "Vocals", "src": "/stems/demo/vocals.mp3" },
             { "id": "instruments", "label": "Instruments", "src": "/stems/demo/instruments.mp3" },
@@ -131,7 +143,6 @@
       "title": "Get Up",
       "year": 2023,
       "type": "EP",
-      "coverArt": "/covers/get-up.svg",
       "songs": [
         {
           "id": "new-jeans",
@@ -139,7 +150,6 @@
           "durationSec": 185,
           "bpm": 130,
           "key": "D major",
-          "artwork": "/covers/get-up.svg",
           "stems": [
             { "id": "vocals", "label": "Vocals", "src": "/stems/demo/vocals.mp3" },
             { "id": "instruments", "label": "Instruments", "src": "/stems/demo/instruments.mp3" },
@@ -162,7 +172,6 @@
           "durationSec": 175,
           "bpm": 125,
           "key": "E minor",
-          "artwork": "/covers/get-up.svg",
           "stems": [
             { "id": "vocals", "label": "Vocals", "src": "/stems/demo/vocals.mp3" },
             { "id": "instruments", "label": "Instruments", "src": "/stems/demo/instruments.mp3" },

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
-import { getSongIndex } from "../../data/catalog";
+import { getSongArtwork, getSongIndex } from "../../data/catalog";
 import { useFullscreenKeyboard } from "../../hooks/useFullscreenKeyboard";
 import { useMergedLyrics } from "../../hooks/useMergedLyrics";
 import { usePlayerStore } from "../../store/playerStore";
@@ -122,11 +122,18 @@ export default function FullscreenPlayer({
         <div className="fs-player__controls-col">
           <div className="fs-player__cluster">
             <div className="fs-player__cluster-rail">
-              <div className="fs-player__cluster-playback">
+              <div
+                className={
+                  fullscreenUseStems
+                    ? "fs-player__cluster-playback"
+                    : "fs-player__cluster-playback fs-player__cluster-playback--master"
+                }
+              >
               <FullscreenPlayerCard
-                artwork={song.artwork}
+                artwork={getSongArtwork(song, release)}
                 title={song.title}
                 releaseTitle={release.title}
+                releaseType={release.type}
                 year={release.year}
                 isInstrumental={song.id.endsWith("-instrumental")}
                 isPlaying={isPlaying}
@@ -148,7 +155,13 @@ export default function FullscreenPlayer({
         </div>
       </main>
 
-      <FullscreenBottomBar label={trackLabel} />
+      <FullscreenBottomBar
+        label={trackLabel}
+        onPrevious={onPrevious}
+        onNext={onNext}
+        hasPrevious={hasPrevious}
+        hasNext={hasNext}
+      />
     </div>,
     document.body,
   );

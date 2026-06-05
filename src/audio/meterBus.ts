@@ -1,5 +1,9 @@
 import { METER_MAX_DB, METER_MIN_DB } from "../meters/dsp";
-import { METER_SETTINGS } from "../meters/meterSettings";
+import {
+  METER_SETTINGS,
+  SPECTRUM_DB_MAX,
+  SPECTRUM_DB_MIN,
+} from "../meters/meterSettings";
 
 export const METER_FFT_SIZE = METER_SETTINGS.fftSize;
 export const METER_SPECTRUM_FFT_SIZE = METER_SETTINGS.spectrumFftSize;
@@ -34,10 +38,16 @@ export function attachMeterBus(ctx: AudioContext, source: AudioNode): MeterBus {
   const analyserSpectrum = ctx.createAnalyser();
   analyserSpectrum.fftSize = METER_SPECTRUM_FFT_SIZE;
   analyserSpectrum.smoothingTimeConstant = METER_SETTINGS.spectrumSmoothing;
-  analyserSpectrum.minDecibels = METER_MIN_DB;
-  analyserSpectrum.maxDecibels = METER_MAX_DB;
+  analyserSpectrum.minDecibels = SPECTRUM_DB_MIN;
+  analyserSpectrum.maxDecibels = SPECTRUM_DB_MAX;
 
   const splitter = ctx.createChannelSplitter(2);
+  const midGainL = ctx.createGain();
+  midGainL.gain.value = 0.5;
+  const midGainR = ctx.createGain();
+  midGainR.gain.value = 0.5;
+  const midBus = ctx.createGain();
+
   const analyserL = ctx.createAnalyser();
   analyserL.fftSize = METER_FFT_SIZE;
   analyserL.smoothingTimeConstant = 0.45;
@@ -53,10 +63,16 @@ export function attachMeterBus(ctx: AudioContext, source: AudioNode): MeterBus {
 
   source.connect(trim);
   trim.connect(analyser);
-  trim.connect(analyserSpectrum);
   analyser.connect(ctx.destination);
 
+  /** Minimeters Audio → Mid/Side (spectrum uses Mid = (L+R)/2). */
   source.connect(splitter);
+  splitter.connect(midGainL, 0);
+  splitter.connect(midGainR, 1);
+  midGainL.connect(midBus);
+  midGainR.connect(midBus);
+  midBus.connect(analyserSpectrum);
+
   splitter.connect(analyserL, 0);
   splitter.connect(analyserR, 1);
 

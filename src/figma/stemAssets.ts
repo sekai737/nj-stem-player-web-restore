@@ -13,10 +13,16 @@ export const soloIconSvg = {
   clicked: { src: "/figma/solo-icon-clicked.svg", width: 23, height: 32 },
 } as const;
 
-/** Fullscreen stem stack solo controls (Figma 121:438 / 121:443 / …). */
+/** Fullscreen stem stack solo controls (121:438 / …). */
 export const fullscreenSoloIconSvg = {
   default: { src: "/figma/fullscreen-solo-icon-default.svg", width: 16, height: 28 },
   clicked: { src: "/figma/fullscreen-solo-icon-clicked.svg", width: 16, height: 28 },
+} as const;
+
+/** Fullscreen stem stack mute controls (121:439 / …). */
+export const fullscreenMuteIconSvg = {
+  default: { src: "/figma/fullscreen-mute-icon-default.svg", width: 21, height: 28 },
+  clicked: { src: "/figma/fullscreen-mute-icon-clicked.svg", width: 21, height: 28 },
 } as const;
 
 export const muteIconSvg = {

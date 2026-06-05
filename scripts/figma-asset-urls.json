@@ -1,0 +1,20 @@
+{
+  "stem-track.png": "http://localhost:3845/assets/c5f1ea58f4be79d1f4521b4431ec61309b6acf6f.png",
+  "letterbox.png": "http://localhost:3845/assets/7cb8db92b348469d25c22c69330af2503784f75f.png",
+  "home.svg": "http://localhost:3845/assets/2667d6d638c2f69a19c613559739194ad2481382.svg",
+  "settings.svg": "http://localhost:3845/assets/3930332196ba2afe6964f449bfd300658677ba2b.svg",
+  "icon-circle.svg": "http://localhost:3845/assets/8d579fc7869be6ef98c071fbaae95526e8434dba.svg",
+  "small-stars.svg": "http://localhost:3845/assets/b230940bc83cd2306eaebe6e1d94bcd8d446600d.svg",
+  "background.svg": "http://localhost:3845/assets/d9ad41cf0d800b9366a0823a45a7f76eebcef5cc.svg",
+  "previous-song.svg": "http://localhost:3845/assets/64e525d8eaeeb2567be71d2af8e7ce039e8cfee9.svg",
+  "next-song.svg": "http://localhost:3845/assets/e9977573b20e43c750ae509225d9f3b53fe1a8f4.svg",
+  "progress-bar.svg": "http://localhost:3845/assets/98fa8d1e004e440d60d3db01d5e1ed4e430d5327.svg",
+  "play.svg": "http://localhost:3845/assets/a4f48f92ccb0ae8217d658d180d59c7257a0c520.svg",
+  "pause.svg": "http://localhost:3845/assets/525ea9b50c1b51bab93e8a9709da9cf2f7154841.svg",
+  "vocal-icon.svg": "http://localhost:3845/assets/29b74d24eef306a52464b8bdd5d5f58be4e367b9.svg",
+  "drums-icon.svg": "http://localhost:3845/assets/0a6b97ecf65d880e345fe44f722f8b2a12ada14d.svg",
+  "bass-icon.svg": "http://localhost:3845/assets/82555aa87db0c745f343740c59461a6e52be7de3.svg",
+  "drop-down.svg": "http://localhost:3845/assets/ea65366d69e2c6b2d809773a974f332fcf8178b4.svg",
+  "back-button.svg": "http://localhost:3845/assets/be4654fe4bc60cd2279728a824cde930f47731af.svg",
+  "menu-button.svg": "http://localhost:3845/assets/be4654fe4bc60cd2279728a824cde930f47731af.svg"
+}

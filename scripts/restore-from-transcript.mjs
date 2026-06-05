@@ -1,16 +1,23 @@
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const OUT_ROOT = path.resolve(__dirname, "..");
 
 const TRANSCRIPT =
+  process.env.NJ_TRANSCRIPT ||
   "C:\\Users\\Athony\\.cursor\\projects\\c-Users-Athony-cursor-projects-empty-window-nj-stem-player-web\\agent-transcripts\\c0841c1d-7a4f-4fef-a8ea-5d0ed49d8f26\\c0841c1d-7a4f-4fef-a8ea-5d0ed49d8f26.jsonl";
-const OUT_ROOT =
-  "C:\\Users\\Athony\\.cursor\\projects\\empty-window\\nj-stem-player-web";
 
 const PATH_MARKERS = [
   "C:\\Users\\Athony\\.cursor\\projects\\empty-window\\nj-stem-player-web",
   "C:/Users/Athony/.cursor/projects/empty-window/nj-stem-player-web",
-  "e:\\1 - Work\\NJ Stem Player\\nj-stem-player-web",
-  "E:/1 - Work/NJ Stem Player/nj-stem-player-web",
+  "g:\\1 - Work\\NJ Stem Player",
+  "G:/1 - Work/NJ Stem Player",
+  "e:\\1 - Work\\NJ Stem Player",
+  "E:/1 - Work/NJ Stem Player",
+  "g:\\1 - Work\\NJ Stem Player\\nj-stem-player-web",
+  "G:/1 - Work/NJ Stem Player/nj-stem-player-web",
 ];
 
 function normalizePath(raw) {

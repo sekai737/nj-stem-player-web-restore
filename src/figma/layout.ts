@@ -9,17 +9,19 @@ const SP_8 = 8;
 const CONTENT_ROW_TOP = 96;
 
 /**
- * Figma Frame 10 (26:207) — MCP: x=306 y=96 w=1498 h=127 (content: Title + gap + Lyrics = 1800px row).
- * Title (26:216) w=562; Lyrics (26:214) x=610 w=884 → gap = 610 − 562 = 48.
- * Stem block (26:212) x=305 — title column aligns +1px vs stems (Figma).
+ * Figma Track Info Container (26:207) @ x=306 — title + lyrics in the 1800px column.
+ * Title (26:216) w=562; Lyrics (26:214) x=546 w=948 → Title mr-[-16px] overlap.
  */
+const METERS_BOX_WIDTH = 273;
+/** Figma 26:207 x=306 → meters (273) + 33px gap. */
 const FRAME_10_LEFT = 306;
 const TITLE_FRAME_WIDTH = 562;
 const TITLE_FRAME_HEIGHT = 127;
-/** Lyrics container (26:214) — MCP h=120; Frame 10 row h=127 */
+/** Figma Title `mr-[-16px]` — lyrics start at x=546 (562 − 16). */
+const TITLE_LYRICS_OVERLAP = 16;
+/** Lyrics container (26:214) — MCP w=948 h=120; Frame 10 row h=127 */
+const LYRICS_CONTAINER_WIDTH = 948;
 const LYRICS_CONTAINER_HEIGHT = 120;
-const LYRICS_FRAME_X_IN_FRAME_10 = 610;
-const TITLE_TO_LYRICS_GAP = LYRICS_FRAME_X_IN_FRAME_10 - TITLE_FRAME_WIDTH;
 
 /**
  * Figma Title (26:216) — dev-mode child frames (MCP metadata, document space).
@@ -28,7 +30,7 @@ const TITLE_TO_LYRICS_GAP = LYRICS_FRAME_X_IN_FRAME_10 - TITLE_FRAME_WIDTH;
 const TITLE_NOW_PLAYING = { left: 0, top: 0, width: 76, height: 22 } as const;
 const TITLE_TRACK_TITLE = { left: 1, top: 22, width: 511, height: 86 } as const; // 3:282 x≈0.706
 const TITLE_METADATA = { left: 0, top: 108, width: 562, height: 19 } as const;
-/** Band between fixed Now Playing + metadata (Figma y=22…108); title glyphs center here for even gaps. */
+/** Legacy absolute slot — Title (26:216) now uses flex-col items-start in SongTitleBlock. */
 const TITLE_TRACK_SLOT_TOP = TITLE_NOW_PLAYING.top + TITLE_NOW_PLAYING.height;
 const TITLE_TRACK_SLOT_HEIGHT = TITLE_METADATA.top - TITLE_TRACK_SLOT_TOP;
 
@@ -55,28 +57,28 @@ export const FIGMA = {
   header: { height: 44, icon: 44 },
   /** Frame 11 (node 26:212) — 1800×860; meters top-left (0,0), stem block y=160, progress y=820 */
   main: { top: CONTENT_ROW_TOP, height: 860 },
-  /** Frame 10 (26:207) — title row + lyrics; MCP left=306 aligns with stem block (305) +1px */
+  /** Frame 10 (26:207) — title row + lyrics; overlap via titleLyricsOverlap */
   titleRow: {
     left: FRAME_10_LEFT,
     top: CONTENT_ROW_TOP,
-    gap: TITLE_TO_LYRICS_GAP,
+    /** Figma Title negative margin toward lyrics (flex gap is 0). */
+    titleLyricsOverlap: TITLE_LYRICS_OVERLAP,
     titleWidth: TITLE_FRAME_WIDTH,
     /** Title group (26:216) — MCP h=127 */
     titleHeight: TITLE_FRAME_HEIGHT,
-    /** Lyrics container (26:214) — MCP w=884 h=120 */
-    lyricsWidth: 884,
+    /** Lyrics container (26:214) — widened left to match meters→title gap (was 884) */
+    lyricsWidth: LYRICS_CONTAINER_WIDTH,
     lyricsHeight: LYRICS_CONTAINER_HEIGHT,
     /** Frame 10: Title extends 7px below Lyrics (127 − 120); metadata sits in that band per Figma y=108. */
     titleExtendsBelowLyrics: TITLE_FRAME_HEIGHT - LYRICS_CONTAINER_HEIGHT,
-    /** Absolute layout for Title children — use `titleStack` positions, not flex spacers. */
+    /** Title child frames — Now Playing dimensions; title/metadata use flex flow in SongTitleBlock. */
     titleStack: {
       nowPlaying: TITLE_NOW_PLAYING,
-      /** Figma 3:282 frame — glyphs are centered in `trackTitleSlot` (NP/metadata stay fixed). */
       trackTitle: TITLE_TRACK_TITLE,
       trackTitleSlot: {
-        left: TITLE_TRACK_TITLE.left,
+        left: TITLE_NOW_PLAYING.left,
         top: TITLE_TRACK_SLOT_TOP,
-        width: TITLE_TRACK_TITLE.width,
+        width: TITLE_FRAME_WIDTH,
         height: TITLE_TRACK_SLOT_HEIGHT,
       },
       metadata: TITLE_METADATA,
@@ -86,7 +88,7 @@ export const FIGMA = {
     left: 0,
     top: 0,
     /** Meters Box (node 26:215) — Figma MCP: 273×768, instance @ (0,0) in Frame 11 */
-    width: 273,
+    width: METERS_BOX_WIDTH,
     height: 768,
     /** Label pill (node 10:84) — Green Gradient, pop shadow 2×; Figma absolute frame 76×25 @ left 99 top 6 */
     label: { left: 99, top: 6, width: 76, height: 25 },
@@ -136,9 +138,9 @@ export const FIGMA = {
     volumeIconWidth: 15,
     volumeIconHeight: 11,
     sliderWidth: 69,
-    sliderHeight: 8,
+    sliderHeight: 16,
     sliderTrackHeight: 4,
-    sliderKnobSize: 8,
+    sliderKnobSize: 16,
     /** Volume % hover label (above knob) */
     volumeTooltip: {
       offsetY: 6,

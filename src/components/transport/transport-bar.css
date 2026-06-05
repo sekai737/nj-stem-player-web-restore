@@ -33,6 +33,7 @@
 .transport-scrubber {
   position: relative;
   flex-shrink: 0;
+  overflow: visible;
 }
 
 .transport-scrubber__visual {

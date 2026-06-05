@@ -9,15 +9,13 @@
   /** COOL_FONT — meters label; add `cool-font.woff2` via fonts:build when licensed file is available */
   --font-cool-meters: "Times New Roman", Times, Georgia, serif;
   /* Must match @font-face family names in fonts.css exactly */
-  --font-noto-kr-vf: NotoSansKR-VF, sans-serif;
-  --font-noto-jp-regular: NotoSansJPRegular, sans-serif;
+  --font-noto-kr-regular: NotoSansKRRegular, sans-serif;
   --font-noto-kr-light: NotoSansKRLight, sans-serif;
+  --font-noto-jp-regular: NotoSansJPRegular, sans-serif;
   --font-noto-jp-light: NotoSansJPLight, sans-serif;
-  --font-swis721-roman: Swis721BTRoman, sans-serif;
-  --font-swis721-light: Swis721LtBTLight, sans-serif;
-  --font-swis721-bold: Swis721BTBold, sans-serif;
   --font-swiss721-regular: Swiss721Regular, sans-serif;
   --font-swiss721-medium: Swiss721Medium, sans-serif;
+  --font-swiss721-light: Swiss721Light, sans-serif;
 }
 
 /* ── Figma text styles ───────────────────────────────────── */
@@ -26,24 +24,6 @@
 .type-jersey {
   font-family: var(--font-jersey);
   font-weight: 400;
-  font-style: normal;
-  font-synthesis: none;
-  line-height: normal;
-}
-
-/** Swis721 BT Roman */
-.type-swis721-roman {
-  font-family: var(--font-swis721-roman);
-  font-weight: normal;
-  font-style: normal;
-  font-synthesis: none;
-  line-height: normal;
-}
-
-/** Swis721 BT Bold */
-.type-swis721-bold {
-  font-family: var(--font-swis721-bold);
-  font-weight: normal;
   font-style: normal;
   font-synthesis: none;
   line-height: normal;
@@ -67,6 +47,15 @@
   line-height: normal;
 }
 
+/** Swiss 721 Light */
+.type-swiss721-light {
+  font-family: var(--font-swiss721-light);
+  font-weight: normal;
+  font-style: normal;
+  font-synthesis: none;
+  line-height: normal;
+}
+
 /* ── Component-specific sizes (Figma nodes) ─────────────── */
 
 /**
@@ -83,9 +72,9 @@
   max-width: 100%;
 }
 
-/** Title metadata — Swis721 BT Roman 16px, tracking -0.8px (node 3:280 / 26:216) */
+/** Title metadata — Swiss 721 Regular 16px (node 3:280 / 26:216) */
 .title-track-metadata {
-  font-family: var(--font-swis721-roman);
+  font-family: var(--font-swiss721-regular);
   font-size: 16px;
   font-weight: normal;
   font-synthesis: none;
@@ -94,9 +83,9 @@
   white-space: pre;
 }
 
-/** Lyrics main line — Swis721 BT Roman 24px (node 3:45) */
+/** Lyrics main line — Swiss 721 Regular 24px (node 3:45) */
 .lyric-line-main {
-  font-family: var(--font-swis721-roman);
+  font-family: var(--font-swiss721-regular);
   font-size: 24px;
   font-weight: normal;
   font-synthesis: none;
@@ -104,9 +93,9 @@
   color: var(--text-primary);
 }
 
-/** Lyrics preview — Swis721 BT Roman 16px */
+/** Lyrics preview — Swiss 721 Regular 16px */
 .lyric-line-preview {
-  font-family: var(--font-swis721-roman);
+  font-family: var(--font-swiss721-regular);
   font-size: 16px;
   font-weight: normal;
   font-synthesis: none;
@@ -115,13 +104,27 @@
 }
 
 .lyric-line-main--kr,
-.lyric-line-preview--kr {
-  font-family: var(--font-noto-kr-vf);
+.lyric-line-preview--kr,
+.lyric-run--kr {
+  font-family: var(--font-noto-kr-regular);
 }
 
 .lyric-line-main--jp,
-.lyric-line-preview--jp {
+.lyric-line-preview--jp,
+.lyric-run--jp {
   font-family: var(--font-noto-jp-regular);
+}
+
+.lyric-run--latin {
+  font-family: var(--font-swiss721-regular);
+}
+
+.lyric-run {
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  color: inherit;
 }
 
 /** Member pill name — Swiss 721 Medium 24px (node 3:131) */

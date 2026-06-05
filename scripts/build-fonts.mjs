@@ -109,48 +109,45 @@ const COOL_FONT_SLOTS = [
 /** Canonical source basename (without extension) → output woff2 name */
 const FONT_SLOTS = [
   {
-    key: "swis721-bt-roman",
-    out: "swis721-bt-roman.woff2",
-    aliases: [
-      /swiss[\s_-]*721[\s_-]*bt[\s_-]*font/i,
-      /swis721[\s_-]*bt[\s_-]*roman/i,
-      /swiss721bt[\s_-]*roman/i,
-    ],
-    windowsNames: [
-      "Swiss-721-BT-Font.ttf",
-      "Swis721 BT.ttf",
-      "Swis721_BT.ttf",
-      "Swis721_BT_Roman.ttf",
-    ],
-  },
-  {
-    key: "swis721-bt-bold",
-    out: "swis721-bt-bold.woff2",
-    aliases: [/swis721[\s_-]*bt[\s_-]*bold/i, /swis721bt[\s_-]*bold/i],
-    windowsNames: ["Swis721_BT_Bold.ttf"],
-  },
-  {
     key: "swiss-721-regular",
-    out: "swiss-721-regular.woff2",
+    out: "Swiss-721-Regular.woff2",
     aliases: [/swiss[\s_-]*721[\s_-]*regular/i, /swiss[\s_-]*721[\s_-]*roman/i],
-    windowsNames: ["Swiss721BT-Regular.ttf", "Swiss721BTRegular.ttf"],
+    windowsNames: ["Swiss721BT-Regular.ttf", "Swiss721BTRegular.ttf", "Swiss 721 Regular Condensed.otf"],
   },
   {
     key: "swiss-721-medium",
-    out: "swiss-721-medium.woff2",
+    out: "Swiss-721-Medium.woff2",
     aliases: [/swiss[\s_-]*721[\s_-]*medium/i],
-    windowsNames: ["Swis721_Md_BT_Medium.ttf", "Swis721_Md_BT_Medium_Italic.ttf"],
+    windowsNames: ["Swis721_Md_BT_Medium.ttf", "Swiss 721 Medium.otf"],
+  },
+  {
+    key: "swiss-721-light",
+    out: "Swiss-721-Light.woff2",
+    aliases: [/swiss[\s_-]*721[\s_-]*light/i],
+    windowsNames: ["Swiss 721 Light.otf", "Swiss721BT-Light.ttf"],
   },
 ];
 
 function matchInDir(dir, slot) {
   if (!existsSync(dir)) return null;
   const lowerKey = slot.key.toLowerCase();
+  /** @type {string[]} */
+  const candidates = [];
   for (const name of readdirSync(dir)) {
     if (!/\.(ttf|otf)$/i.test(name)) continue;
     const stem = name.replace(/\.[^.]+$/i, "");
-    if (stem.toLowerCase() === lowerKey) return join(dir, name);
-    if (slot.aliases.some((re) => re.test(stem))) return join(dir, name);
+    if (stem.toLowerCase() === lowerKey || slot.aliases.some((re) => re.test(stem))) {
+      candidates.push(join(dir, name));
+    }
+  }
+  if (candidates.length > 0) {
+    const upright = candidates.find((p) => !/italic/i.test(basename(p)));
+    return upright ?? candidates[0];
+  }
+  for (const winName of slot.windowsNames ?? []) {
+    if (/italic/i.test(winName)) continue;
+    const path = join(dir, winName);
+    if (existsSync(path)) return path;
   }
   for (const winName of slot.windowsNames ?? []) {
     const path = join(dir, winName);
@@ -331,13 +328,13 @@ async function main() {
 
   if (built === 0) {
     console.error(
-      "\nNo source fonts found. Add licensed files to fonts-source/ or install Swis721 / COOL FONT (see fonts-source/README.md), then re-run:\n  npm run fonts:build\n",
+      "\nNo source fonts found. Add licensed files to fonts-source/ or install Swiss 721 / COOL FONT (see fonts-source/README.md), then re-run:\n  npm run fonts:build\n",
     );
     process.exit(1);
   }
 
   console.log(
-    `\nDone: ${builtSwiss}/${FONT_SLOTS.length} Swis721/Swiss + ${builtCool}/${COOL_FONT_SLOTS.length} COOL → public/fonts/`,
+    `\nDone: ${builtSwiss}/${FONT_SLOTS.length} Swiss 721 + ${builtCool}/${COOL_FONT_SLOTS.length} COOL → public/fonts/`,
   );
 }
 

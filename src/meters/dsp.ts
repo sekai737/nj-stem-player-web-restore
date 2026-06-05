@@ -81,7 +81,7 @@ export function smoothSpectrum(
   }
 }
 
-/** Pink-noise style tilt: +4.5 dB/oct above 1 kHz reference. */
+/** Optional display tilt (dB/oct relative to 1 kHz); 0 leaves slope from source only. */
 export function applySpectrumTilt(
   values: Float32Array,
   sampleRate: number,

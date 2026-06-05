@@ -46,7 +46,13 @@
   --text-inverse: var(--color-white);
   --stem-container-primary: var(--color-yellow);
   --stem-container-secondary: var(--color-white);
-  --stem-waveform-container: rgb(179 179 179 / 0.2);
+  /** Figma `stem-waveform-container-primary` — Gray Light @ 20% (#b3b3b333). */
+  --stem-waveform-container: #b3b3b333;
+  /** Waveform trace — Gray Secondary (#666666) @ 35% on stem tracks. */
+  --stem-waveform-trace: color-mix(in srgb, var(--color-gray-secondary) 35%, transparent);
+  /** Playhead line — text-inverse on yellow stem rows. */
+  --stem-waveform-playhead: var(--text-inverse);
+  --stem-waveform-playhead-width: 4px;
   --bg-primary: var(--color-blue-dark);
   --bg-secondary: var(--color-blue-light);
   --member-lyric-box-primary: var(--color-blue);
@@ -107,4 +113,9 @@
   /* Shadows */
   --shadow-pop-4: var(--spacing-sp-4) var(--spacing-sp-4) 0 var(--stroke-primary);
   --shadow-pop-2: var(--spacing-sp-2) var(--spacing-sp-2) 0 var(--stroke-primary);
+}
+
+/** Page backdrop — replaces background.svg gradient (bg-secondary → bg-primary) */
+.bg-page-gradient {
+  background: var(--gradient-page);
 }

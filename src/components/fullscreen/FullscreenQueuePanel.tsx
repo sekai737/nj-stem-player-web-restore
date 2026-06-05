@@ -1,3 +1,4 @@
+import { getSongArtwork } from "../../data/catalog";
 import { displayTrackTitle } from "../../utils/displayTrackTitle";
 import type { Release, Song } from "../../types";
 
@@ -31,7 +32,7 @@ export default function FullscreenQueuePanel({
                 className={`fs-queue-panel__item ${track.id === currentSongId ? "fs-queue-panel__item--active" : ""}`}
                 onClick={() => onSelect(track)}
               >
-                <img src={track.artwork} alt="" className="fs-queue-panel__art" />
+                <img src={getSongArtwork(track, release)} alt="" className="fs-queue-panel__art" />
                 <span className="fs-queue-panel__name">{displayTrackTitle(track.title)}</span>
               </button>
             </li>
