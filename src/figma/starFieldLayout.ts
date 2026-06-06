@@ -10,6 +10,9 @@
 /** Reference frame the Figma composition was authored against. */
 export const STAR_FIELD_REFERENCE = { width: 1920, height: 1080 } as const;
 
+/** Small-star sprite tint (Figma home star yellow). */
+export const STAR_FIELD_TINT = "#FFDB4D";
+
 /** Stable seed — identical layout per (size, options) on every load. */
 const LAYOUT_SEED = 0x4e_4a_5f_33;
 

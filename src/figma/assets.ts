@@ -39,7 +39,8 @@ export const figmaAssets = {
   /** Home bubble currently exported as PNG in public/figma. */
   homePageBubble: "/figma/bubble.png",
   homePageFloor: "/figma/floor.svg",
-  homePageYoutubeButton: "/figma/youtube-button.svg",
+  homePageYoutubeButton: "/figma/youtube-button.png",
+  homePageTokkiHeart: "/figma/tokki-heart.png",
   homePageBackUp: "/figma/back-up.svg",
   homePageCircles: "/figma/circles.svg",
   homePageBigStars: "/figma/big-stars.svg",

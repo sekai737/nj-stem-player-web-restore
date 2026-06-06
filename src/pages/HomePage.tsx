@@ -1,124 +1,109 @@
 import { useMemo, useRef, useState } from "react";
-import { Link } from "react-router-dom";
-import { catalog, getReleaseCoverArt, getReleases, getSelectableSongs } from "../data/catalog";
+import { catalog, getReleases } from "../data/catalog";
 import { figmaAssets } from "../figma/assets";
-import { useViewportSize } from "../hooks/useViewportSize";
-import { useWebFontsReady } from "../hooks/useWebFontsReady";
 import { buildBackgroundDecorLayout } from "../figma/backgroundDecorLayout";
+import { STAR_FIELD_REFERENCE } from "../figma/starFieldLayout";
+import { useHomePageScale } from "../hooks/useHomePageScale";
+import { useWebFontsReady } from "../hooks/useWebFontsReady";
 import PlayerBackgroundDecor from "../components/stem-player/PlayerBackgroundDecor";
 import StarField from "../components/StarField";
+import HomePageCardCarousel, {
+  type HomePageCardCarouselHandle,
+} from "../components/home/HomePageCardCarousel";
 import "../styles/background-decor.css";
 import "./home-page.css";
 
+/** Fixed reference layout — avoids star/decor rebuild jitter on zoom/resize. */
+const BACKGROUND_REFERENCE = { width: 1920, height: 1080 } as const;
+
 export default function HomePage() {
+  const rootRef = useRef<HTMLDivElement>(null);
   const releases = getReleases();
-  const { width, height } = useViewportSize();
-  const listRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HomePageCardCarouselHandle>(null);
   const [isScrolled, setIsScrolled] = useState(false);
-  const scale = useMemo(() => Math.min(width / 1920, height / 1080), [width, height]);
+  useHomePageScale(rootRef);
   const fontsReady = useWebFontsReady();
   const decorPlacements = useMemo(
-    () => buildBackgroundDecorLayout(width, height),
-    [width, height],
+    () => buildBackgroundDecorLayout(BACKGROUND_REFERENCE.width, BACKGROUND_REFERENCE.height),
+    [],
   );
 
   return (
-    <div className="home-page-root">
+    <div ref={rootRef} className="home-page-root">
       {fontsReady ? <PlayerBackgroundDecor placements={decorPlacements} /> : null}
-      <StarField width={width} height={height} />
-      <div
-        className="home-page-frame"
-        style={{ transform: `translate(-50%, -50%) scale(${scale})` }}
-      >
+      <StarField
+        width={STAR_FIELD_REFERENCE.width}
+        height={STAR_FIELD_REFERENCE.height}
+      />
+      <div className="home-page-frame">
         <img
           src={figmaAssets.homePageCircles}
           alt=""
-          className="pointer-events-none absolute left-[105px] top-[89px] h-[719px] w-[1724px]"
+          className="home-page-decor-circles pointer-events-none"
         />
         <img
           src={figmaAssets.homePageBigStars}
           alt=""
-          className="pointer-events-none absolute left-[135px] top-[77px] h-[821px] w-[1657px]"
+          className="home-page-decor-big-stars pointer-events-none"
         />
-        <div className="absolute left-[1028px] top-[246px] z-10 h-[107px] w-[305px]">
-          <img src={figmaAssets.homePageBubble} alt="" className="absolute inset-0 h-full w-full" />
-          <p className="type-swiss721-condensed-italic absolute inset-0 flex items-center justify-center text-[48px] leading-none tracking-[-1.2px] text-content-primary">
-            Stem Player
-          </p>
+
+        <div className="home-page-main">
+          <div className="home-page-hero">
+            <div className="home-page-title-group">
+              <div className="home-page-title-group__bubble">
+                <img src={figmaAssets.homePageBubble} alt="" />
+                <p className="type-swiss721-condensed-italic home-page-title-group__bubble-text">
+                  Stem Player
+                </p>
+              </div>
+              <div className="home-page-title-group__logo">
+                <img src={figmaAssets.homePageTitle} alt="NewJeans" />
+              </div>
+            </div>
+
+            <HomePageCardCarousel
+              ref={listRef}
+              releases={releases}
+              onScrolledChange={setIsScrolled}
+            />
+          </div>
         </div>
+      </div>
 
-        <img
-          src={figmaAssets.homePageTitle}
-          alt="NewJeans"
-          className="pointer-events-none absolute left-[639px] top-[112px] z-10 h-[162px] w-[642px]"
-        />
-
+      <div className="home-page-bottom home-page-bottom--floor">
         <img
           src={figmaAssets.homePageFloor}
           alt=""
-          className="pointer-events-none absolute left-[213px] top-[840px] z-0 h-[242px] w-[1494px]"
+          className="home-page-bottom-floor pointer-events-none"
         />
+      </div>
 
-        <div
-          ref={listRef}
-          className="home-page-card-list"
-          onScroll={(e) => setIsScrolled(e.currentTarget.scrollTop > 8)}
-        >
-          {releases.map((release) => {
-            const songCount = getSelectableSongs(release).length;
-            return (
-              <article key={release.id} className="home-page-card">
-                <div className="home-page-card-metadata">
-                  <img
-                    src={getReleaseCoverArt(release)}
-                    alt=""
-                    className="h-[88px] w-[88px] shrink-0 rounded-[6px] object-cover"
-                  />
-                  <div className="home-page-card-text">
-                    <h2 className="home-page-card-title truncate">{release.title}</h2>
-                    <p className="home-page-card-meta truncate">
-                      {release.type} &bull; {release.year} &bull; {songCount} song
-                      {songCount === 1 ? "" : "s"}
-                    </p>
-                  </div>
-                </div>
-                <Link
-                  to={`/release/${release.id}`}
-                  className="home-page-card-play"
-                  aria-label={`Open ${release.title}`}
-                >
-                  <img src={figmaAssets.homePagePlay} alt="" className="h-[44px] w-[44px] max-w-none" />
-                </Link>
-              </article>
-            );
-          })}
-        </div>
+      <div className="home-page-bottom home-page-bottom--ui">
+        <div className="home-page-footer">
+          <button
+            type="button"
+            aria-label="Back to top"
+            onClick={() => listRef.current?.scrollToTop()}
+            style={{ transition: "opacity 180ms ease-out, transform 300ms ease-out" }}
+            className={`home-page-back-up ${
+              isScrolled ? "home-page-back-up--visible" : "home-page-back-up--hidden"
+            }`}
+          >
+            <img src={figmaAssets.homePageBackUp} alt="" />
+          </button>
 
-        <button
-          type="button"
-          aria-label="Back to top"
-          onClick={() => listRef.current?.scrollTo({ top: 0, behavior: "smooth" })}
-          style={{ transition: "opacity 180ms ease-out, transform 300ms ease-out" }}
-          className={`absolute left-1/2 top-[904px] z-10 h-[56px] w-[56px] -translate-x-1/2 ${
-            isScrolled
-              ? "translate-y-0 opacity-100"
-              : "pointer-events-none translate-y-4 opacity-0"
-          }`}
-        >
-          <img src={figmaAssets.homePageBackUp} alt="" className="h-full w-full" />
-        </button>
-
-        <div className="absolute left-[60px] top-[992px] z-10 h-[54px] w-[1800px]">
-          <div className="absolute left-1/2 top-0 flex w-[147px] -translate-x-1/2 flex-col items-center gap-[8px]">
-            <p className="type-swiss721-regular whitespace-nowrap text-[16px] tracking-[-0.8px] text-[#151715]">
-              Made by @sekai737
-            </p>
-            <div className="flex items-center gap-[2px]">
-              <img src={figmaAssets.homePageHeartMinji} alt="" className="h-[27px] w-[27px]" />
-              <img src={figmaAssets.homePageHeartHanni} alt="" className="h-[27px] w-[27px]" />
-              <img src={figmaAssets.homePageHeartDanielle} alt="" className="h-[27px] w-[27px]" />
-              <img src={figmaAssets.homePageHeartHaerin} alt="" className="h-[27px] w-[27px]" />
-              <img src={figmaAssets.homePageHeartHyein} alt="" className="h-[27px] w-[27px]" />
+          <div className="home-page-footer-row">
+            <div className="home-page-footer-credits">
+              <p className="type-swiss721-regular home-page-footer-credits__text">
+                Made by @sekai737
+              </p>
+              <div className="home-page-hearts">
+                <img src={figmaAssets.homePageHeartMinji} alt="" className="home-page-heart" />
+                <img src={figmaAssets.homePageHeartDanielle} alt="" className="home-page-heart" />
+                <img src={figmaAssets.homePageHeartHyein} alt="" className="home-page-heart" />
+                <img src={figmaAssets.homePageHeartHanni} alt="" className="home-page-heart" />
+                <img src={figmaAssets.homePageHeartHaerin} alt="" className="home-page-heart" />
+              </div>
             </div>
           </div>
         </div>
@@ -129,18 +114,19 @@ export default function HomePage() {
         target="_blank"
         rel="noreferrer"
         aria-label="Creator on YouTube"
-        className="absolute bottom-[40px] left-[40px] z-20 inline-flex h-[40px] w-[40px] items-center justify-center"
+        className="home-page-viewport-youtube"
       >
-        <img src={figmaAssets.homePageYoutubeButton} alt="" className="h-[40px] w-[40px]" />
+        <img src={figmaAssets.homePageYoutubeButton} alt="" />
       </a>
 
       <a
         href={catalog.creator.litLink}
         target="_blank"
         rel="noreferrer"
-        className="type-swiss721-regular absolute bottom-[44px] right-[40px] z-20 whitespace-nowrap text-[16px] tracking-[-0.8px] text-[#151715]"
+        aria-label="Creator lit.link"
+        className="home-page-viewport-litlink"
       >
-        {catalog.creator.litLink}
+        <img src={figmaAssets.homePageTokkiHeart} alt="" />
       </a>
     </div>
   );
