@@ -64,6 +64,26 @@ export const METER_SETTINGS = {
  */
 export const METER_PLOT_CORNER_RADIUS_PX = 13;
 
+/** Canvas plot titles — short subtitles under each meter name. */
+export const METER_PLOT_LABELS = {
+  spectrogram: {
+    title: "Spectrogram",
+    subtitle: (spanSeconds: number) => `Log frequency · ${spanSeconds}s`,
+  },
+  spectrum: {
+    title: "Spectrum",
+    subtitle: `Mel scale · ${METER_SETTINGS.spectrumTiltDbPerOct} dB/oct`,
+  },
+  stereometer: {
+    title: "Stereometer",
+    subtitle: "Scaled · Unipolar",
+  },
+  waveform: {
+    title: "Waveform",
+    subtitle: "Mid / side",
+  },
+} as const;
+
 /** Visible dB window for spectrum (center ± range/2). */
 export const SPECTRUM_DB_MIN =
   METER_SETTINGS.spectrumCenterDb - METER_SETTINGS.spectrumRangeDb / 2;

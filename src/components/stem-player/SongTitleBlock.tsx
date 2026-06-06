@@ -1,5 +1,6 @@
 import { figmaAssets } from "../../figma/assets";
 import { FIGMA } from "../../figma/layout";
+import { trackTitleSuffixes } from "../../utils/displayTrackTitle";
 import { formatTrackMetadata } from "../../utils/formatTrackMetadata";
 import SelectableCopyRegion from "../SelectableCopyRegion";
 import CoolTitleDisplay from "./CoolTitleDisplay";
@@ -26,7 +27,7 @@ export default function SongTitleBlock({
   bpm,
 }: SongTitleBlockProps) {
   const stack = FIGMA.titleRow.titleStack;
-  const isInstrumental = songId.endsWith("-instrumental");
+  const titleSuffixes = trackTitleSuffixes(title);
 
   return (
     <div
@@ -68,7 +69,7 @@ export default function SongTitleBlock({
       >
         <div className="title-metadata-block">
           <p className="title-track-metadata text-content-primary" data-copy-block>
-            {formatTrackMetadata(durationSec, keyLabel, bpm, { instrumental: isInstrumental })}
+            {formatTrackMetadata(durationSec, keyLabel, bpm, { titleSuffixes })}
           </p>
         </div>
       </SelectableCopyRegion>

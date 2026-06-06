@@ -1,27 +1,28 @@
 interface CreatorLinksProps {
-  twitter: string;
-  linktree: string;
+  youtube: string;
+  litLink: string;
 }
 
-export default function CreatorLinks({ twitter, linktree }: CreatorLinksProps) {
+export default function CreatorLinks({ youtube, litLink }: CreatorLinksProps) {
   return (
     <div className="flex items-center gap-3 text-sm text-nj-muted">
       <a
-        href={twitter}
+        href={youtube}
         target="_blank"
         rel="noreferrer"
         className="rounded-full border border-black/10 bg-white/70 px-3 py-1.5 transition hover:border-nj-pink/40 hover:text-nj-pink"
-        aria-label="Creator on X"
+        aria-label="Creator on YouTube"
       >
-        𝕏
+        YouTube
       </a>
       <a
-        href={linktree}
+        href={litLink}
         target="_blank"
         rel="noreferrer"
         className="rounded-full border border-black/10 bg-white/70 px-3 py-1.5 transition hover:border-nj-pink/40 hover:text-nj-pink"
+        aria-label="My Links"
       >
-        Linktree
+        My Links
       </a>
     </div>
   );

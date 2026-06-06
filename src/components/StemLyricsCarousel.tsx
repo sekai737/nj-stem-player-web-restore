@@ -11,6 +11,7 @@ import {
 } from "react";
 import { LYRICS_FIGMA } from "../figma/lyricsLayout";
 import type { LyricLine } from "../types";
+import { usePlayerStore } from "../store/playerStore";
 import { isPauseLine } from "../utils/lyricsDisplay";
 import LyricIdlingIndicator from "./lyrics/LyricIdlingIndicator";
 import LyricText from "./LyricText";
@@ -83,10 +84,27 @@ export default function StemLyricsCarousel({
   );
   const [exitIndex, setExitIndex] = useState<number | null>(null);
 
+  const transportSeq = usePlayerStore((s) => s.transportSeq);
+  const lastTransportSeqRef = useRef(transportSeq);
   const lastIndexRef = useRef(activeIndex);
   const mountedRef = useRef(false);
   const trackRef = useRef<HTMLDivElement>(null);
   const pushPendingRef = useRef(false);
+
+  useEffect(() => {
+    if (lastTransportSeqRef.current === transportSeq) return;
+    lastTransportSeqRef.current = transportSeq;
+    mountedRef.current = false;
+    lastIndexRef.current = -1;
+    pushPendingRef.current = false;
+    setPhase("idle");
+    setInstant(false);
+    setTrackY(0);
+    setActive(false);
+    setExitIndex(null);
+    setMainIndex(activeIndex >= 0 ? activeIndex : 0);
+    setPreviewIndex(previewIndexFor(lines, activeIndex, next));
+  }, [transportSeq, activeIndex, lines, next]);
 
   const stageStyle = {
     "--stem-lyric-main-h": `${LYRICS_FIGMA.lyrics.mainLineHeight}px`,

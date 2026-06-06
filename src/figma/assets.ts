@@ -1,6 +1,7 @@
 /** Figma-exported assets (public/figma). */
 export const figmaAssets = {
   home: "/figma/home.svg",
+  stemPageBack: "/figma/stem-page-back.svg",
   settings: "/figma/settings.svg",
   fullscreen: "/figma/fullscreen.svg",
   backButton: "/figma/back-button.svg",

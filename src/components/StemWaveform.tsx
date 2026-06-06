@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type MouseEvent } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent } from "react";
 import WaveSurfer from "wavesurfer.js";
 import {
   disableWaveSurferProgress,
@@ -39,9 +39,15 @@ export default function StemWaveform({
   const stemDuration = usePlayerStore((s) => s.stemDurations[stemId]);
   const peaks = usePlayerStore((s) => s.stemPeaks[stemId]);
   const stemsLoading = usePlayerStore((s) => s.stemsLoading);
+  const isPlaying = usePlayerStore((s) => s.isPlaying);
+  const transportSeq = usePlayerStore((s) => s.transportSeq);
   const [isLoading, setIsLoading] = useState(true);
 
   const transportDuration = storeDuration > 0 ? storeDuration : fallbackDurationSec;
+
+  useLayoutEffect(() => {
+    setPlayheadPosition(playheadRef.current, outerRef.current, 0);
+  }, [transportSeq]);
 
   useEffect(() => {
     if (!waveformRef.current || stemsLoading) return;
@@ -108,6 +114,7 @@ export default function StemWaveform({
 
   /**
    * GGD updateTimeline() — direct DOM playhead position, snapped to whole pixels.
+   * Only animates while audio is playing; song changes reset via transportSeq.
    */
   useEffect(() => {
     if (!transportDuration) return;
@@ -120,10 +127,13 @@ export default function StemWaveform({
       setPlayheadPosition(playheadRef.current, outerRef.current, time / transportDuration);
     };
 
-    const tick = () => {
-      if (!active) return;
+    const schedule = () => {
+      if (!active || !usePlayerStore.getState().isPlaying) {
+        frame = 0;
+        return;
+      }
       updatePlayhead();
-      frame = requestAnimationFrame(tick);
+      frame = requestAnimationFrame(schedule);
     };
 
     const observer =
@@ -133,13 +143,35 @@ export default function StemWaveform({
       });
     if (observer && outerRef.current) observer.observe(outerRef.current);
 
-    frame = requestAnimationFrame(tick);
+    updatePlayhead();
+    if (isPlaying) {
+      frame = requestAnimationFrame(schedule);
+    }
+
+    const unsubscribe = usePlayerStore.subscribe((state, prev) => {
+      if (!active) return;
+      if (
+        state.currentTime !== prev.currentTime ||
+        state.isPlaying !== prev.isPlaying ||
+        state.transportSeq !== prev.transportSeq
+      ) {
+        updatePlayhead();
+        if (state.isPlaying && frame === 0) {
+          frame = requestAnimationFrame(schedule);
+        } else if (!state.isPlaying && frame !== 0) {
+          cancelAnimationFrame(frame);
+          frame = 0;
+        }
+      }
+    });
+
     return () => {
       active = false;
       cancelAnimationFrame(frame);
+      unsubscribe();
       observer?.disconnect();
     };
-  }, [transportDuration]);
+  }, [transportDuration, isPlaying, transportSeq]);
 
   const seekFromClientX = (clientX: number) => {
     if (disabled || !transportDuration || !outerRef.current) return;

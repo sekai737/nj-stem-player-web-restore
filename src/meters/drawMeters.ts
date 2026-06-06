@@ -15,7 +15,7 @@ import {
   fillRoundedMeterPlot,
   resolveMeterPlotRadius,
 } from "./meterPlotClip";
-import { METER_SETTINGS } from "./meterSettings";
+import { METER_PLOT_LABELS, METER_SETTINGS } from "./meterSettings";
 import type { MeterVisualTokens } from "./meterVisualThemes";
 
 let spectrogramScratchCanvas: HTMLCanvasElement | null = null;
@@ -189,18 +189,14 @@ export function drawSpectrogram(
     w,
     h,
     theme,
-    "Spectrogram",
-    `Horizontal · ${spanSeconds}s`,
+    METER_PLOT_LABELS.spectrogram.title,
+    METER_PLOT_LABELS.spectrogram.subtitle(spanSeconds),
     cornerRadius,
   );
 
   const plotRadius = resolveMeterPlotRadius(cornerRadius);
 
   if (!snap.hasSignal && !snap.spectrogramWrapped) {
-    ctx.fillStyle = theme.textMuted;
-    ctx.font = `normal 11px ${theme.fontRegular}`;
-    ctx.textAlign = "center";
-    ctx.fillText("Play audio to fill spectrogram", w / 2, h / 2);
     return;
   }
 
@@ -316,8 +312,8 @@ export function drawSpectrum(
     w,
     h,
     theme,
-    "Spectrum",
-    `Mel · ${METER_SETTINGS.spectrumTiltDbPerOct} dB · M/S`,
+    METER_PLOT_LABELS.spectrum.title,
+    METER_PLOT_LABELS.spectrum.subtitle,
     cornerRadius,
   );
 
@@ -409,8 +405,8 @@ export function drawStereo(
     w,
     h,
     theme,
-    "Stereometer",
-    "Vectorscope",
+    METER_PLOT_LABELS.stereometer.title,
+    METER_PLOT_LABELS.stereometer.subtitle,
     cornerRadius,
   );
 
@@ -676,17 +672,13 @@ export function drawWaveform(
     w,
     h,
     theme,
-    "Waveform",
-    "Mid / Side",
+    METER_PLOT_LABELS.waveform.title,
+    METER_PLOT_LABELS.waveform.subtitle,
     cornerRadius,
   );
 
   const filled = snap.waveformFilled;
   if (filled < 2 && snap.peakLevel < 0.008) {
-    ctx.fillStyle = theme.textMuted;
-    ctx.font = `normal 11px ${theme.fontRegular}`;
-    ctx.textAlign = "center";
-    ctx.fillText("Waveform builds while playing", w / 2, h / 2);
     return;
   }
 

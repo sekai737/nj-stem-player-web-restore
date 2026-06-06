@@ -33,13 +33,26 @@ export default function PlayerHeader({
       className="absolute left-0 right-0 top-0 z-20 flex w-full shrink-0 items-center justify-between"
       style={{ height: FIGMA.header.height }}
     >
-      <FigmaIconButton label="Home" src={figmaAssets.home} to="/" />
+      <div
+        className="flex shrink-0 items-center"
+        style={{ gap: FIGMA.header.iconGap }}
+      >
+        <FigmaIconButton
+          label="Back to song selection"
+          src={figmaAssets.stemPageBack}
+          to={`/release/${releaseId}`}
+        />
+        <FigmaIconButton label="Home" src={figmaAssets.home} to="/" />
+      </div>
 
       <h1 className="header-title absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap text-content-primary">
         Stem Player
       </h1>
 
-      <div className="relative flex shrink-0 items-center gap-2">
+      <div
+        className="relative flex shrink-0 items-center"
+        style={{ gap: FIGMA.header.iconGap }}
+      >
         <FigmaIconButton
           label="Full screen"
           src={figmaAssets.fullscreen}
@@ -56,7 +69,6 @@ export default function PlayerHeader({
           />
         </span>
         <SongNavMenu
-          releaseId={releaseId}
           songTitle={songTitle}
           stems={stems}
           stemsZipFiles={stemsZipFiles}

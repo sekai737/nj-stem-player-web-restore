@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
 import { extractPeaks } from "../audio/extractPeaks";
 import { publicAssetUrl } from "../utils/publicAssetUrl";
-import { getSongMasterSrc } from "../utils/songMaster";
+import { getSongMasterSrc, songHasMasterMix } from "../utils/songMaster";
 import { attachMeterBus, detachMeterBus } from "../audio/meterBus";
 import { resetMeterStore } from "../meters/meterStore";
 import type { Song, StemId } from "../types";
@@ -55,7 +55,7 @@ function usesStemPlayback(): boolean {
   return !fullscreenOpen || fullscreenUseStems;
 }
 
-export function useStemEngine(song: Song | undefined) {
+export function useStemEngine(song: Song | undefined, releaseId?: string) {
   const audioRef = useRef<{
     ctx: AudioContext;
     master: GainNode;
@@ -70,8 +70,12 @@ export function useStemEngine(song: Song | undefined) {
   const loadStateRef = useRef<{ songLoadKey: string; stemPlayback: boolean } | null>(
     null,
   );
+  /** Blocks preserve-playback resume on stem/master reload right after a song change. */
+  const suppressPreserveResumeRef = useRef(false);
+  /** Invalidates in-flight requestAnimationFrame time loops after halt/seek/song change. */
+  const playbackSessionRef = useRef(0);
   const songLoadKey = song
-    ? `${song.id}:${song.stems.map((stem) => stem.src).join("|")}:${song.masterSrc ?? ""}`
+    ? `${releaseId ?? ""}:${song.id}:${song.stems.map((stem) => stem.src).join("|")}:${song.masterSrc ?? ""}`
     : "";
 
   const channels = usePlayerStore((s) => s.channels);
@@ -80,12 +84,14 @@ export function useStemEngine(song: Song | undefined) {
   /** Stems vs master — only changes when mode actually switches, not on every fullscreen toggle. */
   const stemPlayback = !fullscreenOpen || fullscreenUseStems;
   const setCurrentTime = usePlayerStore((s) => s.setCurrentTime);
+  const advanceCurrentTime = usePlayerStore((s) => s.advanceCurrentTime);
   const setDuration = usePlayerStore((s) => s.setDuration);
   const setPlaying = usePlayerStore((s) => s.setPlaying);
   const setStemsLoading = usePlayerStore((s) => s.setStemsLoading);
   const setStemsLoadProgress = usePlayerStore((s) => s.setStemsLoadProgress);
   const setStemsLoadError = usePlayerStore((s) => s.setStemsLoadError);
   const masterVolume = usePlayerStore((s) => s.masterVolume);
+  const transportSeq = usePlayerStore((s) => s.transportSeq);
 
   const applyGains = useCallback(() => {
     const engine = audioRef.current;
@@ -103,7 +109,7 @@ export function useStemEngine(song: Song | undefined) {
       const node = stems[id];
       if (!node) return;
       const level = stemAudibility(mixer, id);
-      node.gain.gain.setTargetAtTime(level, now, 0.02);
+      node.gain.gain.setTargetAtTime(level, now, 0.05);
     });
   }, []);
 
@@ -174,6 +180,46 @@ export function useStemEngine(song: Song | undefined) {
     }
   }, []);
 
+  const hasActiveSources = useCallback(() => {
+    const engine = audioRef.current;
+    if (!engine) return false;
+    if (engine.mix?.source) return true;
+    return (Object.values(engine.stems) as StemNodes[]).some((stem) => stem.source !== null);
+  }, []);
+
+  const invalidatePlaybackSession = useCallback(() => {
+    playbackSessionRef.current += 1;
+  }, []);
+
+  const stopPlayback = useCallback(
+    (resetTime = false) => {
+      invalidatePlaybackSession();
+      const engine = audioRef.current;
+      if (engine) {
+        if (resetTime) {
+          engine.offset = 0;
+        }
+        stopSources();
+        cancelAnimationFrame(engine.raf);
+        engine.raf = 0;
+      }
+      if (resetTime) {
+        setCurrentTime(0);
+      }
+      setPlaying(false);
+    },
+    [invalidatePlaybackSession, stopSources, setPlaying, setCurrentTime],
+  );
+
+  useLayoutEffect(() => {
+    invalidatePlaybackSession();
+    const engine = audioRef.current;
+    if (!engine) return;
+    stopSources();
+    cancelAnimationFrame(engine.raf);
+    engine.raf = 0;
+  }, [transportSeq, invalidatePlaybackSession, stopSources]);
+
   const startSources = useCallback((engine: NonNullable<typeof audioRef.current>) => {
     const { ctx } = engine;
     engine.startTime = ctx.currentTime;
@@ -196,21 +242,55 @@ export function useStemEngine(song: Song | undefined) {
     });
   }, []);
 
-  const tick = useCallback(() => {
-    const engine = audioRef.current;
-    if (!engine || !song) return;
-    const t = engine.offset + (engine.ctx.currentTime - engine.startTime);
-    const clamped = Math.min(t, song.durationSec);
-    setCurrentTime(clamped);
-    if (t >= song.durationSec) {
-      setPlaying(false);
-      stopSources();
-      engine.offset = 0;
-      setCurrentTime(0);
-      return;
-    }
-    engine.raf = requestAnimationFrame(tick);
-  }, [song, setCurrentTime, setPlaying, stopSources]);
+  const startTimeLoop = useCallback(
+    (engine: NonNullable<typeof audioRef.current>) => {
+      const session = playbackSessionRef.current;
+      const transportSeq = usePlayerStore.getState().transportSeq;
+      const run = () => {
+        if (playbackSessionRef.current !== session) {
+          engine.raf = 0;
+          return;
+        }
+        if (usePlayerStore.getState().transportSeq !== transportSeq) {
+          engine.raf = 0;
+          return;
+        }
+        if (!song) {
+          engine.raf = 0;
+          return;
+        }
+        if (!usePlayerStore.getState().isPlaying || !hasActiveSources()) {
+          engine.raf = 0;
+          return;
+        }
+        const t = engine.offset + (engine.ctx.currentTime - engine.startTime);
+        const clamped = Math.min(t, song.durationSec);
+        advanceCurrentTime(clamped, transportSeq);
+        if (t >= song.durationSec) {
+          invalidatePlaybackSession();
+          setPlaying(false);
+          stopSources();
+          engine.offset = 0;
+          setCurrentTime(0);
+          engine.raf = 0;
+          return;
+        }
+        engine.raf = requestAnimationFrame(run);
+      };
+
+      cancelAnimationFrame(engine.raf);
+      engine.raf = requestAnimationFrame(run);
+    },
+    [
+      song,
+      advanceCurrentTime,
+      setCurrentTime,
+      setPlaying,
+      stopSources,
+      hasActiveSources,
+      invalidatePlaybackSession,
+    ],
+  );
 
   const loadSong = useCallback(async (preservePlayback = false) => {
     if (!song) return;
@@ -220,9 +300,17 @@ export function useStemEngine(song: Song | undefined) {
     const savedOffset = preservePlayback
       ? Math.max(0, engine.offset || usePlayerStore.getState().currentTime)
       : 0;
-    const savedPlaying = preservePlayback && usePlayerStore.getState().isPlaying;
+    const loadTransportSeq = usePlayerStore.getState().transportSeq;
+    const savedPlaying =
+      preservePlayback &&
+      !suppressPreserveResumeRef.current &&
+      usePlayerStore.getState().isPlaying;
 
-    stopSources();
+    if (!preservePlayback) {
+      stopPlayback(true);
+    } else {
+      stopSources();
+    }
     disconnectStemNodes(engine.stems);
     disconnectMix(engine.mix);
     engine.stems = {};
@@ -342,16 +430,20 @@ export function useStemEngine(song: Song | undefined) {
         setStemsLoading(false);
         setStemsLoadProgress(1);
 
-        if (savedPlaying) {
+        if (
+          savedPlaying &&
+          loadTransportSeq === usePlayerStore.getState().transportSeq
+        ) {
           const hasAudio =
             engine.mix !== null || Object.keys(engine.stems).length > 0;
           if (hasAudio) {
             await engine.ctx.resume();
             startSources(engine);
             setPlaying(true);
-            cancelAnimationFrame(engine.raf);
-            engine.raf = requestAnimationFrame(tick);
+            startTimeLoop(engine);
           }
+        } else if (!preservePlayback) {
+          suppressPreserveResumeRef.current = false;
         }
       }
     }
@@ -359,6 +451,7 @@ export function useStemEngine(song: Song | undefined) {
     songLoadKey,
     ensureContext,
     stopSources,
+    stopPlayback,
     setCurrentTime,
     setPlaying,
     setDuration,
@@ -367,31 +460,56 @@ export function useStemEngine(song: Song | undefined) {
     setStemsLoadError,
     applyGains,
     startSources,
-    tick,
+    startTimeLoop,
   ]);
 
   useEffect(() => {
     const prev = loadStateRef.current;
     const songChanged = prev === null || prev.songLoadKey !== songLoadKey;
+
+    if (songChanged) {
+      suppressPreserveResumeRef.current = true;
+      if (song && !songHasMasterMix(song)) {
+        usePlayerStore.getState().setFullscreenUseStems(true);
+      }
+      stopPlayback(true);
+    }
+
+    const currentStemPlayback =
+      !usePlayerStore.getState().fullscreenOpen ||
+      usePlayerStore.getState().fullscreenUseStems;
     const modeChanged =
       prev !== null &&
       prev.songLoadKey === songLoadKey &&
-      prev.stemPlayback !== stemPlayback;
+      prev.stemPlayback !== currentStemPlayback;
 
     if (!songChanged && !modeChanged) {
       return undefined;
     }
 
-    const preservePlayback = modeChanged && !songChanged;
-    loadStateRef.current = { songLoadKey, stemPlayback };
+    const preservePlayback =
+      modeChanged && !songChanged && !suppressPreserveResumeRef.current;
+    loadStateRef.current = { songLoadKey, stemPlayback: currentStemPlayback };
 
     void loadSong(preservePlayback);
 
     return () => {
+      invalidatePlaybackSession();
+      const engine = audioRef.current;
+      if (!engine) return;
       stopSources();
-      if (audioRef.current) cancelAnimationFrame(audioRef.current.raf);
+      cancelAnimationFrame(engine.raf);
+      engine.raf = 0;
     };
-  }, [songLoadKey, stemPlayback, loadSong, stopSources]);
+  }, [
+    songLoadKey,
+    stemPlayback,
+    loadSong,
+    stopSources,
+    stopPlayback,
+    invalidatePlaybackSession,
+    song,
+  ]);
 
   const play = useCallback(async () => {
     if (!song || usePlayerStore.getState().stemsLoading) return;
@@ -402,8 +520,7 @@ export function useStemEngine(song: Song | undefined) {
       stopSources();
       startSources(engine);
       setPlaying(true);
-      cancelAnimationFrame(engine.raf);
-      engine.raf = requestAnimationFrame(tick);
+      startTimeLoop(engine);
       return;
     }
 
@@ -414,18 +531,19 @@ export function useStemEngine(song: Song | undefined) {
     stopSources();
     startSources(engine);
     setPlaying(true);
-    cancelAnimationFrame(engine.raf);
-    engine.raf = requestAnimationFrame(tick);
-  }, [song, ensureContext, stopSources, setPlaying, tick, startSources]);
+    startTimeLoop(engine);
+  }, [song, ensureContext, stopSources, setPlaying, startTimeLoop, startSources]);
 
   const pause = useCallback(() => {
     const engine = audioRef.current;
     if (!engine) return;
+    invalidatePlaybackSession();
     engine.offset += engine.ctx.currentTime - engine.startTime;
     stopSources();
     setPlaying(false);
     cancelAnimationFrame(engine.raf);
-  }, [stopSources, setPlaying]);
+    engine.raf = 0;
+  }, [invalidatePlaybackSession, stopSources, setPlaying]);
 
   const seek = useCallback(
     (time: number) => {
@@ -443,9 +561,9 @@ export function useStemEngine(song: Song | undefined) {
   );
 
   const togglePlay = useCallback(async () => {
-    if (usePlayerStore.getState().isPlaying) pause();
+    if (usePlayerStore.getState().isPlaying || hasActiveSources()) pause();
     else await play();
-  }, [play, pause]);
+  }, [play, pause, hasActiveSources]);
 
   return { play, pause, togglePlay, seek, reload: loadSong };
 }

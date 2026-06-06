@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import Layout from "../components/Layout";
 import LyricPanel from "../components/LyricPanel";
@@ -39,16 +39,10 @@ export default function StemPlayerPage() {
   const duration = usePlayerStore((s) => s.duration);
   const stemsLoading = usePlayerStore((s) => s.stemsLoading);
   const { fullscreenOpen, setFullscreenOpen } = usePlayerFullscreen(Boolean(song));
-  const { seek, togglePlay } = useStemEngine(song);
-  useKeyboardPlayPause(() => void togglePlay(), !stemsLoading && Boolean(song));
-  useMeterAnalysis();
-  useAudioAnalysis(releaseId, songId);
 
-
-  useEffect(() => {
+  useLayoutEffect(() => {
+    usePlayerStore.getState().resetTransportForSong();
     usePlayerStore.getState().resetChannels();
-    usePlayerStore.getState().setPlaying(false);
-    usePlayerStore.getState().setCurrentTime(0);
     usePlayerStore.getState().setStemsLoadError(null);
     usePlayerStore.getState().setMenuOpen(false);
     const nextSong = releaseId && songId ? getSong(releaseId, songId) : undefined;
@@ -56,6 +50,11 @@ export default function StemPlayerPage() {
       usePlayerStore.getState().setFullscreenUseStems(true);
     }
   }, [releaseId, songId]);
+
+  const { seek, togglePlay } = useStemEngine(song, releaseId);
+  useKeyboardPlayPause(() => void togglePlay(), !stemsLoading && Boolean(song));
+  useMeterAnalysis();
+  useAudioAnalysis(releaseId, songId);
 
   useEffect(() => {
     return () => {
@@ -161,7 +160,12 @@ export default function StemPlayerPage() {
               keyLabel={song.key}
               bpm={song.bpm}
             />
-            <LyricPanel lrc={song.lrc} fontsReady={fontsReady} onSeek={seek} />
+            <LyricPanel
+              key={`${releaseId}-${songId}`}
+              lrc={song.lrc}
+              fontsReady={fontsReady}
+              onSeek={seek}
+            />
           </div>
 
           {/* Frame 11 — meters, stems, progress (26:212); top matches lyrics row */}
@@ -183,6 +187,7 @@ export default function StemPlayerPage() {
               <StemsLoadingOverlay songTitle={song.title} />
               <div className={stemsLoading ? "pointer-events-none select-none opacity-50" : ""}>
                 <StemContainer
+                  key={`${releaseId}-${songId}`}
                   stems={song.stems}
                   onSeek={seek}
                   disabled={stemsLoading}

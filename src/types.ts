@@ -85,8 +85,8 @@ export interface Release {
 
 export interface Catalog {
   creator: {
-    twitter: string;
-    linktree: string;
+    youtube: string;
+    litLink: string;
   };
   releases: Release[];
 }

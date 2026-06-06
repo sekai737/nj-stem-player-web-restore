@@ -113,6 +113,8 @@ function applyAdditiveSolo(
 interface PlayerStore {
   isPlaying: boolean;
   currentTime: number;
+  /** Bumped on song navigation so transport UI invalidates stale animation frames. */
+  transportSeq: number;
   duration: number;
   stemsLoading: boolean;
   stemsLoadProgress: number;
@@ -139,6 +141,9 @@ interface PlayerStore {
   masterVolumeBeforeMute: number;
   setPlaying: (playing: boolean) => void;
   setCurrentTime: (time: number) => void;
+  /** RAF tick updates — ignored when paused or after a song change bumps transportSeq. */
+  advanceCurrentTime: (time: number, transportSeq: number) => void;
+  resetTransportForSong: () => void;
   setDuration: (duration: number) => void;
   setStemsLoading: (loading: boolean) => void;
   setStemsLoadProgress: (progress: number) => void;
@@ -164,6 +169,7 @@ interface PlayerStore {
 export const usePlayerStore = create<PlayerStore>((set) => ({
   isPlaying: false,
   currentTime: 0,
+  transportSeq: 0,
   duration: 0,
   stemsLoading: false,
   stemsLoadProgress: 0,
@@ -186,6 +192,18 @@ export const usePlayerStore = create<PlayerStore>((set) => ({
   masterVolumeBeforeMute: DEFAULT_STEM_VOLUME,
   setPlaying: (isPlaying) => set({ isPlaying }),
   setCurrentTime: (currentTime) => set({ currentTime }),
+  advanceCurrentTime: (currentTime, transportSeq) =>
+    set((state) => {
+      if (!state.isPlaying) return state;
+      if (state.transportSeq !== transportSeq) return state;
+      return { currentTime };
+    }),
+  resetTransportForSong: () =>
+    set((state) => ({
+      transportSeq: state.transportSeq + 1,
+      isPlaying: false,
+      currentTime: 0,
+    })),
   setDuration: (duration) => set({ duration }),
   setStemsLoading: (stemsLoading) => set({ stemsLoading }),
   setStemsLoadProgress: (stemsLoadProgress) => set({ stemsLoadProgress }),
