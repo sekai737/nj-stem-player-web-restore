@@ -36,6 +36,15 @@
   font-display: swap;
 }
 
+/* Swiss 721 Condensed Italic — home page bubble title */
+@font-face {
+  font-family: Swiss721CondensedItalic;
+  src: url("/fonts/Swiss-721-Condensed-Italic.woff2") format("woff2");
+  font-weight: normal;
+  font-style: italic;
+  font-display: swap;
+}
+
 /* Hangul + hanja (Korean lyric runs) */
 @font-face {
   font-family: NotoSansKRRegular;

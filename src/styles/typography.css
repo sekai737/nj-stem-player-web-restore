@@ -16,6 +16,7 @@
   --font-swiss721-regular: Swiss721Regular, sans-serif;
   --font-swiss721-medium: Swiss721Medium, sans-serif;
   --font-swiss721-light: Swiss721Light, sans-serif;
+  --font-swiss721-condensed-italic: Swiss721CondensedItalic, sans-serif;
 }
 
 /* ── Figma text styles ───────────────────────────────────── */
@@ -52,6 +53,14 @@
   font-family: var(--font-swiss721-light);
   font-weight: normal;
   font-style: normal;
+  font-synthesis: none;
+  line-height: normal;
+}
+
+.type-swiss721-condensed-italic {
+  font-family: var(--font-swiss721-condensed-italic);
+  font-weight: normal;
+  font-style: italic;
   font-synthesis: none;
   line-height: normal;
 }
