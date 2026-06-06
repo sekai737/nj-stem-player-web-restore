@@ -57,7 +57,7 @@ const fonts = [
   "public/fonts/cool-font-simplified.woff2",
   "public/fonts/cool-font-goop.woff2",
   "public/fonts/cool-font-pixel.woff2",
-  "public/fonts/cool-font-pix-outlined.woff2",
+  "public/fonts/cool-font-ball.woff2",
   "public/fonts/cool-font-distorted.woff2",
   "public/fonts/cool-font-fire.woff2",
   "public/fonts/cool-font-fluid.woff2",

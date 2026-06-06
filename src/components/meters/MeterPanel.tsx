@@ -25,29 +25,53 @@ export default function MeterPanel({ className = "" }: MeterPanelProps) {
   const meterTokens = getMeterVisualTokens(visualThemeId);
 
   const drawSpec = useCallback(
-    (ctx: CanvasRenderingContext2D, w: number, h: number, dpr: number) => {
-      drawSpectrogram(ctx, w, h, getMeterSnapshot(), 3, meterTokens, dpr);
+    (
+      ctx: CanvasRenderingContext2D,
+      w: number,
+      h: number,
+      dpr: number,
+      cornerRadius: number,
+    ) => {
+      drawSpectrogram(ctx, w, h, getMeterSnapshot(), 3, meterTokens, dpr, cornerRadius);
     },
     [meterTokens],
   );
 
   const drawSpecLine = useCallback(
-    (ctx: CanvasRenderingContext2D, w: number, h: number) => {
-      drawSpectrum(ctx, w, h, getMeterSnapshot(), meterTokens);
+    (
+      ctx: CanvasRenderingContext2D,
+      w: number,
+      h: number,
+      _dpr: number,
+      cornerRadius: number,
+    ) => {
+      drawSpectrum(ctx, w, h, getMeterSnapshot(), meterTokens, cornerRadius);
     },
     [meterTokens],
   );
 
   const drawScope = useCallback(
-    (ctx: CanvasRenderingContext2D, w: number, h: number) => {
-      drawStereo(ctx, w, h, getMeterSnapshot(), meterTokens);
+    (
+      ctx: CanvasRenderingContext2D,
+      w: number,
+      h: number,
+      _dpr: number,
+      cornerRadius: number,
+    ) => {
+      drawStereo(ctx, w, h, getMeterSnapshot(), meterTokens, cornerRadius);
     },
     [meterTokens],
   );
 
   const drawWave = useCallback(
-    (ctx: CanvasRenderingContext2D, w: number, h: number) => {
-      drawWaveform(ctx, w, h, getMeterSnapshot(), meterTokens);
+    (
+      ctx: CanvasRenderingContext2D,
+      w: number,
+      h: number,
+      _dpr: number,
+      cornerRadius: number,
+    ) => {
+      drawWaveform(ctx, w, h, getMeterSnapshot(), meterTokens, cornerRadius);
     },
     [meterTokens],
   );

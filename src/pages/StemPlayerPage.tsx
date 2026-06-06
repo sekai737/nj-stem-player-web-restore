@@ -17,6 +17,7 @@ import { usePlayerFullscreen } from "../hooks/usePlayerFullscreen";
 import { FIGMA } from "../figma/layout";
 
 import { useMeterAnalysis } from "../hooks/useMeterAnalysis";
+import { useAudioAnalysis } from "../hooks/useAudioAnalysis";
 import { usePlayerScale } from "../hooks/usePlayerScale";
 import { useStemEngine } from "../hooks/useStemEngine";
 import { useKeyboardPlayPause } from "../hooks/useKeyboardPlayPause";
@@ -41,6 +42,7 @@ export default function StemPlayerPage() {
   const { seek, togglePlay } = useStemEngine(song);
   useKeyboardPlayPause(() => void togglePlay(), !stemsLoading && Boolean(song));
   useMeterAnalysis();
+  useAudioAnalysis(releaseId, songId);
 
 
   useEffect(() => {
@@ -159,7 +161,7 @@ export default function StemPlayerPage() {
               keyLabel={song.key}
               bpm={song.bpm}
             />
-            <LyricPanel lrc={song.lrc} fontsReady={fontsReady} />
+            <LyricPanel lrc={song.lrc} fontsReady={fontsReady} onSeek={seek} />
           </div>
 
           {/* Frame 11 — meters, stems, progress (26:212); top matches lyrics row */}

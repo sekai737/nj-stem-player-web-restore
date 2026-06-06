@@ -67,6 +67,9 @@ export function useStemEngine(song: Song | undefined) {
     raf: number;
   } | null>(null);
   const loadIdRef = useRef(0);
+  const loadStateRef = useRef<{ songLoadKey: string; stemPlayback: boolean } | null>(
+    null,
+  );
   const songLoadKey = song
     ? `${song.id}:${song.stems.map((stem) => stem.src).join("|")}:${song.masterSrc ?? ""}`
     : "";
@@ -74,6 +77,8 @@ export function useStemEngine(song: Song | undefined) {
   const channels = usePlayerStore((s) => s.channels);
   const fullscreenOpen = usePlayerStore((s) => s.fullscreenOpen);
   const fullscreenUseStems = usePlayerStore((s) => s.fullscreenUseStems);
+  /** Stems vs master — only changes when mode actually switches, not on every fullscreen toggle. */
+  const stemPlayback = !fullscreenOpen || fullscreenUseStems;
   const setCurrentTime = usePlayerStore((s) => s.setCurrentTime);
   const setDuration = usePlayerStore((s) => s.setDuration);
   const setPlaying = usePlayerStore((s) => s.setPlaying);
@@ -169,6 +174,28 @@ export function useStemEngine(song: Song | undefined) {
     }
   }, []);
 
+  const startSources = useCallback((engine: NonNullable<typeof audioRef.current>) => {
+    const { ctx } = engine;
+    engine.startTime = ctx.currentTime;
+
+    if (engine.mix) {
+      const source = ctx.createBufferSource();
+      source.buffer = engine.mix.buffer;
+      source.connect(engine.mix.gain);
+      source.start(0, engine.offset);
+      engine.mix.source = source;
+      return;
+    }
+
+    (Object.entries(engine.stems) as [StemId, StemNodes][]).forEach(([, stem]) => {
+      const source = ctx.createBufferSource();
+      source.buffer = stem.buffer;
+      source.connect(stem.gain);
+      source.start(0, engine.offset);
+      stem.source = source;
+    });
+  }, []);
+
   const tick = useCallback(() => {
     const engine = audioRef.current;
     if (!engine || !song) return;
@@ -185,21 +212,33 @@ export function useStemEngine(song: Song | undefined) {
     engine.raf = requestAnimationFrame(tick);
   }, [song, setCurrentTime, setPlaying, stopSources]);
 
-  const loadSong = useCallback(async () => {
+  const loadSong = useCallback(async (preservePlayback = false) => {
     if (!song) return;
     const loadId = ++loadIdRef.current;
     const engine = ensureContext();
-    const stemPlayback = usesStemPlayback();
+    const useStems = usesStemPlayback();
+    const savedOffset = preservePlayback
+      ? Math.max(0, engine.offset || usePlayerStore.getState().currentTime)
+      : 0;
+    const savedPlaying = preservePlayback && usePlayerStore.getState().isPlaying;
+
     stopSources();
     disconnectStemNodes(engine.stems);
     disconnectMix(engine.mix);
-    resetMeterStore();
-    usePlayerStore.getState().clearStemPeaks();
     engine.stems = {};
     engine.mix = null;
-    engine.offset = 0;
-    setCurrentTime(0);
-    setPlaying(false);
+
+    if (preservePlayback) {
+      engine.offset = Math.min(savedOffset, song.durationSec);
+      setCurrentTime(engine.offset);
+    } else {
+      resetMeterStore();
+      usePlayerStore.getState().clearStemPeaks();
+      engine.offset = 0;
+      setCurrentTime(0);
+      setPlaying(false);
+    }
+
     setStemsLoading(true);
     setStemsLoadProgress(0);
     setStemsLoadError(null);
@@ -207,7 +246,8 @@ export function useStemEngine(song: Song | undefined) {
     const { ctx, master } = engine;
 
     try {
-      if (stemPlayback) {
+      if (useStems) {
+        usePlayerStore.getState().clearStemPeaks();
         let maxDuration = 0;
         const total = song.stems.length;
         const loadErrors: string[] = [];
@@ -233,7 +273,7 @@ export function useStemEngine(song: Song | undefined) {
             const gain = ctx.createGain();
             gain.connect(master);
             engine.stems[stemId] = { buffer, source: null, gain };
-            usePlayerStore.getState().setStemPeaks(stemId, extractPeaks(buffer));
+            usePlayerStore.getState().setStemPeaks(stemId, extractPeaks(buffer), buffer.duration);
             maxDuration = Math.max(maxDuration, buffer.duration);
           } catch (err) {
             const msg = err instanceof Error ? err.message : `Failed to load ${stem.label}`;
@@ -301,6 +341,18 @@ export function useStemEngine(song: Song | undefined) {
       if (loadId === loadIdRef.current) {
         setStemsLoading(false);
         setStemsLoadProgress(1);
+
+        if (savedPlaying) {
+          const hasAudio =
+            engine.mix !== null || Object.keys(engine.stems).length > 0;
+          if (hasAudio) {
+            await engine.ctx.resume();
+            startSources(engine);
+            setPlaying(true);
+            cancelAnimationFrame(engine.raf);
+            engine.raf = requestAnimationFrame(tick);
+          }
+        }
       }
     }
   }, [
@@ -314,15 +366,32 @@ export function useStemEngine(song: Song | undefined) {
     setStemsLoadProgress,
     setStemsLoadError,
     applyGains,
+    startSources,
+    tick,
   ]);
 
   useEffect(() => {
-    void loadSong();
+    const prev = loadStateRef.current;
+    const songChanged = prev === null || prev.songLoadKey !== songLoadKey;
+    const modeChanged =
+      prev !== null &&
+      prev.songLoadKey === songLoadKey &&
+      prev.stemPlayback !== stemPlayback;
+
+    if (!songChanged && !modeChanged) {
+      return undefined;
+    }
+
+    const preservePlayback = modeChanged && !songChanged;
+    loadStateRef.current = { songLoadKey, stemPlayback };
+
+    void loadSong(preservePlayback);
+
     return () => {
       stopSources();
       if (audioRef.current) cancelAnimationFrame(audioRef.current.raf);
     };
-  }, [loadSong, stopSources, fullscreenOpen, fullscreenUseStems]);
+  }, [songLoadKey, stemPlayback, loadSong, stopSources]);
 
   const play = useCallback(async () => {
     if (!song || usePlayerStore.getState().stemsLoading) return;
@@ -331,13 +400,7 @@ export function useStemEngine(song: Song | undefined) {
 
     if (engine.mix) {
       stopSources();
-      const { ctx, mix } = engine;
-      engine.startTime = ctx.currentTime;
-      const source = ctx.createBufferSource();
-      source.buffer = mix.buffer;
-      source.connect(mix.gain);
-      source.start(0, engine.offset);
-      mix.source = source;
+      startSources(engine);
       setPlaying(true);
       cancelAnimationFrame(engine.raf);
       engine.raf = requestAnimationFrame(tick);
@@ -349,19 +412,11 @@ export function useStemEngine(song: Song | undefined) {
       return;
     }
     stopSources();
-    const { ctx, stems } = engine;
-    engine.startTime = ctx.currentTime;
-    (Object.entries(stems) as [StemId, StemNodes][]).forEach(([, stem]) => {
-      const source = ctx.createBufferSource();
-      source.buffer = stem.buffer;
-      source.connect(stem.gain);
-      source.start(0, engine.offset);
-      stem.source = source;
-    });
+    startSources(engine);
     setPlaying(true);
     cancelAnimationFrame(engine.raf);
     engine.raf = requestAnimationFrame(tick);
-  }, [song, ensureContext, stopSources, setPlaying, tick]);
+  }, [song, ensureContext, stopSources, setPlaying, tick, startSources]);
 
   const pause = useCallback(() => {
     const engine = audioRef.current;

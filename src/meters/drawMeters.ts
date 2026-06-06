@@ -10,12 +10,63 @@ import {
   melNormToHz,
   softCompressDisplay,
 } from "./dsp";
+import {
+  clipMeterPlotRegion,
+  fillRoundedMeterPlot,
+  resolveMeterPlotRadius,
+} from "./meterPlotClip";
 import { METER_SETTINGS } from "./meterSettings";
 import type { MeterVisualTokens } from "./meterVisualThemes";
 
 let spectrogramScratchCanvas: HTMLCanvasElement | null = null;
 let spectrogramScratchW = 0;
 let spectrogramScratchH = 0;
+
+/** Universal "phase problem" red for negative correlation (theme-independent). */
+const CORRELATION_NEGATIVE = "#ff4d4f";
+const CORRELATION_NEGATIVE_SOFT = "rgba(255, 77, 79, 0.55)";
+
+/**
+ * Draws the half-circle goniometer reference frame: the outer semicircle, two
+ * concentric arcs, and the Left / mid / Right radial axes from the origin.
+ */
+function drawStereoGrid(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  radius: number,
+  theme: MeterVisualTokens,
+): void {
+  ctx.save();
+  ctx.lineWidth = 1;
+
+  /** Concentric arcs (upper half spans canvas angles π … 2π). */
+  ctx.strokeStyle = theme.grid;
+  for (const frac of [0.4, 0.7, 1]) {
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius * frac, Math.PI, 2 * Math.PI);
+    ctx.stroke();
+  }
+
+  /** Radial axes: Right (45°), mid (90°, up), Left (135°). */
+  ctx.strokeStyle = theme.gridStrong;
+  for (const deg of [45, 90, 135]) {
+    const a = (deg * Math.PI) / 180;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + Math.cos(a) * radius, cy - Math.sin(a) * radius);
+    ctx.stroke();
+  }
+
+  ctx.restore();
+}
+
+/** Maps raw sample magnitude → radius in audio-reference space (no visual scale). */
+function scopeRadiusFromMag(mag: number, radius: number): number {
+  const maxRad = radius * METER_SETTINGS.scopeMaxFill;
+  const unit = 1 - Math.exp(-mag * METER_SETTINGS.scopeAudioDrive);
+  return maxRad * unit;
+}
 
 function spectrogramBinsFromSnap(snap: MeterSnapshot): number {
   return snap.spectrogramFftSize / 2;
@@ -98,10 +149,9 @@ function drawPlotChrome(
   theme: MeterVisualTokens,
   title: string,
   subtitle?: string,
+  cornerRadius = 0,
 ): { plotX: number; plotY: number; plotW: number; plotH: number } {
-  ctx.clearRect(0, 0, w, h);
-  ctx.fillStyle = theme.plotWell;
-  ctx.fillRect(0, 0, w, h);
+  fillRoundedMeterPlot(ctx, w, h, resolveMeterPlotRadius(cornerRadius), theme.plotWell);
 
   ctx.fillStyle = theme.text;
   ctx.font = `normal 11px ${theme.fontMedium}`;
@@ -132,6 +182,7 @@ export function drawSpectrogram(
   spanSeconds: number,
   theme: MeterVisualTokens,
   dpr = 1,
+  cornerRadius = 0,
 ): void {
   const { plotX, plotY, plotW, plotH } = drawPlotChrome(
     ctx,
@@ -140,7 +191,10 @@ export function drawSpectrogram(
     theme,
     "Spectrogram",
     `Horizontal · ${spanSeconds}s`,
+    cornerRadius,
   );
+
+  const plotRadius = resolveMeterPlotRadius(cornerRadius);
 
   if (!snap.hasSignal && !snap.spectrogramWrapped) {
     ctx.fillStyle = theme.textMuted;
@@ -195,9 +249,12 @@ export function drawSpectrogram(
   const offCtx = spectrogramScratchCanvas.getContext("2d");
   if (offCtx) {
     offCtx.putImageData(img, 0, 0);
+    ctx.save();
+    clipMeterPlotRegion(ctx, plotX, plotY, plotW, plotH, plotRadius);
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = "high";
     ctx.drawImage(spectrogramScratchCanvas, plotX, plotY, plotW, plotH);
+    ctx.restore();
   }
 
   ctx.fillStyle = theme.textMuted;
@@ -252,6 +309,7 @@ export function drawSpectrum(
   h: number,
   snap: MeterSnapshot,
   theme: MeterVisualTokens,
+  cornerRadius = 0,
 ): void {
   const { plotX, plotY, plotW, plotH } = drawPlotChrome(
     ctx,
@@ -260,8 +318,10 @@ export function drawSpectrum(
     theme,
     "Spectrum",
     `Mel · ${METER_SETTINGS.spectrumTiltDbPerOct} dB · M/S`,
+    cornerRadius,
   );
 
+  const plotRadius = resolveMeterPlotRadius(cornerRadius);
   const nyquist = snap.sampleRate * 0.5;
   const minHz = 40;
   const maxHz = Math.min(nyquist, 16000);
@@ -272,6 +332,9 @@ export function drawSpectrum(
     const raw = interpolateSpectrumAtHz(snap.spectrum, hzAt, snap.sampleRate, snap.spectrumFftSize);
     return softCompressDisplay(raw, 0.5) * displayScale;
   };
+
+  ctx.save();
+  clipMeterPlotRegion(ctx, plotX, plotY, plotW, plotH, plotRadius);
 
   /** Style "Both" — thin bars; color from horizontal freq gradient (kept from minimeters bar pass). */
   if (METER_SETTINGS.spectrumStyleBoth) {
@@ -330,6 +393,7 @@ export function drawSpectrum(
   ctx.strokeStyle = theme.spectrumLine;
   ctx.lineWidth = 1.25;
   strokeSpectrumCurve(ctx, curvePoints);
+  ctx.restore();
 }
 
 export function drawStereo(
@@ -338,6 +402,7 @@ export function drawStereo(
   h: number,
   snap: MeterSnapshot,
   theme: MeterVisualTokens,
+  cornerRadius = 0,
 ): void {
   const { plotX, plotY, plotW, plotH } = drawPlotChrome(
     ctx,
@@ -345,70 +410,122 @@ export function drawStereo(
     h,
     theme,
     "Stereometer",
-    "Lissajous",
+    "Vectorscope",
+    cornerRadius,
   );
 
-  const scopeW = plotW - 22;
-  const scopeH = plotH - 4;
-  const scopeX = plotX + 2;
-  const scopeY = plotY + 2;
+  /**
+   * Half-circle stereo goniometer. Audio analysis follows polarity/app.vectorscope
+   * (real L/R time-domain samples, channel temporal smoothing) but is rendered in
+   * a unipolar half-circle anchored at the bottom-centre origin:
+   *   angle  = stereo position from the L/R balance — mono → straight up ("mid"),
+   *            right-leaning → upper-right, left-leaning → upper-left;
+   *   radius = instantaneous level (raw L/R amplitude, fixed audio curve).
+   * Faint radial axes (Left / mid / Right) and concentric arcs give the cloud a
+   * readable reference frame. Cleared fresh each frame (no trail), single colour.
+   */
+  const scopeW = plotW - 18;
+  const scopeX = plotX;
+  const scopeY = plotY;
+  const scopeH = plotH;
+
   const cx = scopeX + scopeW * 0.5;
   const cy = scopeY + scopeH;
-  const radius = Math.min(scopeW * 0.48, scopeH * 0.92);
-  const pointSize = METER_SETTINGS.scopePointSize;
+  /** Fixed grid + audio-reference disc (Figma layout; never scaled). */
+  const gridRadius = Math.max(2, Math.min(scopeW * 0.48, scopeH * 0.96));
+  const visualScale = METER_SETTINGS.scopeVisualScale;
 
-  const count = snap.lissajousCount;
-  const stride = LISSAJOUS_STRIDE;
-  const peak = snap.scopePeak;
+  drawStereoGrid(ctx, cx, cy, gridRadius, theme);
 
-  for (let i = 0; i < count; i++) {
-    const idx = (snap.lissajousWrite + i) % count;
-    const base = idx * stride;
-    const l = snap.lissajous[base];
-    const rch = snap.lissajous[base + 1];
-    const lN = l / peak;
-    const rN = rch / peak;
-    const sum = Math.abs(lN) + Math.abs(rN);
-    if (sum < 0.04) continue;
-
-    const pan = Math.max(-1, Math.min(1, (rN - lN) / (sum + 1e-6)));
-    const energy = Math.min(1, sum * 0.5);
-    const angle = Math.PI * (0.5 - pan * 0.5);
-    const rad = energy * radius;
-    const px = cx + Math.cos(angle) * rad;
-    const py = cy - Math.sin(angle) * rad;
-
+  if (snap.hasSignal) {
+    const pointSize = METER_SETTINGS.scopePointSize;
+    const half = pointSize * 0.5;
+    const count = snap.lissajousCount;
+    const stride = LISSAJOUS_STRIDE;
+    const visRim = gridRadius * METER_SETTINGS.scopeMaxFill * visualScale;
     ctx.fillStyle = theme.primary;
-    ctx.beginPath();
-    ctx.arc(px, py, pointSize * 0.5, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.globalAlpha = 0.6;
+    for (let i = 0; i < count; i++) {
+      const base = ((snap.lissajousWrite + i) % count) * stride;
+      const l = snap.lissajous[base];
+      const r = snap.lissajous[base + 1];
+      const mag = Math.hypot(l, r);
+      if (mag < 0.006) continue;
+
+      /** Angle in [0, π]: π/2 = mono (up), < π/2 right, > π/2 left. */
+      const ang = Math.atan2(Math.abs(l + r), r - l);
+      const audioRad = scopeRadiusFromMag(mag, gridRadius);
+      const rad = Math.min(visRim, audioRad * visualScale);
+      const px = Math.round(cx + Math.cos(ang) * rad);
+      const py = Math.round(cy - Math.sin(ang) * rad);
+
+      ctx.fillRect(px - half, py - half, pointSize, pointSize);
+    }
+    ctx.globalAlpha = 1;
   }
 
+  /**
+   * Phase-correlation meter. Bottom-anchored bar maps the full correlation
+   * range [-1, +1] to its height with a zero (uncorrelated) reference line at
+   * the centre: mono/in-phase (+1) fills to the top, decorrelated wide stereo
+   * (0) sits at the centre, anti-phase (-1) drops to empty. Negative
+   * correlation is flagged in red so out-of-phase content reads correctly.
+   */
   const corrX = plotX + plotW - 14;
   const corrY = plotY + 4;
   const corrH = plotH - 8;
+  const corr = Math.max(-1, Math.min(1, snap.correlation));
+  const centerY = corrY + corrH * 0.5;
+  const fillH = ((corr + 1) / 2) * corrH;
+  const valueY = corrY + corrH - fillH;
+
   ctx.fillStyle = theme.correlationTrough;
   ctx.fillRect(corrX, corrY, 10, corrH);
-  const corr = Math.max(0, snap.correlation);
-  const fillH = corr * corrH;
-  const grad = ctx.createLinearGradient(0, corrY + corrH, 0, corrY);
-  grad.addColorStop(0, theme.tertiary);
-  grad.addColorStop(1, theme.primary);
-  ctx.fillStyle = grad;
-  ctx.fillRect(corrX + 1, corrY + corrH - fillH, 8, fillH);
+
+  if (corr >= 0) {
+    const grad = ctx.createLinearGradient(0, corrY + corrH, 0, corrY);
+    grad.addColorStop(0, theme.tertiary);
+    grad.addColorStop(1, theme.primary);
+    ctx.fillStyle = grad;
+  } else {
+    const grad = ctx.createLinearGradient(0, corrY + corrH, 0, centerY);
+    grad.addColorStop(0, CORRELATION_NEGATIVE);
+    grad.addColorStop(1, CORRELATION_NEGATIVE_SOFT);
+    ctx.fillStyle = grad;
+  }
+  ctx.fillRect(corrX + 1, valueY, 8, fillH);
+
+  /** Zero / uncorrelated reference line at the bar centre. */
   ctx.strokeStyle = theme.gridStrong;
   ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(corrX + 0.5, centerY);
+  ctx.lineTo(corrX + 9.5, centerY);
+  ctx.stroke();
+
   ctx.strokeRect(corrX + 0.5, corrY + 0.5, 9, corrH - 1);
 
-  /** Peak line on correlation meter (theme accent) */
-  if (corr > 0.02) {
-    const peakY = corrY + corrH - fillH;
-    ctx.strokeStyle = theme.accent;
+  /** Value line (theme accent for in-phase, red for out-of-phase). */
+  ctx.strokeStyle = corr >= 0 ? theme.accent : CORRELATION_NEGATIVE;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(corrX + 0.5, valueY);
+  ctx.lineTo(corrX + 9.5, valueY);
+  ctx.stroke();
+
+  /** Validated reference tick from offline audio-analyzer-rs (if loaded). */
+  const ref = snap.referenceStereo;
+  if (ref) {
+    const refCorr = Math.max(-1, Math.min(1, ref.correlationAvg));
+    const refY = corrY + corrH - ((refCorr + 1) / 2) * corrH;
+    ctx.strokeStyle = theme.text;
     ctx.lineWidth = 1;
+    ctx.setLineDash([2, 2]);
     ctx.beginPath();
-    ctx.moveTo(corrX + 0.5, peakY);
-    ctx.lineTo(corrX + 9.5, peakY);
+    ctx.moveTo(corrX - 2.5, refY);
+    ctx.lineTo(corrX - 0.5, refY);
     ctx.stroke();
+    ctx.setLineDash([]);
   }
 
   ctx.fillStyle = theme.textMuted;
@@ -419,6 +536,79 @@ export function drawStereo(
     plotX + plotW * 0.45,
     plotY + plotH + 12,
   );
+}
+
+/** Snap a coordinate for crisp 1px canvas strokes (stem-waveform style). */
+function snapStrokeCoord(v: number): number {
+  return Math.round(v) + 0.5;
+}
+
+function waveformBucketX(
+  plotX: number,
+  plotW: number,
+  index: number,
+  filled: number,
+): number {
+  if (filled <= 1) return snapStrokeCoord(plotX);
+  return snapStrokeCoord(plotX + (index / (filled - 1)) * plotW);
+}
+
+/** Filled band between max/min envelopes (theme.spectrumFill). */
+function fillWaveformBand(
+  ctx: CanvasRenderingContext2D,
+  plotX: number,
+  plotW: number,
+  centerY: number,
+  mins: Float32Array,
+  maxs: Float32Array,
+  filled: number,
+  start: number,
+  scale: number,
+): void {
+  if (filled < 2) return;
+
+  ctx.beginPath();
+  for (let i = 0; i < filled; i++) {
+    const idx = (start + i) % WAVEFORM_BUCKETS;
+    const x = plotX + (i / (filled - 1)) * plotW;
+    const y = centerY - maxs[idx] * scale;
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  for (let i = filled - 1; i >= 0; i--) {
+    const idx = (start + i) % WAVEFORM_BUCKETS;
+    const x = plotX + (i / (filled - 1)) * plotW;
+    const y = centerY - mins[idx] * scale;
+    ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+  ctx.fill();
+}
+
+/**
+ * Draws one bipolar envelope trace (max or min) as a single continuous path.
+ */
+function strokeWaveformEnvelope(
+  ctx: CanvasRenderingContext2D,
+  plotX: number,
+  plotW: number,
+  centerY: number,
+  samples: Float32Array,
+  filled: number,
+  start: number,
+  scale: number,
+): void {
+  if (filled < 2) return;
+
+  ctx.beginPath();
+  for (let i = 0; i < filled; i++) {
+    const idx = (start + i) % WAVEFORM_BUCKETS;
+    const x = waveformBucketX(plotX, plotW, i, filled);
+    const y = snapStrokeCoord(centerY - samples[idx] * scale);
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
 }
 
 function drawBipolarBandWave(
@@ -443,48 +633,32 @@ function drawBipolarBandWave(
   ctx.textAlign = "left";
   ctx.fillText(label, plotX + 4, plotY + 11);
 
-  for (let i = 0; i < filled - 1; i++) {
-    const idx0 = (start + i) % WAVEFORM_BUCKETS;
-    const idx1 = (start + i + 1) % WAVEFORM_BUCKETS;
-    const x0 = plotX + (i / (filled - 1)) * plotW;
-    const x1 = plotX + ((i + 1) / (filled - 1)) * plotW;
+  ctx.save();
+  ctx.fillStyle = theme.spectrumFill;
+  fillWaveformBand(ctx, plotX, plotW, centerY, mins, maxs, filled, start, scale);
 
-    const yTop0 = centerY - maxs[idx0] * scale;
-    const yBot0 = centerY - mins[idx0] * scale;
-    const yTop1 = centerY - maxs[idx1] * scale;
-    const yBot1 = centerY - mins[idx1] * scale;
-
-    ctx.fillStyle = theme.spectrumFill;
-    ctx.beginPath();
-    ctx.moveTo(x0, yTop0);
-    ctx.lineTo(x1, yTop1);
-    ctx.lineTo(x1, yBot1);
-    ctx.lineTo(x0, yBot0);
-    ctx.closePath();
-    ctx.fill();
-
-    ctx.strokeStyle = theme.spectrumLine;
-    ctx.lineWidth = 1.1;
-    ctx.beginPath();
-    ctx.moveTo(x0, yTop0);
-    ctx.lineTo(x1, yTop1);
-    ctx.moveTo(x0, yBot0);
-    ctx.lineTo(x1, yBot1);
-    ctx.stroke();
-  }
+  ctx.strokeStyle = theme.spectrumLine;
+  ctx.lineWidth = METER_SETTINGS.waveformLineWidth;
+  ctx.lineJoin = "round";
+  ctx.lineCap = "round";
+  strokeWaveformEnvelope(ctx, plotX, plotW, centerY, maxs, filled, start, scale);
+  strokeWaveformEnvelope(ctx, plotX, plotW, centerY, mins, filled, start, scale);
+  ctx.restore();
 
   /** Peak ticks — accent at latest bucket min/max on the right edge */
   if (filled >= 2) {
     const lastIdx = (start + filled - 1) % WAVEFORM_BUCKETS;
-    const yPeakT = centerY - maxs[lastIdx] * scale;
-    const yPeakB = centerY - mins[lastIdx] * scale;
+    const yPeakT = snapStrokeCoord(centerY - maxs[lastIdx] * scale);
+    const yPeakB = snapStrokeCoord(centerY - mins[lastIdx] * scale);
+    const tickRight = snapStrokeCoord(plotX + plotW);
+    const tickLeft = snapStrokeCoord(plotX + plotW - 3);
     ctx.strokeStyle = theme.accent;
-    ctx.lineWidth = 1.25;
+    ctx.lineWidth = METER_SETTINGS.waveformLineWidth;
     ctx.beginPath();
-    ctx.moveTo(plotX + plotW - 3, yPeakT - 1);
-    ctx.lineTo(plotX + plotW, yPeakT - 1);
-    ctx.moveTo(plotX + plotW - 3, yPeakB + 1);
-    ctx.lineTo(plotX + plotW, yPeakB + 1);
+    ctx.moveTo(tickLeft, yPeakT);
+    ctx.lineTo(tickRight, yPeakT);
+    ctx.moveTo(tickLeft, yPeakB);
+    ctx.lineTo(tickRight, yPeakB);
     ctx.stroke();
   }
 }
@@ -495,6 +669,7 @@ export function drawWaveform(
   h: number,
   snap: MeterSnapshot,
   theme: MeterVisualTokens,
+  cornerRadius = 0,
 ): void {
   const { plotX, plotY, plotW, plotH } = drawPlotChrome(
     ctx,
@@ -503,6 +678,7 @@ export function drawWaveform(
     theme,
     "Waveform",
     "Mid / Side",
+    cornerRadius,
   );
 
   const filled = snap.waveformFilled;

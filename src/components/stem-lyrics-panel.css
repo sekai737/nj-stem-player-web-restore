@@ -125,6 +125,10 @@
   opacity: 1;
 }
 
+.stem-lyrics-carousel__item--seekable {
+  cursor: pointer;
+}
+
 .stem-lyrics-carousel .synced-lyrics__idling {
   justify-content: center;
   min-height: var(--stem-lyric-main-h);

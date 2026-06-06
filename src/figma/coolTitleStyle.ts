@@ -8,7 +8,7 @@ export const COOL_TITLE_PATTERN = [
   "Simplified",
   "Goop",
   "Pixel",
-  "Pix-Outlined",
+  "Ball",
   "Distorted",
   "Goop",
   "Pixel",
@@ -20,6 +20,9 @@ export const COOL_TITLE_PATTERN = [
 ] as const;
 
 export type CoolTitleStyle = (typeof COOL_TITLE_PATTERN)[number];
+
+/** Never assigned to title glyphs — use Ball instead. */
+export const BLACKLISTED_COOL_TITLE_STYLES = ["Pix-Outlined"] as const;
 
 /**
  * Distinct @font-face families for the title (Figma node 3:282 — “Supernatural” reference).
@@ -33,13 +36,17 @@ const SLUG_BY_STYLE: Record<CoolTitleStyle, string> = {
   Simplified: "simplified",
   Goop: "goop",
   Pixel: "pixel",
-  "Pix-Outlined": "pix-outlined",
+  Ball: "ball",
   Distorted: "distorted",
   Fire: "fire",
   Fluid: "fluid",
   Regular: "regular",
   Structured: "structured",
   Cloud: "cloud",
+};
+
+const BLACKLISTED_SLUG_REPLACEMENTS: Record<string, string> = {
+  "pix-outlined": "ball",
 };
 
 /** `public/fonts` path for a COOL @font-face family (dev diagnostics). */
@@ -58,8 +65,27 @@ export function splitTitleGlyphs(title: string): string[] {
   return Array.from(title);
 }
 
-export function coolTitleGlyphClassForIndex(index: number): string {
-  const style = COOL_TITLE_PATTERN[index % COOL_TITLE_PATTERN.length];
+/** Unique COOL_FONT styles available for title glyphs (blacklisted faces excluded). */
+export const COOL_TITLE_FONT_STYLES = [...new Set(COOL_TITLE_PATTERN)].filter(
+  (style) => !BLACKLISTED_COOL_TITLE_STYLES.includes(style as (typeof BLACKLISTED_COOL_TITLE_STYLES)[number]),
+) as CoolTitleStyle[];
+
+export function coolTitleGlyphClassForStyle(style: CoolTitleStyle): string {
   const slug = SLUG_BY_STYLE[style];
   return `title-cool-glyph title-cool-glyph--${slug}`;
+}
+
+/** Remap legacy/blacklisted glyph classes (e.g. pix-outlined → ball). */
+export function resolveTitleGlyphClass(className: string): string {
+  for (const [blocked, replacement] of Object.entries(BLACKLISTED_SLUG_REPLACEMENTS)) {
+    if (className.includes(`title-cool-glyph--${blocked}`)) {
+      return className.replace(`title-cool-glyph--${blocked}`, `title-cool-glyph--${replacement}`);
+    }
+  }
+  return className;
+}
+
+export function coolTitleGlyphClassForIndex(index: number): string {
+  const style = COOL_TITLE_PATTERN[index % COOL_TITLE_PATTERN.length];
+  return coolTitleGlyphClassForStyle(style);
 }

@@ -9,6 +9,7 @@
     "build": "npm run fonts:ensure && tsc -b && vite build",
     "preview": "vite preview",
     "stems:placeholder": "node scripts/generate-demo-stems.mjs",
+    "analyze:stems": "node scripts/analyze-stems.mjs",
     "fonts:build": "node scripts/build-fonts.mjs"
   },
   "dependencies": {

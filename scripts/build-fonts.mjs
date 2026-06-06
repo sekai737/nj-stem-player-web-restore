@@ -84,6 +84,7 @@ const COOL_FONT_SLOTS = [
   { out: "cool-font-cloud.woff2", test: (n) => /cloud/i.test(n) },
   { out: "cool-font-simplified.woff2", test: (n) => /simplified/i.test(n) },
   { out: "cool-font-goop.woff2", test: (n) => /goop/i.test(n) },
+  { out: "cool-font-ball.woff2", test: (n) => /\bball\b/i.test(n) || /coolfontball/i.test(n) },
   {
     out: "cool-font-pix-outlined.woff2",
     test: (n) =>
