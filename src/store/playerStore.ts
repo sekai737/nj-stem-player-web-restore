@@ -113,6 +113,8 @@ function applyAdditiveSolo(
 interface PlayerStore {
   isPlaying: boolean;
   currentTime: number;
+  /** Bumped on song navigation so transport UI invalidates stale animation frames. */
+  transportSeq: number;
   duration: number;
   stemsLoading: boolean;
   stemsLoadProgress: number;
@@ -123,6 +125,8 @@ interface PlayerStore {
   channels: Record<StemId, StemChannelState>;
   /** Waveform peaks from decoded stems (same audio as playback, no second fetch). */
   stemPeaks: Partial<Record<StemId, number[]>>;
+  /** Decoded duration per stem — aligns waveform timing with each buffer. */
+  stemDurations: Partial<Record<StemId, number>>;
   menuOpen: boolean;
   fullscreenOpen: boolean;
   /** Fullscreen playback: true = separated stems, false = pre-mixed master when available. */
@@ -137,6 +141,9 @@ interface PlayerStore {
   masterVolumeBeforeMute: number;
   setPlaying: (playing: boolean) => void;
   setCurrentTime: (time: number) => void;
+  /** RAF tick updates — ignored when paused or after a song change bumps transportSeq. */
+  advanceCurrentTime: (time: number, transportSeq: number) => void;
+  resetTransportForSong: () => void;
   setDuration: (duration: number) => void;
   setStemsLoading: (loading: boolean) => void;
   setStemsLoadProgress: (progress: number) => void;
@@ -147,7 +154,7 @@ interface PlayerStore {
   toggleMute: (id: StemId) => void;
   toggleSolo: (id: StemId, additive?: boolean) => void;
   resetChannels: () => void;
-  setStemPeaks: (id: StemId, peaks: number[]) => void;
+  setStemPeaks: (id: StemId, peaks: number[], durationSec?: number) => void;
   clearStemPeaks: () => void;
   setMenuOpen: (open: boolean) => void;
   setFullscreenOpen: (open: boolean) => void;
@@ -162,6 +169,7 @@ interface PlayerStore {
 export const usePlayerStore = create<PlayerStore>((set) => ({
   isPlaying: false,
   currentTime: 0,
+  transportSeq: 0,
   duration: 0,
   stemsLoading: false,
   stemsLoadProgress: 0,
@@ -170,6 +178,7 @@ export const usePlayerStore = create<PlayerStore>((set) => ({
   lyricLanguageBeforeFullscreen: null,
   channels: defaultChannels(),
   stemPeaks: {},
+  stemDurations: {},
   menuOpen: false,
   fullscreenOpen: false,
   fullscreenUseStems: true,
@@ -183,6 +192,18 @@ export const usePlayerStore = create<PlayerStore>((set) => ({
   masterVolumeBeforeMute: DEFAULT_STEM_VOLUME,
   setPlaying: (isPlaying) => set({ isPlaying }),
   setCurrentTime: (currentTime) => set({ currentTime }),
+  advanceCurrentTime: (currentTime, transportSeq) =>
+    set((state) => {
+      if (!state.isPlaying) return state;
+      if (state.transportSeq !== transportSeq) return state;
+      return { currentTime };
+    }),
+  resetTransportForSong: () =>
+    set((state) => ({
+      transportSeq: state.transportSeq + 1,
+      isPlaying: false,
+      currentTime: 0,
+    })),
   setDuration: (duration) => set({ duration }),
   setStemsLoading: (stemsLoading) => set({ stemsLoading }),
   setStemsLoadProgress: (stemsLoadProgress) => set({ stemsLoadProgress }),
@@ -235,12 +256,15 @@ export const usePlayerStore = create<PlayerStore>((set) => ({
 
       return { channels: applyExclusiveSolo(channels, id) };
     }),
-  resetChannels: () => set({ channels: defaultChannels(), stemPeaks: {} }),
-  setStemPeaks: (id, peaks) =>
+  resetChannels: () => set({ channels: defaultChannels(), stemPeaks: {}, stemDurations: {} }),
+  setStemPeaks: (id, peaks, durationSec) =>
     set((state) => ({
       stemPeaks: { ...state.stemPeaks, [id]: peaks },
+      ...(durationSec != null && durationSec > 0
+        ? { stemDurations: { ...state.stemDurations, [id]: durationSec } }
+        : {}),
     })),
-  clearStemPeaks: () => set({ stemPeaks: {} }),
+  clearStemPeaks: () => set({ stemPeaks: {}, stemDurations: {} }),
   setMenuOpen: (menuOpen) => set({ menuOpen }),
   setFullscreenOpen: (fullscreenOpen) =>
     set((state) => {

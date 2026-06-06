@@ -1,7 +1,7 @@
 {
   "creator": {
-    "twitter": "https://x.com/",
-    "linktree": "https://linktr.ee/"
+    "youtube": "https://www.youtube.com/@sekai737",
+    "litLink": "https://lit.link/en/tsukimi737"
   },
   "releases": [
     {
@@ -9,6 +9,7 @@
       "title": "Supernatural",
       "year": 2024,
       "type": "EP",
+      "coverArt": "/covers/Supernatural_album_cover.jpg",
       "songs": [
         {
           "id": "supernatural-title",
@@ -17,10 +18,22 @@
           "bpm": 109,
           "key": "Bbm",
           "stems": [
-            { "id": "vocals", "label": "Vocals" },
-            { "id": "instruments", "label": "Other" },
-            { "id": "drums", "label": "Drums" },
-            { "id": "bass", "label": "Bass" }
+            {
+              "id": "vocals",
+              "label": "Vocals"
+            },
+            {
+              "id": "instruments",
+              "label": "Other"
+            },
+            {
+              "id": "drums",
+              "label": "Drums"
+            },
+            {
+              "id": "bass",
+              "label": "Bass"
+            }
           ],
           "lrc": {
             "org": "/lyrics/supernatural-org.lrc",
@@ -38,13 +51,91 @@
             },
             {
               "id": "supernatural-sekai-remix",
-              "title": "Supernatural",
+              "title": "Supernatural (1988 New Jack Swing Remix)",
               "source": "sekai",
               "category": "sekai",
               "songId": "supernatural-sekai-remix",
               "durationSec": 191
             }
           ]
+        },
+        {
+          "id": "right-now",
+          "title": "Right Now",
+          "durationSec": 200,
+          "bpm": 120,
+          "key": "—",
+          "stems": [
+            {
+              "id": "vocals",
+              "label": "Vocals"
+            },
+            {
+              "id": "instruments",
+              "label": "Other"
+            },
+            {
+              "id": "drums",
+              "label": "Drums"
+            },
+            {
+              "id": "bass",
+              "label": "Bass"
+            }
+          ],
+          "stemSlug": "right-now"
+        },
+        {
+          "id": "supernatural-instrumental",
+          "title": "Supernatural (Instrumental)",
+          "durationSec": 200,
+          "bpm": 120,
+          "key": "—",
+          "stems": [
+            {
+              "id": "vocals",
+              "label": "Vocals"
+            },
+            {
+              "id": "instruments",
+              "label": "Other"
+            },
+            {
+              "id": "drums",
+              "label": "Drums"
+            },
+            {
+              "id": "bass",
+              "label": "Bass"
+            }
+          ],
+          "stemSlug": "supernatural-instrumental"
+        },
+        {
+          "id": "right-now-instrumental",
+          "title": "Right Now (Instrumental)",
+          "durationSec": 200,
+          "bpm": 120,
+          "key": "—",
+          "stems": [
+            {
+              "id": "vocals",
+              "label": "Vocals"
+            },
+            {
+              "id": "instruments",
+              "label": "Other"
+            },
+            {
+              "id": "drums",
+              "label": "Drums"
+            },
+            {
+              "id": "bass",
+              "label": "Bass"
+            }
+          ],
+          "stemSlug": "right-now-instrumental"
         },
         {
           "id": "supernatural-winter-ver",
@@ -54,10 +145,22 @@
           "key": "Bbm",
           "isRemix": true,
           "stems": [
-            { "id": "vocals", "label": "Vocals" },
-            { "id": "instruments", "label": "Other" },
-            { "id": "drums", "label": "Drums" },
-            { "id": "bass", "label": "Bass" }
+            {
+              "id": "vocals",
+              "label": "Vocals"
+            },
+            {
+              "id": "instruments",
+              "label": "Other"
+            },
+            {
+              "id": "drums",
+              "label": "Drums"
+            },
+            {
+              "id": "bass",
+              "label": "Bass"
+            }
           ],
           "lrc": {
             "org": "/lyrics/supernatural-org.lrc",
@@ -67,16 +170,28 @@
         },
         {
           "id": "supernatural-sekai-remix",
-          "title": "Supernatural",
+          "title": "Supernatural (1988 New Jack Swing Remix)",
           "durationSec": 191,
           "bpm": 109,
           "key": "Bbm",
           "isRemix": true,
           "stems": [
-            { "id": "vocals", "label": "Vocals" },
-            { "id": "instruments", "label": "Other" },
-            { "id": "drums", "label": "Drums" },
-            { "id": "bass", "label": "Bass" }
+            {
+              "id": "vocals",
+              "label": "Vocals"
+            },
+            {
+              "id": "instruments",
+              "label": "Other"
+            },
+            {
+              "id": "drums",
+              "label": "Drums"
+            },
+            {
+              "id": "bass",
+              "label": "Bass"
+            }
           ],
           "lrc": {
             "org": "/lyrics/supernatural-org.lrc",
@@ -91,6 +206,7 @@
       "title": "How Sweet",
       "year": 2024,
       "type": "EP",
+      "coverArt": "/covers/How%20Sweet_album_cover.jpg",
       "songs": [
         {
           "id": "how-sweet-title",
@@ -99,10 +215,26 @@
           "bpm": 118,
           "key": "A major",
           "stems": [
-            { "id": "vocals", "label": "Vocals", "src": "/stems/demo/vocals.mp3" },
-            { "id": "instruments", "label": "Instruments", "src": "/stems/demo/instruments.mp3" },
-            { "id": "drums", "label": "Drums", "src": "/stems/demo/drums.mp3" },
-            { "id": "bass", "label": "Bass", "src": "/stems/demo/bass.mp3" }
+            {
+              "id": "vocals",
+              "label": "Vocals",
+              "src": "/stems/demo/vocals.mp3"
+            },
+            {
+              "id": "instruments",
+              "label": "Instruments",
+              "src": "/stems/demo/instruments.mp3"
+            },
+            {
+              "id": "drums",
+              "label": "Drums",
+              "src": "/stems/demo/drums.mp3"
+            },
+            {
+              "id": "bass",
+              "label": "Bass",
+              "src": "/stems/demo/bass.mp3"
+            }
           ],
           "lyrics": [
             {
@@ -121,10 +253,26 @@
           "bpm": 120,
           "key": "G major",
           "stems": [
-            { "id": "vocals", "label": "Vocals", "src": "/stems/demo/vocals.mp3" },
-            { "id": "instruments", "label": "Instruments", "src": "/stems/demo/instruments.mp3" },
-            { "id": "drums", "label": "Drums", "src": "/stems/demo/drums.mp3" },
-            { "id": "bass", "label": "Bass", "src": "/stems/demo/bass.mp3" }
+            {
+              "id": "vocals",
+              "label": "Vocals",
+              "src": "/stems/demo/vocals.mp3"
+            },
+            {
+              "id": "instruments",
+              "label": "Instruments",
+              "src": "/stems/demo/instruments.mp3"
+            },
+            {
+              "id": "drums",
+              "label": "Drums",
+              "src": "/stems/demo/drums.mp3"
+            },
+            {
+              "id": "bass",
+              "label": "Bass",
+              "src": "/stems/demo/bass.mp3"
+            }
           ],
           "lyrics": [
             {
@@ -135,6 +283,564 @@
               "member": "group"
             }
           ]
+        },
+        {
+          "id": "how-sweet-title-instrumental",
+          "title": "How Sweet (Instrumental)",
+          "durationSec": 200,
+          "bpm": 120,
+          "key": "—",
+          "stems": [
+            {
+              "id": "vocals",
+              "label": "Vocals",
+              "src": "/stems/demo/vocals.mp3"
+            },
+            {
+              "id": "instruments",
+              "label": "Instruments",
+              "src": "/stems/demo/instruments.mp3"
+            },
+            {
+              "id": "drums",
+              "label": "Drums",
+              "src": "/stems/demo/drums.mp3"
+            },
+            {
+              "id": "bass",
+              "label": "Bass",
+              "src": "/stems/demo/bass.mp3"
+            }
+          ]
+        },
+        {
+          "id": "bubble-gum-instrumental",
+          "title": "Bubble Gum (Instrumental)",
+          "durationSec": 200,
+          "bpm": 120,
+          "key": "—",
+          "stems": [
+            {
+              "id": "vocals",
+              "label": "Vocals",
+              "src": "/stems/demo/vocals.mp3"
+            },
+            {
+              "id": "instruments",
+              "label": "Instruments",
+              "src": "/stems/demo/instruments.mp3"
+            },
+            {
+              "id": "drums",
+              "label": "Drums",
+              "src": "/stems/demo/drums.mp3"
+            },
+            {
+              "id": "bass",
+              "label": "Bass",
+              "src": "/stems/demo/bass.mp3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "njwmx",
+      "title": "NJWMX",
+      "year": 2023,
+      "type": "Album",
+      "coverArt": "/covers/NJWMX_album_cover.jpg",
+      "songs": [
+        {
+          "id": "ditto-250-remix",
+          "title": "Ditto (250 Remix)",
+          "durationSec": 200,
+          "bpm": 120,
+          "key": "—",
+          "stems": [
+            {
+              "id": "vocals",
+              "label": "Vocals",
+              "src": "/stems/demo/vocals.mp3"
+            },
+            {
+              "id": "instruments",
+              "label": "Instruments",
+              "src": "/stems/demo/instruments.mp3"
+            },
+            {
+              "id": "drums",
+              "label": "Drums",
+              "src": "/stems/demo/drums.mp3"
+            },
+            {
+              "id": "bass",
+              "label": "Bass",
+              "src": "/stems/demo/bass.mp3"
+            }
+          ]
+        },
+        {
+          "id": "omg-frnk-remix",
+          "title": "OMG (FRNK Remix)",
+          "durationSec": 200,
+          "bpm": 120,
+          "key": "—",
+          "stems": [
+            {
+              "id": "vocals",
+              "label": "Vocals",
+              "src": "/stems/demo/vocals.mp3"
+            },
+            {
+              "id": "instruments",
+              "label": "Instruments",
+              "src": "/stems/demo/instruments.mp3"
+            },
+            {
+              "id": "drums",
+              "label": "Drums",
+              "src": "/stems/demo/drums.mp3"
+            },
+            {
+              "id": "bass",
+              "label": "Bass",
+              "src": "/stems/demo/bass.mp3"
+            }
+          ]
+        },
+        {
+          "id": "attention-250-remix",
+          "title": "Attention (250 Remix)",
+          "durationSec": 200,
+          "bpm": 120,
+          "key": "—",
+          "stems": [
+            {
+              "id": "vocals",
+              "label": "Vocals",
+              "src": "/stems/demo/vocals.mp3"
+            },
+            {
+              "id": "instruments",
+              "label": "Instruments",
+              "src": "/stems/demo/instruments.mp3"
+            },
+            {
+              "id": "drums",
+              "label": "Drums",
+              "src": "/stems/demo/drums.mp3"
+            },
+            {
+              "id": "bass",
+              "label": "Bass",
+              "src": "/stems/demo/bass.mp3"
+            }
+          ]
+        },
+        {
+          "id": "hype-boy-250-remix",
+          "title": "Hype Boy (250 Remix)",
+          "durationSec": 200,
+          "bpm": 120,
+          "key": "—",
+          "stems": [
+            {
+              "id": "vocals",
+              "label": "Vocals",
+              "src": "/stems/demo/vocals.mp3"
+            },
+            {
+              "id": "instruments",
+              "label": "Instruments",
+              "src": "/stems/demo/instruments.mp3"
+            },
+            {
+              "id": "drums",
+              "label": "Drums",
+              "src": "/stems/demo/drums.mp3"
+            },
+            {
+              "id": "bass",
+              "label": "Bass",
+              "src": "/stems/demo/bass.mp3"
+            }
+          ]
+        },
+        {
+          "id": "cookie-frnk-remix",
+          "title": "Cookie (FRNK Remix)",
+          "durationSec": 200,
+          "bpm": 120,
+          "key": "—",
+          "stems": [
+            {
+              "id": "vocals",
+              "label": "Vocals",
+              "src": "/stems/demo/vocals.mp3"
+            },
+            {
+              "id": "instruments",
+              "label": "Instruments",
+              "src": "/stems/demo/instruments.mp3"
+            },
+            {
+              "id": "drums",
+              "label": "Drums",
+              "src": "/stems/demo/drums.mp3"
+            },
+            {
+              "id": "bass",
+              "label": "Bass",
+              "src": "/stems/demo/bass.mp3"
+            }
+          ]
+        },
+        {
+          "id": "hurt-250-remix",
+          "title": "Hurt (250 Remix)",
+          "durationSec": 200,
+          "bpm": 120,
+          "key": "—",
+          "stems": [
+            {
+              "id": "vocals",
+              "label": "Vocals",
+              "src": "/stems/demo/vocals.mp3"
+            },
+            {
+              "id": "instruments",
+              "label": "Instruments",
+              "src": "/stems/demo/instruments.mp3"
+            },
+            {
+              "id": "drums",
+              "label": "Drums",
+              "src": "/stems/demo/drums.mp3"
+            },
+            {
+              "id": "bass",
+              "label": "Bass",
+              "src": "/stems/demo/bass.mp3"
+            }
+          ]
+        },
+        {
+          "id": "ditto-250-remix-instrumental",
+          "title": "Ditto (250 Remix) (Instrumental)",
+          "durationSec": 200,
+          "bpm": 120,
+          "key": "—",
+          "stems": [
+            {
+              "id": "vocals",
+              "label": "Vocals",
+              "src": "/stems/demo/vocals.mp3"
+            },
+            {
+              "id": "instruments",
+              "label": "Instruments",
+              "src": "/stems/demo/instruments.mp3"
+            },
+            {
+              "id": "drums",
+              "label": "Drums",
+              "src": "/stems/demo/drums.mp3"
+            },
+            {
+              "id": "bass",
+              "label": "Bass",
+              "src": "/stems/demo/bass.mp3"
+            }
+          ]
+        },
+        {
+          "id": "omg-frnk-remix-instrumental",
+          "title": "OMG (FRNK Remix) (Instrumental)",
+          "durationSec": 200,
+          "bpm": 120,
+          "key": "—",
+          "stems": [
+            {
+              "id": "vocals",
+              "label": "Vocals",
+              "src": "/stems/demo/vocals.mp3"
+            },
+            {
+              "id": "instruments",
+              "label": "Instruments",
+              "src": "/stems/demo/instruments.mp3"
+            },
+            {
+              "id": "drums",
+              "label": "Drums",
+              "src": "/stems/demo/drums.mp3"
+            },
+            {
+              "id": "bass",
+              "label": "Bass",
+              "src": "/stems/demo/bass.mp3"
+            }
+          ]
+        },
+        {
+          "id": "attention-250-remix-instrumental",
+          "title": "Attention (250 Remix) (Instrumental)",
+          "durationSec": 200,
+          "bpm": 120,
+          "key": "—",
+          "stems": [
+            {
+              "id": "vocals",
+              "label": "Vocals",
+              "src": "/stems/demo/vocals.mp3"
+            },
+            {
+              "id": "instruments",
+              "label": "Instruments",
+              "src": "/stems/demo/instruments.mp3"
+            },
+            {
+              "id": "drums",
+              "label": "Drums",
+              "src": "/stems/demo/drums.mp3"
+            },
+            {
+              "id": "bass",
+              "label": "Bass",
+              "src": "/stems/demo/bass.mp3"
+            }
+          ]
+        },
+        {
+          "id": "hype-boy-250-remix-instrumental",
+          "title": "Hype Boy (250 Remix) (Instrumental)",
+          "durationSec": 200,
+          "bpm": 120,
+          "key": "—",
+          "stems": [
+            {
+              "id": "vocals",
+              "label": "Vocals",
+              "src": "/stems/demo/vocals.mp3"
+            },
+            {
+              "id": "instruments",
+              "label": "Instruments",
+              "src": "/stems/demo/instruments.mp3"
+            },
+            {
+              "id": "drums",
+              "label": "Drums",
+              "src": "/stems/demo/drums.mp3"
+            },
+            {
+              "id": "bass",
+              "label": "Bass",
+              "src": "/stems/demo/bass.mp3"
+            }
+          ]
+        },
+        {
+          "id": "cookie-frnk-remix-instrumental",
+          "title": "Cookie (FRNK Remix) (Instrumental)",
+          "durationSec": 200,
+          "bpm": 120,
+          "key": "—",
+          "stems": [
+            {
+              "id": "vocals",
+              "label": "Vocals",
+              "src": "/stems/demo/vocals.mp3"
+            },
+            {
+              "id": "instruments",
+              "label": "Instruments",
+              "src": "/stems/demo/instruments.mp3"
+            },
+            {
+              "id": "drums",
+              "label": "Drums",
+              "src": "/stems/demo/drums.mp3"
+            },
+            {
+              "id": "bass",
+              "label": "Bass",
+              "src": "/stems/demo/bass.mp3"
+            }
+          ]
+        },
+        {
+          "id": "hurt-250-remix-instrumental",
+          "title": "Hurt (250 Remix) (Instrumental)",
+          "durationSec": 200,
+          "bpm": 120,
+          "key": "—",
+          "stems": [
+            {
+              "id": "vocals",
+              "label": "Vocals",
+              "src": "/stems/demo/vocals.mp3"
+            },
+            {
+              "id": "instruments",
+              "label": "Instruments",
+              "src": "/stems/demo/instruments.mp3"
+            },
+            {
+              "id": "drums",
+              "label": "Drums",
+              "src": "/stems/demo/drums.mp3"
+            },
+            {
+              "id": "bass",
+              "label": "Bass",
+              "src": "/stems/demo/bass.mp3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "newjeans-x-my-demon",
+      "title": "NewJeans X MY DEMON",
+      "year": 2023,
+      "type": "Single",
+      "coverArt": "/covers/NewJeans%20X%20MY%20DEMON_album_cover.jpg",
+      "songs": [
+        {
+          "id": "our-night-is-more-beautiful-than-your-day",
+          "title": "Our Night is more beautiful than your Day",
+          "durationSec": 200,
+          "bpm": 120,
+          "key": "—",
+          "stems": [
+            {
+              "id": "vocals",
+              "label": "Vocals",
+              "src": "/stems/demo/vocals.mp3"
+            },
+            {
+              "id": "instruments",
+              "label": "Instruments",
+              "src": "/stems/demo/instruments.mp3"
+            },
+            {
+              "id": "drums",
+              "label": "Drums",
+              "src": "/stems/demo/drums.mp3"
+            },
+            {
+              "id": "bass",
+              "label": "Bass",
+              "src": "/stems/demo/bass.mp3"
+            }
+          ]
+        },
+        {
+          "id": "our-night-is-more-beautiful-than-your-day-instrumental",
+          "title": "Our Night is more beautiful than your Day (Inst.)",
+          "durationSec": 200,
+          "bpm": 120,
+          "key": "—",
+          "stems": [
+            {
+              "id": "vocals",
+              "label": "Vocals",
+              "src": "/stems/demo/vocals.mp3"
+            },
+            {
+              "id": "instruments",
+              "label": "Instruments",
+              "src": "/stems/demo/instruments.mp3"
+            },
+            {
+              "id": "drums",
+              "label": "Drums",
+              "src": "/stems/demo/drums.mp3"
+            },
+            {
+              "id": "bass",
+              "label": "Bass",
+              "src": "/stems/demo/bass.mp3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gods",
+      "title": "GODS",
+      "year": 2023,
+      "type": "Single",
+      "coverArt": "/covers/GODS_album_cover.jpg",
+      "songs": [
+        {
+          "id": "gods",
+          "title": "GODS",
+          "durationSec": 200,
+          "bpm": 120,
+          "key": "—",
+          "stems": [
+            {
+              "id": "vocals",
+              "label": "Vocals",
+              "src": "/stems/demo/vocals.mp3"
+            },
+            {
+              "id": "instruments",
+              "label": "Instruments",
+              "src": "/stems/demo/instruments.mp3"
+            },
+            {
+              "id": "drums",
+              "label": "Drums",
+              "src": "/stems/demo/drums.mp3"
+            },
+            {
+              "id": "bass",
+              "label": "Bass",
+              "src": "/stems/demo/bass.mp3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a-time-called-you",
+      "title": "A Time Called You",
+      "year": 2023,
+      "type": "Single",
+      "coverArt": "/covers/A%20Time%20Called%20You%20(Original%20Soundtrack%20from%20the%20Netflix%20Series)_album_cover.jpg",
+      "songs": [
+        {
+          "id": "beautiful-restriction",
+          "title": "Beautiful Restriction",
+          "durationSec": 200,
+          "bpm": 120,
+          "key": "—",
+          "stems": [
+            {
+              "id": "vocals",
+              "label": "Vocals",
+              "src": "/stems/demo/vocals.mp3"
+            },
+            {
+              "id": "instruments",
+              "label": "Instruments",
+              "src": "/stems/demo/instruments.mp3"
+            },
+            {
+              "id": "drums",
+              "label": "Drums",
+              "src": "/stems/demo/drums.mp3"
+            },
+            {
+              "id": "bass",
+              "label": "Bass",
+              "src": "/stems/demo/bass.mp3"
+            }
+          ]
         }
       ]
     },
@@ -143,6 +849,7 @@
       "title": "Get Up",
       "year": 2023,
       "type": "EP",
+      "coverArt": "/covers/NewJeans%202nd%20EP%20'Get%20Up'_album_cover.jpg",
       "songs": [
         {
           "id": "new-jeans",
@@ -151,10 +858,26 @@
           "bpm": 130,
           "key": "D major",
           "stems": [
-            { "id": "vocals", "label": "Vocals", "src": "/stems/demo/vocals.mp3" },
-            { "id": "instruments", "label": "Instruments", "src": "/stems/demo/instruments.mp3" },
-            { "id": "drums", "label": "Drums", "src": "/stems/demo/drums.mp3" },
-            { "id": "bass", "label": "Bass", "src": "/stems/demo/bass.mp3" }
+            {
+              "id": "vocals",
+              "label": "Vocals",
+              "src": "/stems/demo/vocals.mp3"
+            },
+            {
+              "id": "instruments",
+              "label": "Instruments",
+              "src": "/stems/demo/instruments.mp3"
+            },
+            {
+              "id": "drums",
+              "label": "Drums",
+              "src": "/stems/demo/drums.mp3"
+            },
+            {
+              "id": "bass",
+              "label": "Bass",
+              "src": "/stems/demo/bass.mp3"
+            }
           ],
           "lyrics": [
             {
@@ -173,10 +896,26 @@
           "bpm": 125,
           "key": "E minor",
           "stems": [
-            { "id": "vocals", "label": "Vocals", "src": "/stems/demo/vocals.mp3" },
-            { "id": "instruments", "label": "Instruments", "src": "/stems/demo/instruments.mp3" },
-            { "id": "drums", "label": "Drums", "src": "/stems/demo/drums.mp3" },
-            { "id": "bass", "label": "Bass", "src": "/stems/demo/bass.mp3" }
+            {
+              "id": "vocals",
+              "label": "Vocals",
+              "src": "/stems/demo/vocals.mp3"
+            },
+            {
+              "id": "instruments",
+              "label": "Instruments",
+              "src": "/stems/demo/instruments.mp3"
+            },
+            {
+              "id": "drums",
+              "label": "Drums",
+              "src": "/stems/demo/drums.mp3"
+            },
+            {
+              "id": "bass",
+              "label": "Bass",
+              "src": "/stems/demo/bass.mp3"
+            }
           ],
           "lyrics": [
             {
@@ -185,6 +924,432 @@
               "ko": "Super Shy — 분리된 스템을 연결하세요.",
               "rom": "Super Shy — bunlyeodoen seutemeul yeongyeolhaseyo.",
               "member": "group"
+            }
+          ]
+        },
+        {
+          "id": "eta",
+          "title": "ETA",
+          "durationSec": 200,
+          "bpm": 120,
+          "key": "—",
+          "stems": [
+            {
+              "id": "vocals",
+              "label": "Vocals",
+              "src": "/stems/demo/vocals.mp3"
+            },
+            {
+              "id": "instruments",
+              "label": "Instruments",
+              "src": "/stems/demo/instruments.mp3"
+            },
+            {
+              "id": "drums",
+              "label": "Drums",
+              "src": "/stems/demo/drums.mp3"
+            },
+            {
+              "id": "bass",
+              "label": "Bass",
+              "src": "/stems/demo/bass.mp3"
+            }
+          ]
+        },
+        {
+          "id": "cool-with-you",
+          "title": "Cool With You",
+          "durationSec": 200,
+          "bpm": 120,
+          "key": "—",
+          "stems": [
+            {
+              "id": "vocals",
+              "label": "Vocals",
+              "src": "/stems/demo/vocals.mp3"
+            },
+            {
+              "id": "instruments",
+              "label": "Instruments",
+              "src": "/stems/demo/instruments.mp3"
+            },
+            {
+              "id": "drums",
+              "label": "Drums",
+              "src": "/stems/demo/drums.mp3"
+            },
+            {
+              "id": "bass",
+              "label": "Bass",
+              "src": "/stems/demo/bass.mp3"
+            }
+          ]
+        },
+        {
+          "id": "get-up-track",
+          "title": "Get Up",
+          "durationSec": 200,
+          "bpm": 120,
+          "key": "—",
+          "stems": [
+            {
+              "id": "vocals",
+              "label": "Vocals",
+              "src": "/stems/demo/vocals.mp3"
+            },
+            {
+              "id": "instruments",
+              "label": "Instruments",
+              "src": "/stems/demo/instruments.mp3"
+            },
+            {
+              "id": "drums",
+              "label": "Drums",
+              "src": "/stems/demo/drums.mp3"
+            },
+            {
+              "id": "bass",
+              "label": "Bass",
+              "src": "/stems/demo/bass.mp3"
+            }
+          ]
+        },
+        {
+          "id": "asap",
+          "title": "ASAP",
+          "durationSec": 200,
+          "bpm": 120,
+          "key": "—",
+          "stems": [
+            {
+              "id": "vocals",
+              "label": "Vocals",
+              "src": "/stems/demo/vocals.mp3"
+            },
+            {
+              "id": "instruments",
+              "label": "Instruments",
+              "src": "/stems/demo/instruments.mp3"
+            },
+            {
+              "id": "drums",
+              "label": "Drums",
+              "src": "/stems/demo/drums.mp3"
+            },
+            {
+              "id": "bass",
+              "label": "Bass",
+              "src": "/stems/demo/bass.mp3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "be-who-you-are",
+      "title": "Be Who You Are (Real Magic)",
+      "year": 2023,
+      "type": "Single",
+      "coverArt": "/covers/Be%20Who%20You%20Are%20(Real%20Magic)_album_cover.jpg",
+      "songs": [
+        {
+          "id": "be-who-you-are-real-magic-feat-jid-newjeans-camilo",
+          "title": "Be Who You Are (Real Magic) (feat. JID, NewJeans & Camilo)",
+          "durationSec": 200,
+          "bpm": 120,
+          "key": "—",
+          "stems": [
+            {
+              "id": "vocals",
+              "label": "Vocals",
+              "src": "/stems/demo/vocals.mp3"
+            },
+            {
+              "id": "instruments",
+              "label": "Instruments",
+              "src": "/stems/demo/instruments.mp3"
+            },
+            {
+              "id": "drums",
+              "label": "Drums",
+              "src": "/stems/demo/drums.mp3"
+            },
+            {
+              "id": "bass",
+              "label": "Bass",
+              "src": "/stems/demo/bass.mp3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "zero",
+      "title": "Zero",
+      "year": 2023,
+      "type": "Single",
+      "coverArt": "/covers/Zero_album_cover.jpg",
+      "songs": [
+        {
+          "id": "zero",
+          "title": "Zero",
+          "durationSec": 200,
+          "bpm": 120,
+          "key": "—",
+          "stems": [
+            {
+              "id": "vocals",
+              "label": "Vocals",
+              "src": "/stems/demo/vocals.mp3"
+            },
+            {
+              "id": "instruments",
+              "label": "Instruments",
+              "src": "/stems/demo/instruments.mp3"
+            },
+            {
+              "id": "drums",
+              "label": "Drums",
+              "src": "/stems/demo/drums.mp3"
+            },
+            {
+              "id": "bass",
+              "label": "Bass",
+              "src": "/stems/demo/bass.mp3"
+            }
+          ],
+          "remixes": [
+            {
+              "id": "zero-j-i-d-remix",
+              "title": "Zero (J.I.D Remix)",
+              "source": "J.I.D",
+              "category": "official",
+              "songId": "zero-j-i-d-remix",
+              "coverArt": "/covers/Zero%20(J.I.D%20Remix)_album_cover.jpg",
+              "durationSec": 200
+            }
+          ]
+        },
+        {
+          "id": "zero-j-i-d-remix",
+          "title": "Zero (J.I.D Remix)",
+          "durationSec": 200,
+          "bpm": 120,
+          "key": "—",
+          "artwork": "/covers/Zero%20(J.I.D%20Remix)_album_cover.jpg",
+          "isRemix": true,
+          "stems": [
+            {
+              "id": "vocals",
+              "label": "Vocals",
+              "src": "/stems/demo/vocals.mp3"
+            },
+            {
+              "id": "instruments",
+              "label": "Instruments",
+              "src": "/stems/demo/instruments.mp3"
+            },
+            {
+              "id": "drums",
+              "label": "Drums",
+              "src": "/stems/demo/drums.mp3"
+            },
+            {
+              "id": "bass",
+              "label": "Bass",
+              "src": "/stems/demo/bass.mp3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "omg",
+      "title": "OMG",
+      "year": 2023,
+      "type": "Single",
+      "coverArt": "/covers/NewJeans%20'OMG'_album_cover.jpg",
+      "songs": [
+        {
+          "id": "omg",
+          "title": "OMG",
+          "durationSec": 200,
+          "bpm": 120,
+          "key": "—",
+          "stems": [
+            {
+              "id": "vocals",
+              "label": "Vocals",
+              "src": "/stems/demo/vocals.mp3"
+            },
+            {
+              "id": "instruments",
+              "label": "Instruments",
+              "src": "/stems/demo/instruments.mp3"
+            },
+            {
+              "id": "drums",
+              "label": "Drums",
+              "src": "/stems/demo/drums.mp3"
+            },
+            {
+              "id": "bass",
+              "label": "Bass",
+              "src": "/stems/demo/bass.mp3"
+            }
+          ]
+        },
+        {
+          "id": "ditto",
+          "title": "Ditto",
+          "durationSec": 200,
+          "bpm": 120,
+          "key": "—",
+          "stems": [
+            {
+              "id": "vocals",
+              "label": "Vocals",
+              "src": "/stems/demo/vocals.mp3"
+            },
+            {
+              "id": "instruments",
+              "label": "Instruments",
+              "src": "/stems/demo/instruments.mp3"
+            },
+            {
+              "id": "drums",
+              "label": "Drums",
+              "src": "/stems/demo/drums.mp3"
+            },
+            {
+              "id": "bass",
+              "label": "Bass",
+              "src": "/stems/demo/bass.mp3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "new-jeans",
+      "title": "New Jeans",
+      "year": 2022,
+      "type": "EP",
+      "coverArt": "/covers/NewJeans%201st%20EP%20'New%20Jeans'_album_cover.jpg",
+      "songs": [
+        {
+          "id": "attention",
+          "title": "Attention",
+          "durationSec": 200,
+          "bpm": 120,
+          "key": "—",
+          "stems": [
+            {
+              "id": "vocals",
+              "label": "Vocals",
+              "src": "/stems/demo/vocals.mp3"
+            },
+            {
+              "id": "instruments",
+              "label": "Instruments",
+              "src": "/stems/demo/instruments.mp3"
+            },
+            {
+              "id": "drums",
+              "label": "Drums",
+              "src": "/stems/demo/drums.mp3"
+            },
+            {
+              "id": "bass",
+              "label": "Bass",
+              "src": "/stems/demo/bass.mp3"
+            }
+          ]
+        },
+        {
+          "id": "hype-boy",
+          "title": "Hype Boy",
+          "durationSec": 200,
+          "bpm": 120,
+          "key": "—",
+          "stems": [
+            {
+              "id": "vocals",
+              "label": "Vocals",
+              "src": "/stems/demo/vocals.mp3"
+            },
+            {
+              "id": "instruments",
+              "label": "Instruments",
+              "src": "/stems/demo/instruments.mp3"
+            },
+            {
+              "id": "drums",
+              "label": "Drums",
+              "src": "/stems/demo/drums.mp3"
+            },
+            {
+              "id": "bass",
+              "label": "Bass",
+              "src": "/stems/demo/bass.mp3"
+            }
+          ]
+        },
+        {
+          "id": "cookie",
+          "title": "Cookie",
+          "durationSec": 200,
+          "bpm": 120,
+          "key": "—",
+          "stems": [
+            {
+              "id": "vocals",
+              "label": "Vocals",
+              "src": "/stems/demo/vocals.mp3"
+            },
+            {
+              "id": "instruments",
+              "label": "Instruments",
+              "src": "/stems/demo/instruments.mp3"
+            },
+            {
+              "id": "drums",
+              "label": "Drums",
+              "src": "/stems/demo/drums.mp3"
+            },
+            {
+              "id": "bass",
+              "label": "Bass",
+              "src": "/stems/demo/bass.mp3"
+            }
+          ]
+        },
+        {
+          "id": "hurt",
+          "title": "Hurt",
+          "durationSec": 200,
+          "bpm": 120,
+          "key": "—",
+          "stems": [
+            {
+              "id": "vocals",
+              "label": "Vocals",
+              "src": "/stems/demo/vocals.mp3"
+            },
+            {
+              "id": "instruments",
+              "label": "Instruments",
+              "src": "/stems/demo/instruments.mp3"
+            },
+            {
+              "id": "drums",
+              "label": "Drums",
+              "src": "/stems/demo/drums.mp3"
+            },
+            {
+              "id": "bass",
+              "label": "Bass",
+              "src": "/stems/demo/bass.mp3"
             }
           ]
         }

@@ -62,17 +62,63 @@ export function groupRemixesByCategory(
   };
 }
 
+export function findParentSongForRemix(release: Release, songId: string): Song | undefined {
+  return release.songs.find((song) => song.remixes?.some((remix) => remix.songId === songId));
+}
+
+/** Remix order matches RemixSection: official, then sekai. */
+export function getOrderedRemixes(releaseId: string, parentSongId: string): RemixItem[] {
+  const { official, sekai } = groupRemixesByCategory(getRemixesForSong(releaseId, parentSongId));
+  return [...official, ...sekai];
+}
+
 export function getSongIndex(release: Release, songId: string): number {
   const songs = getSelectableSongs(release);
   const directIndex = songs.findIndex((s) => s.id === songId);
   if (directIndex >= 0) return directIndex;
 
-  const parentSong = release.songs.find((song) => song.remixes?.some((remix) => remix.songId === songId));
+  const parentSong = findParentSongForRemix(release, songId);
   if (!parentSong) return -1;
   return songs.findIndex((s) => s.id === parentSong.id);
 }
 
 export type SongLocation = { releaseId: string; songId: string };
+
+function getAdjacentRemixSong(
+  releaseId: string,
+  parentSongId: string,
+  songId: string,
+  direction: "next" | "previous",
+): SongLocation | undefined {
+  const { official, sekai } = groupRemixesByCategory(getRemixesForSong(releaseId, parentSongId));
+  const officialIndex = official.findIndex((remix) => remix.songId === songId);
+  const sekaiIndex = sekai.findIndex((remix) => remix.songId === songId);
+
+  if (officialIndex >= 0) {
+    if (direction === "next") {
+      const nextOfficial = official[officialIndex + 1];
+      if (nextOfficial) return { releaseId, songId: nextOfficial.songId };
+      const firstSekai = sekai[0];
+      return firstSekai ? { releaseId, songId: firstSekai.songId } : undefined;
+    }
+    const prevOfficial = official[officialIndex - 1];
+    return prevOfficial ? { releaseId, songId: prevOfficial.songId } : undefined;
+  }
+
+  if (sekaiIndex >= 0) {
+    if (direction === "next") {
+      const nextSekai = sekai[sekaiIndex + 1];
+      return nextSekai ? { releaseId, songId: nextSekai.songId } : undefined;
+    }
+    if (sekaiIndex > 0) {
+      return { releaseId, songId: sekai[sekaiIndex - 1]!.songId };
+    }
+    const lastOfficial = official.at(-1);
+    return lastOfficial ? { releaseId, songId: lastOfficial.songId } : undefined;
+  }
+
+  return undefined;
+}
 
 /** Next/previous track in release order (newest→oldest), crossing releases at boundaries. */
 export function getAdjacentSong(
@@ -85,6 +131,11 @@ export function getAdjacentSong(
   if (releaseIndex < 0) return undefined;
 
   const release = releases[releaseIndex]!;
+  const parentSong = findParentSongForRemix(release, songId);
+  if (parentSong) {
+    return getAdjacentRemixSong(releaseId, parentSong.id, songId, direction);
+  }
+
   const songs = getSelectableSongs(release);
   const songIndex = getSongIndex(release, songId);
   if (songIndex < 0) return undefined;

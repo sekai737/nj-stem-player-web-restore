@@ -1,9 +1,9 @@
 import { figmaAssets } from "../../figma/assets";
-import { coolTitleGlyphClassForIndex, splitTitleGlyphs } from "../../figma/coolTitleStyle";
 import { FIGMA } from "../../figma/layout";
-import { displayTrackTitle } from "../../utils/displayTrackTitle";
+import { trackTitleSuffixes } from "../../utils/displayTrackTitle";
 import { formatTrackMetadata } from "../../utils/formatTrackMetadata";
 import SelectableCopyRegion from "../SelectableCopyRegion";
+import CoolTitleDisplay from "./CoolTitleDisplay";
 import "../selectable-copy-stem.css";
 
 interface SongTitleBlockProps {
@@ -26,9 +26,8 @@ export default function SongTitleBlock({
   keyLabel,
   bpm,
 }: SongTitleBlockProps) {
-  const glyphs = splitTitleGlyphs(displayTrackTitle(title));
   const stack = FIGMA.titleRow.titleStack;
-  const isInstrumental = songId.endsWith("-instrumental");
+  const titleSuffixes = trackTitleSuffixes(title);
 
   return (
     <div
@@ -58,15 +57,7 @@ export default function SongTitleBlock({
         data-node-id="3:282"
         data-name="Title display name"
       >
-        <div className="title-cool-block shrink-0">
-          <p className="title-cool-line">
-            {glyphs.map((glyph, index) => (
-              <span key={`${index}-${glyph}`} className={coolTitleGlyphClassForIndex(index)}>
-                {glyph}
-              </span>
-            ))}
-          </p>
-        </div>
+        <CoolTitleDisplay title={title} />
       </div>
 
       <SelectableCopyRegion
@@ -78,7 +69,7 @@ export default function SongTitleBlock({
       >
         <div className="title-metadata-block">
           <p className="title-track-metadata text-content-primary" data-copy-block>
-            {formatTrackMetadata(durationSec, keyLabel, bpm, { instrumental: isInstrumental })}
+            {formatTrackMetadata(durationSec, keyLabel, bpm, { titleSuffixes })}
           </p>
         </div>
       </SelectableCopyRegion>

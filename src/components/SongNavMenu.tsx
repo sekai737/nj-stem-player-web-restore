@@ -1,12 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
 import type { StemTrack } from "../types";
 import { downloadSongMidi, downloadSongStems } from "../utils/downloadStems";
 import { usePlayerStore } from "../store/playerStore";
 import "./song-nav-menu.css";
 
 interface SongNavMenuProps {
-  releaseId: string;
   songTitle: string;
   stems: StemTrack[];
   /** When set, stem ZIP download uses these paths instead of `stems` */
@@ -20,7 +18,6 @@ interface SongNavMenuProps {
 }
 
 export default function SongNavMenu({
-  releaseId,
   songTitle,
   stems,
   stemsZipFiles,
@@ -100,15 +97,8 @@ export default function SongNavMenu({
   return (
     <nav
       ref={navRef}
-      className="figma-surface absolute top-14 right-0 z-50 min-w-56 rounded-cr p-2"
+      className="song-nav-menu figma-surface absolute top-14 right-0 z-50 min-w-56 rounded-cr p-2"
     >
-        <Link
-          to={`/release/${releaseId}`}
-          className="block rounded-cr px-4 py-3 text-sm font-bold text-text-primary hover:bg-bg-secondary"
-          onClick={() => setMenuOpen(false)}
-        >
-          Back to Song Selection
-        </Link>
         <button
           type="button"
           disabled={!hasPrevious}

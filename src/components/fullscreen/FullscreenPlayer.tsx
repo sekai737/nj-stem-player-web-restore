@@ -110,6 +110,7 @@ export default function FullscreenPlayer({
       <main className="fs-player__main">
         <div className="fs-player__lyrics-col">
           <ChatLyricFeed
+            key={song.id}
             songTitle={song.title}
             lines={mergedLines}
             loading={lyricsLoading}
@@ -135,7 +136,6 @@ export default function FullscreenPlayer({
                 releaseTitle={release.title}
                 releaseType={release.type}
                 year={release.year}
-                isInstrumental={song.id.endsWith("-instrumental")}
                 isPlaying={isPlaying}
                 currentTime={currentTime}
                 durationSec={safeDuration}

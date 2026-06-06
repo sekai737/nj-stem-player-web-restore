@@ -19,6 +19,7 @@ const LONG_PAUSE_SEC = 8;
 interface LyricPanelProps {
   lrc?: SongLrcFiles;
   fontsReady?: boolean;
+  onSeek?: (time: number) => void;
 }
 
 function findNextSungTime(lyrics: LyricLine[], fromIndex: number): number | null {
@@ -32,7 +33,7 @@ function findNextSungTime(lyrics: LyricLine[], fromIndex: number): number | null
  * Figma lyrics column (node 26:214) — active line + one preview below.
  * Carousel motion on line advance; fadeDo on first paint / seek snap.
  */
-export default function LyricPanel({ lrc, fontsReady = true }: LyricPanelProps) {
+export default function LyricPanel({ lrc, fontsReady = true, onSeek }: LyricPanelProps) {
   const currentTime = usePlayerStore((s) => s.currentTime);
   const { lines, loading, error } = useLyrics(lrc);
 
@@ -88,6 +89,7 @@ export default function LyricPanel({ lrc, fontsReady = true }: LyricPanelProps) 
         copyLabel="Lyrics"
         className="stem-lyrics-copy flex min-w-0 flex-1 flex-col items-center justify-center overflow-visible text-center"
         regionClassName="flex w-full flex-col items-center justify-center overflow-visible text-center"
+        enablePointerCapture={!onSeek}
       >
         {loading ? (
           <p className="lyric-line-main stem-lyrics-panel__line" data-copy-block>
@@ -105,6 +107,7 @@ export default function LyricPanel({ lrc, fontsReady = true }: LyricPanelProps) 
             showIdling={showIdling}
             idlingProgress={idlingProgress}
             idlingDelayMs={idlingDelayMs}
+            onSeek={onSeek}
           />
         ) : (
           <p className="lyric-line-preview stem-lyrics-panel__line" data-copy-block>

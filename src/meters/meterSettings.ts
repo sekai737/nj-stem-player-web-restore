@@ -30,18 +30,59 @@ export const METER_SETTINGS = {
   spectrogramGamma: 1.15,
   spectrogramLutCeiling: 1,
   spectrogramRenderScale: 2,
-  scopePointSize: 3,
-  scopeHistoryPoints: 512,
+  /** Dot size for the half-circle goniometer scatter. */
+  scopePointSize: 1.6,
+  /**
+   * Audio→radius curve drive (fixed). Maps raw sample magnitude to display
+   * position — tune for stereo-field fidelity, not visual size.
+   */
+  scopeAudioDrive: 2.2,
+  /** Max fraction of the inscribed radius loud peaks may approach (headroom from rim). */
+  scopeMaxFill: 0.94,
+  /**
+   * Independent render-only scale for the vectorscope foreground (1 = default).
+   * Scales only the audio-reactive dot cloud from the bottom-centre origin; the
+   * background grid stays fixed. Does not affect audio analysis or correlation.
+   */
+  scopeVisualScale: 1.7,
+  /** Samples plotted in the half-circle goniometer cloud per frame. */
+  scopeHistoryPoints: 1100,
+  /** Temporal smoothing for the vectorscope, 0 (off) … 1 (max). Light EWMA that
+   * takes the edge off jitter without blurring the trace shape. */
+  scopeSmoothing: 0.28,
   waveformMidRatio: 0.58,
   waveformFixedScale: 0.92,
   waveformBandAmplitude: 0.88,
+  /** Render-only: trace line width for the meter waveform (px). */
+  waveformLineWidth: 1,
 } as const;
 
 /**
- * Canvas clip radius inside `.meter-plot-slot` (Figma cr-16 minus 2px stroke).
+ * Fallback canvas clip radius when CSS vars are unavailable.
+ * Live value: `--meter-plot-inner-radius` on `.meter-plot-slot`.
  * @see src/components/meters/meter-panel.css
  */
-export const METER_PLOT_CORNER_RADIUS_PX = 14;
+export const METER_PLOT_CORNER_RADIUS_PX = 13;
+
+/** Canvas plot titles — short subtitles under each meter name. */
+export const METER_PLOT_LABELS = {
+  spectrogram: {
+    title: "Spectrogram",
+    subtitle: (spanSeconds: number) => `Log frequency · ${spanSeconds}s`,
+  },
+  spectrum: {
+    title: "Spectrum",
+    subtitle: `Mel scale · ${METER_SETTINGS.spectrumTiltDbPerOct} dB/oct`,
+  },
+  stereometer: {
+    title: "Stereometer",
+    subtitle: "Scaled · Unipolar",
+  },
+  waveform: {
+    title: "Waveform",
+    subtitle: "Mid / side",
+  },
+} as const;
 
 /** Visible dB window for spectrum (center ± range/2). */
 export const SPECTRUM_DB_MIN =

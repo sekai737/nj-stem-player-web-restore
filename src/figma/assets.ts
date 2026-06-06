@@ -1,6 +1,7 @@
 /** Figma-exported assets (public/figma). */
 export const figmaAssets = {
   home: "/figma/home.svg",
+  stemPageBack: "/figma/stem-page-back.svg",
   settings: "/figma/settings.svg",
   fullscreen: "/figma/fullscreen.svg",
   backButton: "/figma/back-button.svg",
@@ -33,7 +34,35 @@ export const figmaAssets = {
   background: "/figma/background.svg",
   /** Small star accents — layered over background.svg (1836×984 artboard) */
   smallStars: "/figma/small-stars.svg",
-  letterbox: "/figma/letterbox.png",
+  homePageTitle: "/figma/title.svg",
+  homePagePlay: "/figma/home-page-play.svg",
+  /** Home bubble currently exported as PNG in public/figma. */
+  homePageBubble: "/figma/bubble.png",
+  homePageFloor: "/figma/floor.svg",
+  homePageYoutubeButton: "/figma/youtube-button.png",
+  homePageTokkiHeart: "/figma/tokki-heart.png",
+  homePageBackUp: "/figma/back-up.svg",
+  homePageCircles: "/figma/circles.svg",
+  homePageBigStars: "/figma/big-stars.svg",
+  homePageHeartMinji: "/figma/heart-minji.png",
+  homePageHeartHanni: "/figma/heart-hanni.png",
+  homePageHeartDanielle: "/figma/heart-danielle.png",
+  /** Asset exported as heart-hearin.png in public/figma. */
+  homePageHeartHaerin: "/figma/heart-hearin.png",
+  homePageHeartHyein: "/figma/heart-hyein.png",
   /** Legacy aliases */
   iconCircle: "/figma/icon-circle.svg",
 } as const;
+
+/**
+ * Small-star sprites (Figma "Small Stars" 227:288), exported individually as
+ * asset-{n}.svg. Consumed by the jittered StarField; small-stars.svg is the
+ * arrangement reference only.
+ */
+export const figmaStarAssets = [
+  "/figma/asset-1.svg",
+  "/figma/asset-2.svg",
+  "/figma/asset-3.svg",
+  "/figma/asset-4.svg",
+  "/figma/asset-5.svg",
+] as const;

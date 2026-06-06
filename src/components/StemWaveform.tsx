@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState, type MouseEvent } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent } from "react";
 import WaveSurfer from "wavesurfer.js";
 import {
   disableWaveSurferProgress,
   GGD_WAVESURFER_OPTIONS,
   setPlayheadPosition,
 } from "../audio/ggdMediaPlayer";
+import { padPeaksForTimeline } from "../audio/extractPeaks";
 import { getStemWaveformTraceColor } from "../figma/stemWaveformTokens";
 import type { StemId } from "../types";
 import { usePlayerStore } from "../store/playerStore";
@@ -35,11 +36,18 @@ export default function StemWaveform({
   const waveformRef = useRef<HTMLDivElement>(null);
   const wsRef = useRef<WaveSurfer | null>(null);
   const storeDuration = usePlayerStore((s) => s.duration);
+  const stemDuration = usePlayerStore((s) => s.stemDurations[stemId]);
   const peaks = usePlayerStore((s) => s.stemPeaks[stemId]);
   const stemsLoading = usePlayerStore((s) => s.stemsLoading);
+  const isPlaying = usePlayerStore((s) => s.isPlaying);
+  const transportSeq = usePlayerStore((s) => s.transportSeq);
   const [isLoading, setIsLoading] = useState(true);
 
-  const duration = storeDuration > 0 ? storeDuration : fallbackDurationSec;
+  const transportDuration = storeDuration > 0 ? storeDuration : fallbackDurationSec;
+
+  useLayoutEffect(() => {
+    setPlayheadPosition(playheadRef.current, outerRef.current, 0);
+  }, [transportSeq]);
 
   useEffect(() => {
     if (!waveformRef.current || stemsLoading) return;
@@ -73,9 +81,14 @@ export default function StemWaveform({
 
     const load = async () => {
       try {
-        const loadDuration = storeDuration > 0 ? storeDuration : fallbackDurationSec;
+        const loadDuration = transportDuration;
         if (peaks && peaks.length > 0 && loadDuration > 0) {
-          await ws.load("", [peaks], loadDuration);
+          const alignedPeaks = padPeaksForTimeline(
+            peaks,
+            stemDuration ?? loadDuration,
+            loadDuration,
+          );
+          await ws.load("", [alignedPeaks], loadDuration);
           return;
         }
         if (/\.flac$/i.test(src)) {
@@ -97,26 +110,30 @@ export default function StemWaveform({
       ws.destroy();
       wsRef.current = null;
     };
-  }, [src, stemId, peaks, storeDuration, fallbackDurationSec, stemsLoading]);
+  }, [src, stemId, peaks, stemDuration, transportDuration, fallbackDurationSec, stemsLoading]);
 
   /**
    * GGD updateTimeline() — direct DOM playhead position, snapped to whole pixels.
+   * Only animates while audio is playing; song changes reset via transportSeq.
    */
   useEffect(() => {
-    if (!duration) return;
+    if (!transportDuration) return;
 
     let active = true;
     let frame = 0;
 
     const updatePlayhead = () => {
       const time = usePlayerStore.getState().currentTime;
-      setPlayheadPosition(playheadRef.current, outerRef.current, time / duration);
+      setPlayheadPosition(playheadRef.current, outerRef.current, time / transportDuration);
     };
 
-    const tick = () => {
-      if (!active) return;
+    const schedule = () => {
+      if (!active || !usePlayerStore.getState().isPlaying) {
+        frame = 0;
+        return;
+      }
       updatePlayhead();
-      frame = requestAnimationFrame(tick);
+      frame = requestAnimationFrame(schedule);
     };
 
     const observer =
@@ -126,19 +143,41 @@ export default function StemWaveform({
       });
     if (observer && outerRef.current) observer.observe(outerRef.current);
 
-    frame = requestAnimationFrame(tick);
+    updatePlayhead();
+    if (isPlaying) {
+      frame = requestAnimationFrame(schedule);
+    }
+
+    const unsubscribe = usePlayerStore.subscribe((state, prev) => {
+      if (!active) return;
+      if (
+        state.currentTime !== prev.currentTime ||
+        state.isPlaying !== prev.isPlaying ||
+        state.transportSeq !== prev.transportSeq
+      ) {
+        updatePlayhead();
+        if (state.isPlaying && frame === 0) {
+          frame = requestAnimationFrame(schedule);
+        } else if (!state.isPlaying && frame !== 0) {
+          cancelAnimationFrame(frame);
+          frame = 0;
+        }
+      }
+    });
+
     return () => {
       active = false;
       cancelAnimationFrame(frame);
+      unsubscribe();
       observer?.disconnect();
     };
-  }, [duration]);
+  }, [transportDuration, isPlaying, transportSeq]);
 
   const seekFromClientX = (clientX: number) => {
-    if (disabled || !duration || !outerRef.current) return;
+    if (disabled || !transportDuration || !outerRef.current) return;
     const rect = outerRef.current.getBoundingClientRect();
     const ratio = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
-    onSeek(ratio * duration);
+    onSeek(ratio * transportDuration);
   };
 
   const handleClick = (event: MouseEvent<HTMLDivElement>) => {
@@ -161,7 +200,7 @@ export default function StemWaveform({
       role="slider"
       aria-label={`${stemId} waveform`}
       aria-valuemin={0}
-      aria-valuemax={duration || 0}
+      aria-valuemax={transportDuration || 0}
       aria-disabled={disabled}
       onClick={handleClick}
       onDoubleClick={handleDoubleClick}

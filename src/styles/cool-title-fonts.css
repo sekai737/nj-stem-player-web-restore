@@ -42,8 +42,8 @@
 }
 
 @font-face {
-  font-family: "COOL_FONT:Pix-Outlined";
-  src: url("/fonts/cool-font-pix-outlined.woff2") format("woff2");
+  font-family: "COOL_FONT:Ball";
+  src: url("/fonts/cool-font-ball.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -140,7 +140,7 @@
   font-synthesis: none;
   line-height: normal;
   /**
-   * Stroke on every glyph (incl. Pix-Outlined “e”) — see `--title-cool-stroke-width`.
+   * Stroke on every glyph — see `--title-cool-stroke-width`.
    * Cleaner than multi-offset text-shadow on per-letter COOL spans.
    */
   -webkit-text-stroke: var(--title-cool-stroke-width) var(--stroke-primary);
@@ -165,8 +165,8 @@
   font-family: "COOL_FONT:Pixel";
 }
 
-.title-cool-glyph--pix-outlined {
-  font-family: "COOL_FONT:Pix-Outlined";
+.title-cool-glyph--ball {
+  font-family: "COOL_FONT:Ball";
 }
 
 .title-cool-glyph--distorted {

@@ -5,9 +5,13 @@ import {
   useRef,
   useState,
   type CSSProperties,
+  type KeyboardEvent,
+  type MouseEvent,
   type TransitionEvent,
 } from "react";
 import { LYRICS_FIGMA } from "../figma/lyricsLayout";
+import type { LyricLine } from "../types";
+import { usePlayerStore } from "../store/playerStore";
 import { isPauseLine } from "../utils/lyricsDisplay";
 import LyricIdlingIndicator from "./lyrics/LyricIdlingIndicator";
 import LyricText from "./LyricText";
@@ -22,6 +26,26 @@ interface StemLyricsCarouselProps {
   showIdling: boolean;
   idlingProgress: number;
   idlingDelayMs: number;
+  onSeek?: (time: number) => void;
+}
+
+function hasTextSelection(): boolean {
+  const selection = window.getSelection();
+  return Boolean(selection && !selection.isCollapsed);
+}
+
+function seekFromPreviewClick(e: MouseEvent<HTMLDivElement>, onSeek?: (time: number) => void) {
+  if (!onSeek || hasTextSelection()) return;
+  const target = (e.target as HTMLElement).closest<HTMLElement>("[data-seek-time]");
+  if (!target) return;
+  const time = Number(target.dataset.seekTime);
+  if (Number.isFinite(time)) onSeek(time);
+}
+
+function seekFromPreviewKey(e: KeyboardEvent, time: number, onSeek?: (time: number) => void) {
+  if (e.key !== "Enter" && e.key !== " ") return;
+  e.preventDefault();
+  onSeek?.(time);
 }
 
 type Phase = "idle" | "push" | "intro";
@@ -47,6 +71,7 @@ export default function StemLyricsCarousel({
   showIdling,
   idlingProgress,
   idlingDelayMs,
+  onSeek,
 }: StemLyricsCarouselProps) {
   const [phase, setPhase] = useState<Phase>("idle");
   const [instant, setInstant] = useState(false);
@@ -59,10 +84,27 @@ export default function StemLyricsCarousel({
   );
   const [exitIndex, setExitIndex] = useState<number | null>(null);
 
+  const transportSeq = usePlayerStore((s) => s.transportSeq);
+  const lastTransportSeqRef = useRef(transportSeq);
   const lastIndexRef = useRef(activeIndex);
   const mountedRef = useRef(false);
   const trackRef = useRef<HTMLDivElement>(null);
   const pushPendingRef = useRef(false);
+
+  useEffect(() => {
+    if (lastTransportSeqRef.current === transportSeq) return;
+    lastTransportSeqRef.current = transportSeq;
+    mountedRef.current = false;
+    lastIndexRef.current = -1;
+    pushPendingRef.current = false;
+    setPhase("idle");
+    setInstant(false);
+    setTrackY(0);
+    setActive(false);
+    setExitIndex(null);
+    setMainIndex(activeIndex >= 0 ? activeIndex : 0);
+    setPreviewIndex(previewIndexFor(lines, activeIndex, next));
+  }, [transportSeq, activeIndex, lines, next]);
 
   const stageStyle = {
     "--stem-lyric-main-h": `${LYRICS_FIGMA.lyrics.mainLineHeight}px`,
@@ -213,7 +255,11 @@ export default function StemLyricsCarousel({
     .join(" ");
 
   return (
-    <div className={carouselClass} style={stageStyle}>
+    <div
+      className={carouselClass}
+      style={stageStyle}
+      onClick={(e) => seekFromPreviewClick(e, onSeek)}
+    >
       <div className="stem-lyrics-carousel__viewport">
         <div
           ref={trackRef}
@@ -247,8 +293,18 @@ export default function StemLyricsCarousel({
           {previewLine ? (
             <p
               key="slot-preview"
-              className={`stem-lyrics-carousel__item ${previewClass}`}
+              className={[
+                "stem-lyrics-carousel__item",
+                previewClass,
+                onSeek ? "stem-lyrics-carousel__item--seekable" : "",
+              ]
+                .filter(Boolean)
+                .join(" ")}
               data-copy-block
+              role={onSeek ? "button" : undefined}
+              tabIndex={onSeek ? 0 : undefined}
+              data-seek-time={onSeek ? previewLine.time : undefined}
+              onKeyDown={(e) => seekFromPreviewKey(e, previewLine.time, onSeek)}
             >
               <LyricText text={previewLine.text} />
             </p>

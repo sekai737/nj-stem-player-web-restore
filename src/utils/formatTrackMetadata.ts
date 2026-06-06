@@ -11,19 +11,19 @@ export function formatMusicalKey(keyLabel: string): string {
   return trimmed;
 }
 
-/** `3:11 · Bb minor · 109 BPM` — matches Figma node 3:280. */
+/** `3:11 · Bb minor · 109 BPM · (Winter ver.)` — matches Figma node 3:280. */
 export function formatTrackMetadata(
   durationSec: number,
   keyLabel: string,
   bpm: number,
-  options?: { instrumental?: boolean },
+  options?: { titleSuffixes?: string[] },
 ): string {
   const parts = [
     formatTime(durationSec),
     formatMusicalKey(keyLabel),
     `${bpm} BPM`,
   ];
-  if (options?.instrumental) parts.push("(Instrumental)");
+  if (options?.titleSuffixes?.length) parts.push(...options.titleSuffixes);
   /* Double spaces around · match pre–Figma-fix layout (white-space: pre). */
   return parts.join(`  ${TRACK_METADATA_SEP}  `);
 }

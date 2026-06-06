@@ -2,7 +2,11 @@ import type { CSSProperties } from "react";
 import SliderKnob from "../SliderKnob";
 import { figmaAssets } from "../../figma/assets";
 import { FIGMA_FULLSCREEN as FS } from "../../figma/fullscreenLayout";
-import { displayTrackTitle, PLAYER_ARTIST_NAME } from "../../utils/displayTrackTitle";
+import {
+  displayTrackTitle,
+  PLAYER_ARTIST_NAME,
+  trackTitleSuffixes,
+} from "../../utils/displayTrackTitle";
 import { formatTime } from "../../utils/time";
 import FigmaIconButton from "../stem-player/FigmaIconButton";
 import "./fullscreen-player-card.css";
@@ -14,7 +18,6 @@ interface FullscreenPlayerCardProps {
   releaseTitle: string;
   releaseType: string;
   year: number;
-  isInstrumental?: boolean;
   isPlaying: boolean;
   currentTime: number;
   durationSec: number;
@@ -33,7 +36,6 @@ export default function FullscreenPlayerCard({
   releaseTitle,
   releaseType,
   year,
-  isInstrumental = false,
   isPlaying,
   currentTime,
   durationSec,
@@ -46,6 +48,7 @@ export default function FullscreenPlayerCard({
   hasNext,
 }: FullscreenPlayerCardProps) {
   const safeDuration = durationSec > 0 ? durationSec : 0;
+  const titleSuffixes = trackTitleSuffixes(title);
   const progressPct = safeDuration > 0 ? (currentTime / safeDuration) * 100 : 0;
   const thumbHalf = PC.progressThumbSize / 2;
   /** Keep knob center inside track so it does not overlap time labels at 0% / 100%. */
@@ -113,7 +116,7 @@ export default function FullscreenPlayerCard({
           </p>
           <p className="fs-player-card__album" data-node-id="121:318">
             {releaseTitle} {releaseType} · {year}
-            {isInstrumental ? " · (Instrumental)" : ""}
+            {titleSuffixes.map((suffix) => ` · ${suffix}`).join("")}
           </p>
         </div>
 
