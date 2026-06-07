@@ -1,8 +1,9 @@
 {
   "name": "nj-stem-player-web",
   "private": true,
-  "version": "0.1.0",
+  "version": "1.0.0",
   "type": "module",
+  "main": "dist-electron/main.js",
   "scripts": {
     "fonts:ensure": "node scripts/ensure-fonts.mjs",
     "dev": "npm run fonts:ensure && vite",
@@ -11,7 +12,13 @@
     "stems:placeholder": "node scripts/generate-demo-stems.mjs",
     "analyze:stems": "node scripts/analyze-stems.mjs",
     "catalog:sync": "node scripts/build-catalog-from-csv.mjs",
-    "fonts:build": "node scripts/build-fonts.mjs"
+    "fonts:build": "node scripts/build-fonts.mjs",
+    "electron:ensure": "node scripts/ensure-electron.mjs",
+    "electron:compile": "tsc -p tsconfig.electron.json",
+    "electron:dev": "npm run electron:ensure && npm run electron:compile && concurrently -k -n vite,electron -c blue,green \"cross-env ELECTRON_DEV=1 npm run dev\" \"wait-on tcp:5173 && cross-env ELECTRON_DEV=1 npx electron .\"",
+    "electron:build:app": "npm run fonts:ensure && npm run electron:ensure && npm run electron:compile && cross-env ELECTRON_BUILD=1 vite build",
+    "electron:start": "npm run electron:build:app && npx electron .",
+    "electron:build": "npm run electron:build:app && electron-builder"
   },
   "dependencies": {
     "jszip": "^3.10.1",
@@ -22,14 +29,51 @@
     "zustand": "^5.0.5"
   },
   "devDependencies": {
+    "@types/node": "^22.15.21",
     "@types/react": "^18.3.20",
     "@types/react-dom": "^18.3.6",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.21",
+    "concurrently": "^9.1.2",
+    "cross-env": "^7.0.3",
+    "electron": "^34.5.8",
+    "electron-builder": "^25.1.8",
     "postcss": "^8.5.4",
     "tailwindcss": "^3.4.17",
     "typescript": "~5.6.3",
     "vite": "^4.5.14",
+    "wait-on": "^8.0.3",
     "wawoff2": "^2.0.1"
+  },
+  "build": {
+    "appId": "com.sekai737.nj-stem-player",
+    "productName": "NewJeans Stem Player",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "dist-electron/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "build/icon.ico",
+      "signAndEditExecutable": false
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "icon": "build/icon.icns"
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "icon": "build/icon.png"
+    }
   }
 }

@@ -5,19 +5,21 @@
   --fs-lyric-edge-inset: 60px;
   --fs-lyric-name-inset: 96px;
 
+  position: relative;
   flex: 1;
   min-height: 0;
   display: flex;
   flex-direction: column;
+  overflow: visible;
 }
 
 .fs-lyric-feed__scroll {
   flex: 1;
+  min-height: 0;
   overflow-x: hidden;
   overflow-y: auto;
-  /* Room for pop shadow + border on active bubble (not clipped by scroll or footer) */
-  padding: 0 var(--spacing-sp-4) var(--spacing-sp-8) 0;
-  scroll-behavior: smooth;
+  /* Scroll through the footer band — messages rise from beneath it */
+  padding: 0 var(--spacing-sp-4) calc(var(--fs-footer-h) + var(--spacing-sp-16)) 0;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
@@ -74,6 +76,19 @@
 
 .fs-lyric-message--enter {
   animation: fs-message-in 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Bubble pops in from the tail corner while the row slides up */
+.fs-lyric-message--enter .fs-lyric-bubble {
+  animation: fs-bubble-in 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.fs-lyric-message:not(.fs-lyric-message--right) .fs-lyric-bubble {
+  transform-origin: top left;
+}
+
+.fs-lyric-message--right .fs-lyric-bubble {
+  transform-origin: top right;
 }
 
 /* Right side (sekai opener, Pharrell Williams, etc.) — 60px gap to Now Playing card */
@@ -243,16 +258,60 @@
 @keyframes fs-message-in {
   from {
     opacity: 0;
-    transform: translateY(12px) scale(0.98);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
 
-@media (max-width: 1200px) {
-  .fs-lyric-feed__scroll {
-    max-height: 40vh;
+@keyframes fs-bubble-in {
+  from {
+    transform: scale(0.88);
   }
+  to {
+    transform: scale(1);
+  }
+}
+
+/* Re-sync — home page back-up (227:446) rotated to point at current lyric */
+.fs-lyric-feed__resync {
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--fs-footer-h) + var(--spacing-sp-16));
+  z-index: 12;
+  display: inline-flex;
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+  transform: translateX(-50%);
+  transition: opacity 180ms ease-out, transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.fs-lyric-feed__resync-icon {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: rotate(180deg);
+}
+
+.fs-lyric-feed__resync--visible {
+  opacity: 1;
+  transform: translateX(-50%);
+}
+
+.fs-lyric-feed__resync--hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(16px);
+}
+
+.fs-lyric-feed__resync:hover {
+  opacity: 0.9;
 }

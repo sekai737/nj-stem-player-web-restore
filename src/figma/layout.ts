@@ -54,7 +54,7 @@ export const FIGMA = {
   inset: { x: 60, y: 56 },
   /** Frame 12 (node 26:213) — 1800×956 @ content inset */
   content: { width: 1800, height: 956 },
-  header: { height: 44, icon: 44, iconGap: 12 },
+  header: { height: 44, icon: 44, iconGap: 12, fixedNavIcon: 35, fixedNavIconGap: 8 },
   /** Frame 11 (node 26:212) — 1800×860; meters top-left (0,0), stem block y=160, progress y=820 */
   main: { top: CONTENT_ROW_TOP, height: 860 },
   /** Frame 10 (26:207) — title row + lyrics; overlap via titleLyricsOverlap */

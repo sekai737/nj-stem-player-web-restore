@@ -1,0 +1,30 @@
+/** Figma 262:354 — Open Player Button (Green Gradient + stroke + pop shadow) */
+.song-select-open-player {
+  position: relative;
+  flex-shrink: 0;
+  padding: 0;
+  border: var(--stroke-st-2) solid var(--stroke-primary);
+  background: var(--gradient-star-green);
+  box-shadow: var(--shadow-pop-4);
+  cursor: pointer;
+  transition:
+    transform 80ms cubic-bezier(0.3, 0, 0, 1),
+    box-shadow 80ms cubic-bezier(0.3, 0, 0, 1),
+    opacity 120ms ease;
+}
+
+.song-select-open-player__text {
+  position: absolute;
+  display: block;
+  pointer-events: none;
+}
+
+.song-select-open-player:hover {
+  opacity: 0.92;
+}
+
+.song-select-open-player:active {
+  transform: translate(var(--spacing-sp-4), var(--spacing-sp-4));
+  box-shadow: none;
+  opacity: 1;
+}

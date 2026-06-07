@@ -39,8 +39,8 @@ export const figmaAssets = {
   /** Home bubble currently exported as PNG in public/figma. */
   homePageBubble: "/figma/bubble.png",
   homePageFloor: "/figma/floor.svg",
-  homePageYoutubeButton: "/figma/youtube-button.png",
-  homePageTokkiHeart: "/figma/tokki-heart.png",
+  /** Footer lit.link profile — Figma PFP (227:327). */
+  homePageCreatorPfp: "/figma/creator-pfp.png",
   homePageBackUp: "/figma/back-up.svg",
   homePageCircles: "/figma/circles.svg",
   homePageBigStars: "/figma/big-stars.svg",
@@ -50,6 +50,12 @@ export const figmaAssets = {
   /** Asset exported as heart-hearin.png in public/figma. */
   homePageHeartHaerin: "/figma/heart-hearin.png",
   homePageHeartHyein: "/figma/heart-hyein.png",
+  /** Song Selector Page (262:193) — card uses --gradient-stem; nav + CTA exported */
+  songSelectOpenPlayerText: "/figma/song-select-open-player-text.svg",
+  /** Figma 262:381 Song Info card fill (Star Pink + Yellow gradient). */
+  songSelectInfoBg: "/figma/song-select-info-bg.png",
+  songSelectBack: "/figma/song-select-back.png",
+  songSelectNext: "/figma/song-select-next.png",
   /** Legacy aliases */
   iconCircle: "/figma/icon-circle.svg",
 } as const;
