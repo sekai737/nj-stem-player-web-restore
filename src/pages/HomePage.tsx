@@ -29,53 +29,56 @@ export default function HomePage() {
   );
 
   return (
-    <div ref={rootRef} className="home-page-root">
-      {fontsReady ? <PlayerBackgroundDecor placements={decorPlacements} /> : null}
-      <StarField
-        width={STAR_FIELD_REFERENCE.width}
-        height={STAR_FIELD_REFERENCE.height}
-      />
-      <div className="home-page-frame">
-        <img
-          src={figmaAssets.homePageCircles}
-          alt=""
-          className="home-page-decor-circles pointer-events-none"
+    <>
+      <div ref={rootRef} className="home-page-root">
+        {fontsReady ? <PlayerBackgroundDecor placements={decorPlacements} /> : null}
+        <StarField
+          width={STAR_FIELD_REFERENCE.width}
+          height={STAR_FIELD_REFERENCE.height}
         />
-        <img
-          src={figmaAssets.homePageBigStars}
-          alt=""
-          className="home-page-decor-big-stars pointer-events-none"
-        />
+        <div className="home-page-frame">
+          <img
+            src={figmaAssets.homePageCircles}
+            alt=""
+            className="home-page-decor-circles pointer-events-none"
+          />
+          <img
+            src={figmaAssets.homePageBigStars}
+            alt=""
+            className="home-page-decor-big-stars pointer-events-none"
+          />
 
-        <div className="home-page-main">
-          <div className="home-page-hero">
-            <div className="home-page-title-group">
-              <div className="home-page-title-group__bubble">
-                <img src={figmaAssets.homePageBubble} alt="" />
-                <p className="type-swiss721-condensed-italic home-page-title-group__bubble-text">
-                  Stem Player
-                </p>
+          <div className="home-page-main">
+            <div className="home-page-hero">
+              <div className="home-page-title-group">
+                <div className="home-page-title-group__bubble">
+                  <img src={figmaAssets.homePageBubble} alt="" />
+                  <p className="type-swiss721-condensed-italic home-page-title-group__bubble-text">
+                    Stem Player
+                  </p>
+                </div>
+                <div className="home-page-title-group__logo">
+                  <img src={figmaAssets.homePageTitle} alt="NewJeans" />
+                </div>
               </div>
-              <div className="home-page-title-group__logo">
-                <img src={figmaAssets.homePageTitle} alt="NewJeans" />
-              </div>
+
+              <HomePageCardCarousel
+                ref={listRef}
+                scrollRootRef={rootRef}
+                releases={releases}
+                onScrolledChange={setIsScrolled}
+              />
             </div>
-
-            <HomePageCardCarousel
-              ref={listRef}
-              releases={releases}
-              onScrolledChange={setIsScrolled}
-            />
           </div>
         </div>
-      </div>
 
-      <div className="home-page-bottom home-page-bottom--floor">
-        <img
-          src={figmaAssets.homePageFloor}
-          alt=""
-          className="home-page-bottom-floor pointer-events-none"
-        />
+        <div className="home-page-bottom home-page-bottom--floor">
+          <img
+            src={figmaAssets.homePageFloor}
+            alt=""
+            className="home-page-bottom-floor pointer-events-none"
+          />
+        </div>
       </div>
 
       <div className="home-page-bottom home-page-bottom--ui">
@@ -84,7 +87,6 @@ export default function HomePage() {
             type="button"
             aria-label="Back to top"
             onClick={() => listRef.current?.scrollToTop()}
-            style={{ transition: "opacity 180ms ease-out, transform 300ms ease-out" }}
             className={`home-page-back-up ${
               isScrolled ? "home-page-back-up--visible" : "home-page-back-up--hidden"
             }`}
@@ -98,36 +100,45 @@ export default function HomePage() {
                 Made by @sekai737
               </p>
               <div className="home-page-hearts">
-                <img src={figmaAssets.homePageHeartMinji} alt="" className="home-page-heart" />
-                <img src={figmaAssets.homePageHeartDanielle} alt="" className="home-page-heart" />
-                <img src={figmaAssets.homePageHeartHyein} alt="" className="home-page-heart" />
-                <img src={figmaAssets.homePageHeartHanni} alt="" className="home-page-heart" />
-                <img src={figmaAssets.homePageHeartHaerin} alt="" className="home-page-heart" />
+                <img
+                  src={figmaAssets.homePageHeartMinji}
+                  alt=""
+                  className="home-page-heart home-page-heart--minji"
+                />
+                <img
+                  src={figmaAssets.homePageHeartHanni}
+                  alt=""
+                  className="home-page-heart home-page-heart--hanni"
+                />
+                <img
+                  src={figmaAssets.homePageHeartDanielle}
+                  alt=""
+                  className="home-page-heart home-page-heart--danielle"
+                />
+                <img
+                  src={figmaAssets.homePageHeartHaerin}
+                  alt=""
+                  className="home-page-heart home-page-heart--haerin"
+                />
+                <img
+                  src={figmaAssets.homePageHeartHyein}
+                  alt=""
+                  className="home-page-heart home-page-heart--hyein"
+                />
               </div>
             </div>
+            <a
+              href={catalog.creator.litLink}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Creator lit.link"
+              className="home-page-footer-pfp"
+            >
+              <img src="/figma/creator-pfp.png" alt="" />
+            </a>
           </div>
         </div>
       </div>
-
-      <a
-        href={catalog.creator.youtube}
-        target="_blank"
-        rel="noreferrer"
-        aria-label="Creator on YouTube"
-        className="home-page-viewport-youtube"
-      >
-        <img src={figmaAssets.homePageYoutubeButton} alt="" />
-      </a>
-
-      <a
-        href={catalog.creator.litLink}
-        target="_blank"
-        rel="noreferrer"
-        aria-label="Creator lit.link"
-        className="home-page-viewport-litlink"
-      >
-        <img src={figmaAssets.homePageTokkiHeart} alt="" />
-      </a>
-    </div>
+    </>
   );
 }

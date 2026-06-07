@@ -2,10 +2,12 @@ import { useEffect, useMemo, useRef, type KeyboardEvent, type MouseEvent } from 
 import SelectableCopyRegion from "../SelectableCopyRegion";
 import { FULLSCREEN_CHAT_OPENER, MEMBERS } from "../../data/members";
 import RightChatMessage from "./RightChatMessage";
+import { figmaAssets } from "../../figma/assets";
 import { FIGMA_FULLSCREEN as FS } from "../../figma/fullscreenLayout";
 import { getActiveMergedLyricIndex } from "../../utils/lyricsDisplay";
 import { formatFullscreenChatSongTitle } from "../../utils/displayTrackTitle";
 import { formatLyricTimestamp, getLyricBubbleLines } from "../../utils/fullscreenLyrics";
+import { useSmoothScrollContainer } from "../../hooks/useSmoothScrollContainer";
 import LyricText from "../LyricText";
 import { hasDisplayableLyricContent } from "../../utils/mergeLyrics";
 import type { LyricLanguage } from "../../types";
@@ -69,9 +71,13 @@ export default function ChatLyricFeed({
   onSeek,
 }: ChatLyricFeedProps) {
   const currentTime = usePlayerStore((s) => s.currentTime);
+  const isPlaying = usePlayerStore((s) => s.isPlaying);
   const translationDisplay = usePlayerStore((s) => s.lyricsViewSettings.translationDisplay);
   const scrollRef = useRef<HTMLDivElement>(null);
   const activeRef = useRef<HTMLElement | null>(null);
+  const { scrollToElement, isScrolledUp } = useSmoothScrollContainer(scrollRef, {
+    getSyncElement: () => activeRef.current,
+  });
 
   const visibleLines = useMemo(() => {
     if (loading || error) return [];
@@ -101,8 +107,15 @@ export default function ChatLyricFeed({
   }, [visibleLines, currentTime, loading, error]);
 
   useEffect(() => {
-    activeRef.current?.scrollIntoView({ block: "center", behavior: "smooth" });
-  }, [activeLineId, visibleLines.length]);
+    if (!activeRef.current || !activeLineId || isScrolledUp) return;
+    scrollToElement(activeRef.current);
+  }, [activeLineId, isScrolledUp, scrollToElement]);
+
+  const showResync = isScrolledUp && isPlaying && !loading && !error && lines.length > 0;
+
+  const handleResync = () => {
+    if (activeRef.current) scrollToElement(activeRef.current);
+  };
 
   return (
     <section className="fs-lyric-feed" aria-label="Synchronized lyrics">
@@ -216,6 +229,16 @@ export default function ChatLyricFeed({
           )}
         </SelectableCopyRegion>
       </div>
+      <button
+        type="button"
+        aria-label="Jump to current lyric"
+        onClick={handleResync}
+        className={`fs-lyric-feed__resync${
+          showResync ? " fs-lyric-feed__resync--visible" : " fs-lyric-feed__resync--hidden"
+        }`}
+      >
+        <img src={figmaAssets.homePageBackUp} alt="" className="fs-lyric-feed__resync-icon" />
+      </button>
     </section>
   );
 }

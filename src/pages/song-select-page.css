@@ -1,0 +1,319 @@
+/**
+ * Song Selector Page — Figma 262:193
+ * Main (262:425): column, gap 40, 1112×803 @ (404, 138)
+ * Song Info (262:381): column, gap 24, px 240 py 32
+ */
+
+.song-select-root {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  --home-scale: 1;
+  --remix-scroll-offset: 0px;
+  background: var(--gradient-page);
+}
+
+.song-select-root--remix-scroll {
+  touch-action: none;
+}
+
+.song-select-frame {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 5;
+  width: 1920px;
+  height: 1080px;
+  min-height: 1080px;
+  overflow: visible;
+  transform: translate(-50%, -50%) scale(var(--home-scale));
+  transform-origin: center center;
+  will-change: transform;
+  backface-visibility: hidden;
+  box-sizing: border-box;
+}
+
+.song-select-frame__shift {
+  transform: translateY(calc(-1 * var(--remix-scroll-offset, 0px)));
+  will-change: transform;
+}
+
+/** Figma 262:425 — Main Container @ x=404 y=138 */
+.song-select-main {
+  position: relative;
+  width: 1112px;
+  margin: 138px auto 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+}
+
+/** Figma 262:381 — Song Info card */
+.song-select-info {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+  min-height: 718.156px;
+  padding: 32px 240px;
+  border: var(--stroke-st-2) solid var(--stroke-primary);
+  border-radius: var(--spacing-sp-24);
+  box-shadow: var(--shadow-pop-4);
+  box-sizing: border-box;
+  overflow: visible;
+}
+
+.song-select-info__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--spacing-sp-24);
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.song-select-info > *:not(.song-select-info__bg) {
+  position: relative;
+  z-index: 1;
+}
+
+/** Figma 262:419 — Album Info */
+.song-select-album {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  width: max-content;
+  max-width: 100%;
+  text-align: center;
+}
+
+.song-select-album__title {
+  margin: 0;
+  width: max-content;
+  max-width: none;
+  min-height: 58px;
+  font-family: var(--font-swiss721-medium);
+  font-size: 48px;
+  font-weight: normal;
+  line-height: normal;
+  letter-spacing: 0;
+  white-space: nowrap;
+  color: var(--text-primary);
+}
+
+.song-select-album__meta {
+  margin: 0;
+  min-height: 19px;
+  font-family: var(--font-swiss721-regular);
+  font-size: 16px;
+  font-weight: normal;
+  line-height: normal;
+  letter-spacing: 0;
+  color: var(--text-secondary);
+}
+
+/** Figma 262:380 — Images Container wrapper */
+.song-select-carousel-wrap {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
+.song-select-carousel {
+  position: relative;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 69px;
+  width: 632px;
+  height: 392px;
+}
+
+.song-select-carousel__nav {
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  filter: none;
+  transition: filter 120ms ease;
+}
+
+.song-select-carousel__nav-icon {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.song-select-carousel__nav:hover:not(:disabled) {
+  filter: drop-shadow(var(--shadow-pop-2));
+}
+
+.song-select-carousel__nav:focus,
+.song-select-carousel__nav:focus-visible {
+  outline: none;
+}
+
+.song-select-carousel__nav:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
+.song-select-carousel__center {
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+  width: 392px;
+  height: 392px;
+  border: var(--spacing-sp-4) solid var(--text-inverse);
+  border-radius: var(--radius-cr-16);
+  box-shadow: var(--shadow-pop-4);
+  overflow: hidden;
+}
+
+.song-select-carousel__center-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/** Figma 262:365 — Current Track Info */
+.song-select-track-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: max-content;
+  max-width: 100%;
+  text-align: center;
+}
+
+.song-select-track-info__title {
+  margin: 0;
+  width: max-content;
+  max-width: none;
+  min-height: 38px;
+  font-family: var(--font-swiss721-regular);
+  font-size: 32px;
+  font-weight: normal;
+  line-height: normal;
+  letter-spacing: 0;
+  white-space: nowrap;
+  color: var(--text-primary);
+}
+
+.song-select-track-info__index {
+  margin: 0;
+  width: 100%;
+  min-height: 19px;
+  font-family: var(--font-swiss721-regular);
+  font-size: 16px;
+  font-weight: normal;
+  line-height: normal;
+  letter-spacing: 0;
+  color: var(--text-primary);
+}
+
+/** Figma 262:412 — Filter Container (642×45 @ x=235 in main) */
+.song-select-remix {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sp-16);
+  width: 642px;
+  max-width: 100%;
+}
+
+.song-select-remix__toggle {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 478px;
+  width: 100%;
+  height: 45px;
+  padding: 8px 24px;
+  border: var(--stroke-st-2) solid var(--stroke-primary);
+  border-radius: 64px;
+  background: var(--main-container-primary);
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.song-select-remix__label {
+  font-family: var(--font-swiss721-regular);
+  font-size: 24px;
+  font-weight: normal;
+  line-height: normal;
+  letter-spacing: 0;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.song-select-remix__icon {
+  display: block;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  transition: transform 180ms ease;
+}
+
+.song-select-remix__icon--open {
+  transform: rotate(180deg);
+}
+
+.song-select-remix__panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sp-24);
+  width: 100%;
+  padding: var(--spacing-sp-24);
+  border: var(--stroke-st-2) solid var(--stroke-primary);
+  border-radius: var(--spacing-sp-24);
+  background: var(--main-container-primary);
+  box-sizing: border-box;
+  font-family: var(--font-swiss721-regular);
+  color: var(--text-primary);
+}
+
+.song-select-remix__panel h4 {
+  margin: 0;
+  font-family: var(--font-swiss721-medium);
+  font-size: 16px;
+  font-weight: normal;
+  line-height: normal;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text-secondary);
+}
+
+.song-select-remix__panel p,
+.song-select-remix__panel span,
+.song-select-remix__panel button {
+  font-family: inherit;
+  font-weight: normal;
+  letter-spacing: 0;
+}
+
+.song-select-remix__panel .text-xs {
+  font-family: var(--font-swiss721-medium);
+  font-size: 16px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text-secondary);
+}

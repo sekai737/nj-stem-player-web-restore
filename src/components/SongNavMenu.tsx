@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { StemTrack } from "../types";
+import { FIGMA } from "../figma/layout";
 import { downloadSongMidi, downloadSongStems } from "../utils/downloadStems";
 import { usePlayerStore } from "../store/playerStore";
 import "./song-nav-menu.css";
@@ -97,7 +98,8 @@ export default function SongNavMenu({
   return (
     <nav
       ref={navRef}
-      className="song-nav-menu figma-surface absolute top-14 right-0 z-50 min-w-56 rounded-cr p-2"
+      className="song-nav-menu figma-surface absolute right-0 z-50 min-w-56 rounded-cr p-2"
+      style={{ top: `calc(100% + ${FIGMA.header.fixedNavIconGap}px)` }}
     >
         <button
           type="button"

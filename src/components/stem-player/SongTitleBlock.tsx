@@ -31,7 +31,7 @@ export default function SongTitleBlock({
 
   return (
     <div
-      className="flex shrink-0 flex-col items-start justify-center"
+      className="flex shrink-0 flex-col items-start justify-start"
       data-node-id="26:216"
       data-name="Title"
       style={{

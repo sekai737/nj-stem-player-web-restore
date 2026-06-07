@@ -64,14 +64,31 @@
 }
 
 .home-page-bottom--ui {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 10;
+  width: 100%;
   padding-bottom: 34px;
   pointer-events: none;
+  transform: none;
+}
+
+/**
+ * Frame 229:149 — footer stack; spans viewport with Figma 60px side inset.
+ */
+.home-page-footer {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  padding-inline: 60px;
+  flex-shrink: 0;
+  pointer-events: auto;
 }
 
 /**
  * Frame 229:150 — hero column (title + cards).
- * Footer removed — anchored in viewport bottom dock.
  */
 .home-page-main {
   position: absolute;
@@ -153,26 +170,14 @@
   justify-content: center;
   font-size: 48px;
   line-height: normal;
-  letter-spacing: -1.2px;
+  letter-spacing: 0;
   text-align: center;
   color: var(--text-primary);
 }
 
 /**
- * Frame 229:149 — footer stack in viewport bottom dock.
- * flex-col, gap sp-24, items-center, w 1800 (inset 60px in 1920 dock).
+ * Back up (227:446) — centered, bottom-aligned with footer row.
  */
-.home-page-footer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--spacing-sp-24);
-  width: 1800px;
-  margin-left: 60px;
-  flex-shrink: 0;
-  pointer-events: auto;
-}
-
 .home-page-back-up {
   display: inline-flex;
   flex-shrink: 0;
@@ -183,8 +188,12 @@
   background: transparent;
   cursor: pointer;
   pointer-events: auto;
-  position: relative;
+  position: absolute;
+  left: 50%;
+  bottom: 0;
   z-index: 100;
+  transform: translateX(-50%);
+  transition: opacity 180ms ease-out, transform 300ms ease-out;
 }
 
 .home-page-back-up img {
@@ -194,130 +203,140 @@
 }
 
 .home-page-back-up--visible {
-  transform: translateY(0);
+  transform: translateX(-50%);
   opacity: 1;
 }
 
 .home-page-back-up--hidden {
-  transform: translateY(16px);
+  transform: translateX(-50%) translateY(16px);
   opacity: 0;
   pointer-events: none;
 }
 
-/** Frame 227:376 — footer row (1800×54.407). */
+/** Frame 227:376 — footer row. */
 .home-page-footer-row {
-  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
   width: 100%;
-  height: 54.407px;
+  min-height: 52px;
   flex-shrink: 0;
+  position: relative;
 }
 
 /**
- * Credits Container (227:372) — x=826, y=0 within footer row.
- * flex-col, gap sp-8, items-center, 147.407×54.407.
+ * Credits Container (227:372) — left column, flex-col, 4px gap; text + hearts left-aligned.
  */
 .home-page-footer-credits {
-  position: absolute;
-  left: 826px;
-  top: 0;
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
-  align-items: center;
-  gap: var(--spacing-sp-8);
-  width: 147.407px;
-  height: 54.407px;
+  align-items: flex-start;
+  gap: 4px;
+  flex-shrink: 0;
 }
 
 .home-page-footer-credits__text {
+  margin: 0;
   font-size: 16px;
   line-height: normal;
-  letter-spacing: -0.8px;
-  text-align: center;
+  letter-spacing: 0;
+  text-align: left;
   white-space: nowrap;
   color: #151715;
 }
 
-/** Hearts (227:328) — inline grid with Figma offsets. */
+/** Lit.link PFP (227:327) — top-aligned with credits text. */
+.home-page-footer-pfp {
+  display: block;
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  margin-top: 0;
+  line-height: 0;
+  overflow: visible;
+  pointer-events: auto;
+}
+
+.home-page-footer-pfp img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 200px;
+  filter: drop-shadow(0 0 0 transparent);
+  transition: filter 280ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.home-page-footer-pfp:hover img {
+  filter: drop-shadow(var(--spacing-sp-2) var(--spacing-sp-2) 0 var(--stroke-primary));
+}
+
+/** Hearts (227:328) — span credits text width; first/last align to text edges. */
 .home-page-hearts {
-  display: inline-grid;
-  grid-template-columns: max-content;
-  grid-template-rows: max-content;
-  place-items: start;
+  position: relative;
+  align-self: stretch;
+  height: 24.618px;
+  --home-page-heart-size: 24.618px;
 }
 
 .home-page-heart {
-  grid-column: 1;
-  grid-row: 1;
-  width: 27.407px;
-  height: 27.407px;
-}
-
-.home-page-hearts .home-page-heart:nth-child(1) {
-  margin-left: 0;
-}
-
-.home-page-hearts .home-page-heart:nth-child(2) {
-  margin-left: 30px;
-}
-
-.home-page-hearts .home-page-heart:nth-child(3) {
-  margin-left: 60px;
-}
-
-.home-page-hearts .home-page-heart:nth-child(4) {
-  margin-left: 90px;
-}
-
-.home-page-hearts .home-page-heart:nth-child(5) {
-  margin-left: 120px;
-}
-
-/** Viewport-fixed corner links (full viewport, not scaled with frame). */
-.home-page-viewport-youtube {
   position: absolute;
-  bottom: 40px;
-  left: 40px;
-  z-index: 20;
-  display: inline-flex;
-  width: 40px;
-  height: 40px;
-  align-items: center;
-  justify-content: center;
+  top: 0;
+  width: var(--home-page-heart-size);
+  height: var(--home-page-heart-size);
 }
 
-.home-page-viewport-youtube img {
+.home-page-hearts .home-page-heart--minji {
+  left: 0;
+}
+
+.home-page-hearts .home-page-heart--hanni {
+  left: calc((100% - var(--home-page-heart-size)) * 0.25);
+}
+
+.home-page-hearts .home-page-heart--danielle {
+  left: calc((100% - var(--home-page-heart-size)) * 0.5);
+}
+
+.home-page-hearts .home-page-heart--haerin {
+  left: calc((100% - var(--home-page-heart-size)) * 0.75);
+}
+
+.home-page-hearts .home-page-heart--hyein {
+  left: calc(100% - var(--home-page-heart-size));
+}
+
+/** Card play button hover shadow. */
+.home-page-card-play img {
   display: block;
-  width: 40px;
-  height: 40px;
+  filter: drop-shadow(0 0 0 transparent);
+  transition: filter 280ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-.home-page-viewport-litlink {
-  position: absolute;
-  bottom: 40px;
-  right: 40px;
-  z-index: 20;
-  display: inline-flex;
-  width: 40px;
-  height: 40px;
-  align-items: center;
-  justify-content: center;
+.home-page-card-play:hover img {
+  filter: drop-shadow(var(--spacing-sp-2) var(--spacing-sp-2) 0 var(--stroke-primary));
 }
 
-.home-page-viewport-litlink img {
-  display: block;
-  width: 40px;
-  height: 40px;
-}
-
-/** Song Card container (227:434) — 746px cards + 8px right shadow bleed. */
+/** Song Card container (227:434) — 746px cards + bleed for shadow/hover. */
 .home-page-card-carousel {
   position: relative;
   z-index: 10;
-  width: 754px;
-  height: var(--home-card-viewport-h, 580px);
-  padding: 0 8px 0 0;
+  --home-card-bleed-x: 8px;
+  --home-card-bleed-top: 32px;
+  /** Extra clip margin so play tooltips are not cut off at card edges. */
+  --home-card-tooltip-bleed-x: 220px;
+  width: calc(746px + var(--home-card-bleed-x) * 2);
+  height: calc(var(--home-card-viewport-h, 580px) + var(--home-card-bleed-top));
+  margin-top: calc(-1 * var(--home-card-bleed-top));
+  padding: var(--home-card-bleed-top) var(--home-card-bleed-x) 0 var(--home-card-bleed-x);
   box-sizing: border-box;
-  overflow: hidden;
+  overflow: visible;
+  clip-path: polygon(
+    calc(-1 * var(--home-card-tooltip-bleed-x)) calc(-1 * var(--home-card-bleed-top)),
+    calc(100% + var(--home-card-tooltip-bleed-x)) calc(-1 * var(--home-card-bleed-top)),
+    calc(100% + var(--home-card-tooltip-bleed-x)) 100%,
+    calc(-1 * var(--home-card-tooltip-bleed-x)) 100%
+  );
   touch-action: none;
   flex-shrink: 0;
 }
@@ -335,6 +354,9 @@
 .home-page-card-carousel__card {
   position: absolute;
   left: 0;
+  width: 746px;
+  height: 120px;
+  overflow: visible;
   transform-origin: center top;
   will-change: transform;
 }
@@ -344,14 +366,33 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-shrink: 0;
-  width: 746px;
-  height: 120px;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
   padding: var(--spacing-sp-16) 40px var(--spacing-sp-16) var(--spacing-sp-16);
   border: var(--stroke-st-2) solid var(--stroke-primary);
   border-radius: var(--radius-cr-16);
   background: var(--main-container-primary);
   box-shadow: var(--shadow-pop-4);
+  transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
+  transform-origin: center top;
+  backface-visibility: hidden;
+}
+
+/** Keyboard focus — instant lift, shadow unchanged. */
+.home-page-card-carousel__card:focus-within .home-page-card {
+  transform: translate3d(0, -4px, 0) scale3d(1.01, 1.01, 1);
+}
+
+/** Cover art — opens Spotify in a new tab. */
+.home-page-card-cover {
+  display: block;
+  flex-shrink: 0;
+  border-radius: 6px;
+  line-height: 0;
+  cursor: pointer;
+  outline: none;
 }
 
 /** Metadata group (227:417) — cover + text; grows to the play button. */
@@ -377,7 +418,7 @@
   font-family: var(--font-swiss721-medium);
   font-size: 32px;
   line-height: normal;
-  letter-spacing: -1.6px;
+  letter-spacing: 0;
   color: var(--text-primary);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -388,7 +429,7 @@
   font-family: var(--font-swiss721-regular);
   font-size: 16px;
   line-height: normal;
-  letter-spacing: -0.8px;
+  letter-spacing: 0;
   color: #a1a1a6;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -397,15 +438,54 @@
 
 /** Play Button (227:384) — 44×44. */
 .home-page-card-play {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   width: 44px;
   height: 44px;
-  transition: transform 120ms ease;
+  overflow: visible;
 }
 
-.home-page-card-play:hover {
-  transform: translateY(-1px);
+/** Matches stem volume slider tooltip (volume-control__tooltip). */
+.home-page-card-play__tooltip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  z-index: 20;
+  transform: translateX(-50%);
+  box-sizing: border-box;
+  padding: 2px 8px;
+  border: var(--stroke-st-2) solid var(--stroke-primary);
+  border-radius: 8px;
+  background: var(--main-container-primary);
+  font-family: var(--font-swiss721-regular);
+  font-size: 12px;
+  font-weight: normal;
+  font-synthesis: none;
+  line-height: normal;
+  color: var(--text-primary);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.12s ease-out;
+}
+
+.home-page-card-play__tooltip--visible {
+  opacity: 1;
+}
+
+.home-page-card-play img {
+  width: 44px;
+  height: 44px;
+  max-width: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-page-footer-pfp img,
+  .home-page-card-play img,
+  .home-page-card-play__tooltip {
+    transition: none;
+  }
 }

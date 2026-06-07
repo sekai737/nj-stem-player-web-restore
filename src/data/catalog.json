@@ -10,6 +10,7 @@
       "year": 2024,
       "type": "EP",
       "coverArt": "/covers/Supernatural_album_cover.jpg",
+      "spotifyUrl": "https://open.spotify.com/album/1FVw30SoC91lq1UZ6N9rwN",
       "songs": [
         {
           "id": "supernatural-title",
@@ -40,11 +41,12 @@
             "rom": "/lyrics/supernatural-rom.lrc",
             "en": "/lyrics/supernatural-en.lrc"
           },
+          "midi": "/midi/supernatural.mid",
           "remixes": [
             {
               "id": "supernatural-winter-ver",
               "title": "Supernatural (Winter ver.)",
-              "source": "AAA2024",
+              "source": "AAA2024 (Remake by dijei)",
               "category": "official",
               "songId": "supernatural-winter-ver",
               "durationSec": 191
@@ -62,9 +64,9 @@
         {
           "id": "right-now",
           "title": "Right Now",
-          "durationSec": 200,
-          "bpm": 120,
-          "key": "—",
+          "durationSec": 160,
+          "bpm": 86,
+          "key": "Bbm",
           "stems": [
             {
               "id": "vocals",
@@ -88,9 +90,9 @@
         {
           "id": "supernatural-instrumental",
           "title": "Supernatural (Instrumental)",
-          "durationSec": 200,
-          "bpm": 120,
-          "key": "—",
+          "durationSec": 191,
+          "bpm": 109,
+          "key": "Bbm",
           "stems": [
             {
               "id": "vocals",
@@ -114,9 +116,9 @@
         {
           "id": "right-now-instrumental",
           "title": "Right Now (Instrumental)",
-          "durationSec": 200,
-          "bpm": 120,
-          "key": "—",
+          "durationSec": 160,
+          "bpm": 86,
+          "key": "Bbm",
           "stems": [
             {
               "id": "vocals",
@@ -207,6 +209,7 @@
       "year": 2024,
       "type": "EP",
       "coverArt": "/covers/How%20Sweet_album_cover.jpg",
+      "spotifyUrl": "https://open.spotify.com/album/0EhZEM4RRz0yioTgucDhJq",
       "songs": [
         {
           "id": "how-sweet-title",
@@ -217,23 +220,19 @@
           "stems": [
             {
               "id": "vocals",
-              "label": "Vocals",
-              "src": "/stems/demo/vocals.mp3"
+              "label": "Vocals"
             },
             {
               "id": "instruments",
-              "label": "Instruments",
-              "src": "/stems/demo/instruments.mp3"
+              "label": "Other"
             },
             {
               "id": "drums",
-              "label": "Drums",
-              "src": "/stems/demo/drums.mp3"
+              "label": "Drums"
             },
             {
               "id": "bass",
-              "label": "Bass",
-              "src": "/stems/demo/bass.mp3"
+              "label": "Bass"
             }
           ],
           "lyrics": [
@@ -255,25 +254,22 @@
           "stems": [
             {
               "id": "vocals",
-              "label": "Vocals",
-              "src": "/stems/demo/vocals.mp3"
+              "label": "Vocals"
             },
             {
               "id": "instruments",
-              "label": "Instruments",
-              "src": "/stems/demo/instruments.mp3"
+              "label": "Other"
             },
             {
               "id": "drums",
-              "label": "Drums",
-              "src": "/stems/demo/drums.mp3"
+              "label": "Drums"
             },
             {
               "id": "bass",
-              "label": "Bass",
-              "src": "/stems/demo/bass.mp3"
+              "label": "Bass"
             }
           ],
+          "stemSlug": "bubble-gum",
           "lyrics": [
             {
               "time": 0,
@@ -287,60 +283,54 @@
         {
           "id": "how-sweet-title-instrumental",
           "title": "How Sweet (Instrumental)",
-          "durationSec": 200,
-          "bpm": 120,
-          "key": "—",
+          "durationSec": 210,
+          "bpm": 118,
+          "key": "A major",
           "stems": [
             {
               "id": "vocals",
-              "label": "Vocals",
-              "src": "/stems/demo/vocals.mp3"
+              "label": "Vocals"
             },
             {
               "id": "instruments",
-              "label": "Instruments",
-              "src": "/stems/demo/instruments.mp3"
+              "label": "Other"
             },
             {
               "id": "drums",
-              "label": "Drums",
-              "src": "/stems/demo/drums.mp3"
+              "label": "Drums"
             },
             {
               "id": "bass",
-              "label": "Bass",
-              "src": "/stems/demo/bass.mp3"
+              "label": "Bass"
             }
-          ]
+          ],
+          "stemSlug": "how-sweet-instrumental"
         },
         {
           "id": "bubble-gum-instrumental",
           "title": "Bubble Gum (Instrumental)",
-          "durationSec": 200,
+          "durationSec": 205,
           "bpm": 120,
-          "key": "—",
+          "key": "G major",
           "stems": [
             {
               "id": "vocals",
-              "label": "Vocals",
-              "src": "/stems/demo/vocals.mp3"
+              "label": "Vocals"
             },
             {
               "id": "instruments",
-              "label": "Instruments",
-              "src": "/stems/demo/instruments.mp3"
+              "label": "Other"
             },
             {
               "id": "drums",
-              "label": "Drums",
-              "src": "/stems/demo/drums.mp3"
+              "label": "Drums"
             },
             {
               "id": "bass",
-              "label": "Bass",
-              "src": "/stems/demo/bass.mp3"
+              "label": "Bass"
             }
-          ]
+          ],
+          "stemSlug": "bubble-gum-instrumental"
         }
       ]
     },
@@ -350,6 +340,7 @@
       "year": 2023,
       "type": "Album",
       "coverArt": "/covers/NJWMX_album_cover.jpg",
+      "spotifyUrl": "https://open.spotify.com/album/6XRGc3GNodkhSrPwHnx1KX",
       "songs": [
         {
           "id": "ditto-250-remix",
@@ -707,6 +698,7 @@
       "year": 2023,
       "type": "Single",
       "coverArt": "/covers/NewJeans%20X%20MY%20DEMON_album_cover.jpg",
+      "spotifyUrl": "https://open.spotify.com/album/31chdu7JhVd0sC9X7sURNb",
       "songs": [
         {
           "id": "our-night-is-more-beautiful-than-your-day",
@@ -774,6 +766,7 @@
       "year": 2023,
       "type": "Single",
       "coverArt": "/covers/GODS_album_cover.jpg",
+      "spotifyUrl": "https://open.spotify.com/album/4uFXfeGmzFDUrYUyz3Wb1O",
       "songs": [
         {
           "id": "gods",
@@ -812,6 +805,7 @@
       "year": 2023,
       "type": "Single",
       "coverArt": "/covers/A%20Time%20Called%20You%20(Original%20Soundtrack%20from%20the%20Netflix%20Series)_album_cover.jpg",
+      "spotifyUrl": "https://open.spotify.com/album/5qHH0SHWf5yQxG4yqHnIzY",
       "songs": [
         {
           "id": "beautiful-restriction",
@@ -850,6 +844,7 @@
       "year": 2023,
       "type": "EP",
       "coverArt": "/covers/NewJeans%202nd%20EP%20'Get%20Up'_album_cover.jpg",
+      "spotifyUrl": "https://open.spotify.com/album/4N1fROq2oeyLGAlQ1C1j18",
       "songs": [
         {
           "id": "new-jeans",
@@ -1051,6 +1046,7 @@
       "year": 2023,
       "type": "Single",
       "coverArt": "/covers/Be%20Who%20You%20Are%20(Real%20Magic)_album_cover.jpg",
+      "spotifyUrl": "https://open.spotify.com/album/1Pk1W5xbmAqG6wBNL4sjq5",
       "songs": [
         {
           "id": "be-who-you-are-real-magic-feat-jid-newjeans-camilo",
@@ -1089,6 +1085,7 @@
       "year": 2023,
       "type": "Single",
       "coverArt": "/covers/Zero_album_cover.jpg",
+      "spotifyUrl": "https://open.spotify.com/album/2zYcjcNUzcgMntymoukwZR",
       "songs": [
         {
           "id": "zero",
@@ -1169,6 +1166,7 @@
       "year": 2023,
       "type": "Single",
       "coverArt": "/covers/NewJeans%20'OMG'_album_cover.jpg",
+      "spotifyUrl": "https://open.spotify.com/album/45ozep8uHHnj5CCittuyXj",
       "songs": [
         {
           "id": "omg",
@@ -1236,6 +1234,7 @@
       "year": 2022,
       "type": "EP",
       "coverArt": "/covers/NewJeans%201st%20EP%20'New%20Jeans'_album_cover.jpg",
+      "spotifyUrl": "https://open.spotify.com/album/1HMLpmZAnNyl9pxvOnTovV",
       "songs": [
         {
           "id": "attention",

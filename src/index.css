@@ -227,6 +227,22 @@ body,
   width: 100%;
   height: 100%;
   max-width: none;
+  outline: none;
+  -webkit-user-drag: none;
+}
+
+/** PNG/SVG icon controls — no focus stroke on click (incl. shift+click). */
+button:has(img):focus,
+button:has(img):focus-visible,
+a:has(img):focus,
+a:has(img):focus-visible {
+  outline: none;
+}
+
+button:has(img) img,
+a:has(img) img {
+  outline: none;
+  -webkit-user-drag: none;
 }
 
 input,

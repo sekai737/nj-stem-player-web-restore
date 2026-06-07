@@ -80,6 +80,8 @@ export interface Release {
   type: ReleaseType;
   /** Omit to use /covers/{title}_album_cover.jpg */
   coverArt?: string;
+  /** Opens when the home page card cover art is clicked. */
+  spotifyUrl?: string;
   songs: Song[];
 }
 

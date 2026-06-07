@@ -85,7 +85,7 @@ const DEFAULT_SONG = {
 };
 
 /** Releases that use /stems/{releaseId}/{slug}-*.flac convention (no demo mp3). */
-const FLAC_RELEASE_IDS = new Set(["supernatural"]);
+const FLAC_RELEASE_IDS = new Set(["supernatural", "how-sweet"]);
 
 function parseCsv(text) {
   const lines = text.trim().split(/\r?\n/);
@@ -169,6 +169,24 @@ function defaultStemsFor(releaseId) {
     : DEMO_STEMS.map((s) => ({ ...s }));
 }
 
+/** Title tracks whose FLAC slug is the release id, not the song id. */
+const RELEASE_ID_STEM_SLUG_SONG_IDS = new Set(["supernatural-title", "how-sweet-title"]);
+
+/** Song id → filename slug when it differs from the catalog id. */
+const STEM_SLUG_OVERRIDES = {
+  "how-sweet-title-instrumental": "how-sweet-instrumental",
+};
+
+function applyFlacStemSlug(releaseId, song) {
+  if (!FLAC_RELEASE_IDS.has(releaseId)) return;
+  if (STEM_SLUG_OVERRIDES[song.id]) {
+    song.stemSlug = STEM_SLUG_OVERRIDES[song.id];
+    return;
+  }
+  if (RELEASE_ID_STEM_SLUG_SONG_IDS.has(song.id)) return;
+  song.stemSlug = song.id;
+}
+
 function newSongFromCsv(releaseId, row) {
   const id = songIdFor(releaseId, row.name);
   const song = {
@@ -179,9 +197,7 @@ function newSongFromCsv(releaseId, row) {
     key: DEFAULT_SONG.key,
     stems: defaultStemsFor(releaseId),
   };
-  if (FLAC_RELEASE_IDS.has(releaseId) && id !== "supernatural-title") {
-    song.stemSlug = id;
-  }
+  applyFlacStemSlug(releaseId, song);
   return song;
 }
 
@@ -249,6 +265,7 @@ function main() {
       const extras = extraSongsByRelease.get(releaseId) ?? [];
       const existingRelease = catalog.releases.find((r) => r.id === releaseId);
       const coverArt = existingRelease?.coverArt ?? releaseCoverArt(releaseId);
+      const spotifyUrl = existingRelease?.spotifyUrl;
       return {
         id: meta.id,
         title: meta.title,
@@ -256,6 +273,7 @@ function main() {
         type: mapReleaseType(first?.type ?? "EP"),
         releaseDate: first?.releaseDate ?? "",
         ...(coverArt ? { coverArt } : {}),
+        ...(spotifyUrl ? { spotifyUrl } : {}),
         songs: [...songs, ...extras.map((s) => JSON.parse(JSON.stringify(s)))],
       };
     })

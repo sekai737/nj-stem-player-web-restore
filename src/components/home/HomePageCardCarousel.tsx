@@ -3,9 +3,11 @@ import {
   useCallback,
   useEffect,
   useImperativeHandle,
+  useLayoutEffect,
   useRef,
   useState,
   type CSSProperties,
+  type RefObject,
 } from "react";
 import { Link } from "react-router-dom";
 import { getReleaseCoverArt, getSelectableSongs } from "../../data/catalog";
@@ -33,8 +35,12 @@ const SETTLE_EPS = 0.2;
 const VELOCITY_DECAY = 0.9;
 const WHEEL_VELOCITY_GAIN = 0.32;
 const FLICK_VELOCITY_GAIN = 0.45;
-const SNAP_PULL = 0.12;
-const SNAP_ZONE = 0.38;
+/** Momentum below this triggers grid snap settle. */
+const SNAP_VELOCITY_THRESHOLD = 0.05;
+/** Target pull onto card steps once scroll input / momentum ends. */
+const SNAP_SMOOTHING = 18;
+/** After the last wheel tick, clear inertia and snap. */
+const WHEEL_IDLE_MS = 120;
 const MAX_FRAME_DT = 0.032;
 
 export interface HomePageCardCarouselHandle {
@@ -44,10 +50,16 @@ export interface HomePageCardCarouselHandle {
 interface HomePageCardCarouselProps {
   releases: Release[];
   onScrolledChange?: (scrolled: boolean) => void;
+  /** Home page root — wheel/touch in the carousel band scrolls from the side margins too. */
+  scrollRootRef?: RefObject<HTMLElement | null>;
 }
 
 function clamp(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value));
+}
+
+function nearestSnapOffset(offset: number, maxOffset: number): number {
+  return clamp(Math.round(offset / STEP_Y) * STEP_Y, 0, maxOffset);
 }
 
 function getCardMotion(index: number, scrollOffset: number, count: number) {
@@ -129,8 +141,25 @@ function getCardMotion(index: number, scrollOffset: number, count: number) {
   return rest;
 }
 
+/** Hover lift — exponential follow (same feel as carousel scroll). */
+const HOVER_LIFT_PX = 4;
+const HOVER_SCALE_DELTA = 0.01;
+const HOVER_SMOOTHING = 14;
+const HOVER_SETTLE_EPS = 0.001;
+
+function applyCardHoverTransform(el: HTMLDivElement, amount: number): void {
+  const lift = -HOVER_LIFT_PX * amount;
+  const scale = 1 + HOVER_SCALE_DELTA * amount;
+  el.style.transform = `translate3d(0, ${lift}px, 0) scale3d(${scale}, ${scale}, 1)`;
+}
+
+function resetCardHoverTransform(el: HTMLDivElement | null): void {
+  if (!el) return;
+  el.style.transform = "translate3d(0, 0, 0) scale3d(1, 1, 1)";
+}
+
 const HomePageCardCarousel = forwardRef<HomePageCardCarouselHandle, HomePageCardCarouselProps>(
-  function HomePageCardCarousel({ releases, onScrolledChange }, ref) {
+  function HomePageCardCarousel({ releases, onScrolledChange, scrollRootRef }, ref) {
     const viewportRef = useRef<HTMLDivElement>(null);
     const offsetRef = useRef(0);
     const targetRef = useRef(0);
@@ -142,17 +171,43 @@ const HomePageCardCarousel = forwardRef<HomePageCardCarouselHandle, HomePageCard
     const rafRef = useRef<number | null>(null);
     const touchStartYRef = useRef(0);
     const touchStartOffsetRef = useRef(0);
+    const hoverTargetRef = useRef(0);
+    const hoverAmountRef = useRef(0);
+    const hoverCardElRef = useRef<HTMLDivElement | null>(null);
+    const hoverRafRef = useRef<number | null>(null);
+    const wheelIdleRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const [playTooltipReleaseId, setPlayTooltipReleaseId] = useState<string | null>(null);
 
     const [offset, setOffset] = useState(0);
 
+    const handleCardPointerEnter = useCallback((pointerType: string, el: HTMLDivElement) => {
+      if (pointerType !== "mouse") return;
+
+      const previous = hoverCardElRef.current;
+      if (previous && previous !== el) {
+        resetCardHoverTransform(previous);
+        hoverAmountRef.current = 0;
+      }
+
+      hoverCardElRef.current = el;
+      hoverTargetRef.current = 1;
+    }, []);
+
+    const handleCardPointerLeave = useCallback((el: HTMLDivElement) => {
+      if (hoverCardElRef.current !== el) return;
+      hoverTargetRef.current = 0;
+    }, []);
+
     const trackHeight = releases.length * CARD_HEIGHT + Math.max(0, releases.length - 1) * CARD_GAP;
     const maxOffset = Math.max(0, (releases.length - VISIBLE_CARDS) * STEP_Y);
+    const maxOffsetRef = useRef(maxOffset);
+    maxOffsetRef.current = maxOffset;
 
-    useImperativeHandle(ref, () => ({
-      scrollToTop: () => {
-        targetRef.current = 0;
-      },
-    }));
+    useEffect(() => {
+      return () => {
+        if (wheelIdleRef.current) clearTimeout(wheelIdleRef.current);
+      };
+    }, []);
 
     useEffect(() => {
       onScrolledChange?.(offset > 8);
@@ -167,6 +222,45 @@ const HomePageCardCarousel = forwardRef<HomePageCardCarouselHandle, HomePageCard
       let running = true;
       let lastTime = performance.now();
 
+      const tickHover = (now: number) => {
+        const dt = Math.min((now - lastTime) / 1000, MAX_FRAME_DT);
+        lastTime = now;
+
+        const target = hoverTargetRef.current;
+        const current = hoverAmountRef.current;
+        const follow = 1 - Math.exp(-HOVER_SMOOTHING * dt);
+        const next =
+          Math.abs(target - current) < HOVER_SETTLE_EPS
+            ? target
+            : current + (target - current) * follow;
+
+        hoverAmountRef.current = next;
+
+        const el = hoverCardElRef.current;
+        if (el) {
+          applyCardHoverTransform(el, next);
+        }
+
+        if (target === 0 && next <= HOVER_SETTLE_EPS) {
+          hoverAmountRef.current = 0;
+          resetCardHoverTransform(el);
+          hoverCardElRef.current = null;
+        }
+
+        if (running) hoverRafRef.current = requestAnimationFrame(tickHover);
+      };
+
+      hoverRafRef.current = requestAnimationFrame(tickHover);
+      return () => {
+        running = false;
+        if (hoverRafRef.current != null) cancelAnimationFrame(hoverRafRef.current);
+      };
+    }, []);
+
+    useEffect(() => {
+      let running = true;
+      let lastTime = performance.now();
+
       const tick = (now: number) => {
         const dt = Math.min((now - lastTime) / 1000, MAX_FRAME_DT);
         lastTime = now;
@@ -175,17 +269,21 @@ const HomePageCardCarousel = forwardRef<HomePageCardCarouselHandle, HomePageCard
 
         if (!isTouchingRef.current) {
           const velocity = velocityRef.current;
-          if (Math.abs(velocity) > 0.05) {
+          if (Math.abs(velocity) > SNAP_VELOCITY_THRESHOLD) {
             target = clamp(target + velocity * dt, 0, maxOffset);
             targetRef.current = target;
             velocityRef.current = velocity * VELOCITY_DECAY ** (dt * 60);
           } else {
             velocityRef.current = 0;
-            const snap = Math.round(target / STEP_Y) * STEP_Y;
-            if (Math.abs(target - snap) < STEP_Y * SNAP_ZONE) {
-              const pulled = target + (snap - target) * SNAP_PULL;
-              targetRef.current = clamp(pulled, 0, maxOffset);
+            const snapTarget = nearestSnapOffset(target, maxOffset);
+            if (Math.abs(target - snapTarget) > SETTLE_EPS) {
+              const snapFollow = 1 - Math.exp(-SNAP_SMOOTHING * dt);
+              target = target + (snapTarget - target) * snapFollow;
+              targetRef.current = clamp(target, 0, maxOffset);
               target = targetRef.current;
+            } else {
+              targetRef.current = snapTarget;
+              target = snapTarget;
             }
           }
         }
@@ -198,7 +296,7 @@ const HomePageCardCarousel = forwardRef<HomePageCardCarouselHandle, HomePageCard
             : current + (target - current) * follow;
 
         offsetRef.current = next;
-        setOffset(next);
+        setOffset((prev) => (Math.abs(prev - next) < 0.05 ? prev : next));
 
         if (running) rafRef.current = requestAnimationFrame(tick);
       };
@@ -210,71 +308,118 @@ const HomePageCardCarousel = forwardRef<HomePageCardCarouselHandle, HomePageCard
       };
     }, [maxOffset]);
 
-    const applyDelta = useCallback(
-      (delta: number) => {
-        targetRef.current = clamp(targetRef.current + delta, 0, maxOffset);
-        velocityRef.current += delta * WHEEL_VELOCITY_GAIN;
+    const applyDelta = useCallback((delta: number) => {
+      targetRef.current = clamp(targetRef.current + delta, 0, maxOffsetRef.current);
+      velocityRef.current += delta * WHEEL_VELOCITY_GAIN;
+
+      if (wheelIdleRef.current) clearTimeout(wheelIdleRef.current);
+      wheelIdleRef.current = setTimeout(() => {
+        velocityRef.current = 0;
+        wheelIdleRef.current = null;
+      }, WHEEL_IDLE_MS);
+    }, []);
+
+    const isInCarouselBand = useCallback((clientY: number) => {
+      const viewport = viewportRef.current;
+      if (!viewport) return false;
+      const band = viewport.getBoundingClientRect();
+      return clientY >= band.top && clientY <= band.bottom;
+    }, []);
+
+    const bindScrollInput = useCallback(
+      (node: HTMLElement, options?: { bandOnly?: boolean; capture?: boolean }) => {
+        const bandOnly = options?.bandOnly ?? false;
+        const capture = options?.capture ?? false;
+
+        const onWheel = (event: WheelEvent) => {
+          if (bandOnly && !isInCarouselBand(event.clientY)) return;
+          event.preventDefault();
+          applyDelta(event.deltaY);
+        };
+
+        const onTouchStart = (event: TouchEvent) => {
+          const y = event.touches[0]?.clientY ?? 0;
+          if (bandOnly && !isInCarouselBand(y)) return;
+          if (wheelIdleRef.current) {
+            clearTimeout(wheelIdleRef.current);
+            wheelIdleRef.current = null;
+          }
+          isTouchingRef.current = true;
+          velocityRef.current = 0;
+          touchStartYRef.current = y;
+          touchLastYRef.current = y;
+          touchLastTimeRef.current = performance.now();
+          touchStartOffsetRef.current = targetRef.current;
+        };
+
+        const onTouchMove = (event: TouchEvent) => {
+          if (!isTouchingRef.current) return;
+          event.preventDefault();
+          const y = event.touches[0]?.clientY ?? touchStartYRef.current;
+          const now = performance.now();
+          const dt = Math.max(now - touchLastTimeRef.current, 1);
+          touchVelocitySampleRef.current = (touchLastYRef.current - y) / dt;
+          touchLastYRef.current = y;
+          touchLastTimeRef.current = now;
+          targetRef.current = clamp(
+            touchStartOffsetRef.current + (touchStartYRef.current - y),
+            0,
+            maxOffsetRef.current,
+          );
+        };
+
+        const onTouchEnd = () => {
+          if (!isTouchingRef.current) return;
+          isTouchingRef.current = false;
+          velocityRef.current = clamp(
+            touchVelocitySampleRef.current * 1000 * FLICK_VELOCITY_GAIN,
+            -STEP_Y * 3,
+            STEP_Y * 3,
+          );
+        };
+
+        const clearWheelIdle = () => {
+          if (wheelIdleRef.current) {
+            clearTimeout(wheelIdleRef.current);
+            wheelIdleRef.current = null;
+          }
+        };
+
+        const listenerOptions = capture ? ({ capture: true } as const) : undefined;
+
+        node.addEventListener("wheel", onWheel, { passive: false, capture });
+        node.addEventListener("touchstart", onTouchStart, { passive: true, capture });
+        node.addEventListener("touchmove", onTouchMove, { passive: false, capture });
+        node.addEventListener("touchend", onTouchEnd, { passive: true, capture });
+        node.addEventListener("touchcancel", onTouchEnd, { passive: true, capture });
+
+        return () => {
+          clearWheelIdle();
+          node.removeEventListener("wheel", onWheel, listenerOptions);
+          node.removeEventListener("touchstart", onTouchStart, listenerOptions);
+          node.removeEventListener("touchmove", onTouchMove, listenerOptions);
+          node.removeEventListener("touchend", onTouchEnd, listenerOptions);
+          node.removeEventListener("touchcancel", onTouchEnd, listenerOptions);
+        };
       },
-      [maxOffset],
+      [applyDelta, isInCarouselBand],
     );
 
-    useEffect(() => {
-      const node = viewportRef.current;
-      if (!node) return;
+    useImperativeHandle(
+      ref,
+      () => ({
+        scrollToTop: () => {
+          targetRef.current = 0;
+        },
+      }),
+      [],
+    );
 
-      const onWheel = (event: WheelEvent) => {
-        event.preventDefault();
-        applyDelta(event.deltaY);
-      };
-
-      const onTouchStart = (event: TouchEvent) => {
-        isTouchingRef.current = true;
-        velocityRef.current = 0;
-        const y = event.touches[0]?.clientY ?? 0;
-        touchStartYRef.current = y;
-        touchLastYRef.current = y;
-        touchLastTimeRef.current = performance.now();
-        touchStartOffsetRef.current = targetRef.current;
-      };
-
-      const onTouchMove = (event: TouchEvent) => {
-        event.preventDefault();
-        const y = event.touches[0]?.clientY ?? touchStartYRef.current;
-        const now = performance.now();
-        const dt = Math.max(now - touchLastTimeRef.current, 1);
-        touchVelocitySampleRef.current = (touchLastYRef.current - y) / dt;
-        touchLastYRef.current = y;
-        touchLastTimeRef.current = now;
-        targetRef.current = clamp(
-          touchStartOffsetRef.current + (touchStartYRef.current - y),
-          0,
-          maxOffset,
-        );
-      };
-
-      const onTouchEnd = () => {
-        isTouchingRef.current = false;
-        velocityRef.current = clamp(
-          touchVelocitySampleRef.current * 1000 * FLICK_VELOCITY_GAIN,
-          -STEP_Y * 3,
-          STEP_Y * 3,
-        );
-      };
-
-      node.addEventListener("wheel", onWheel, { passive: false });
-      node.addEventListener("touchstart", onTouchStart, { passive: true });
-      node.addEventListener("touchmove", onTouchMove, { passive: false });
-      node.addEventListener("touchend", onTouchEnd, { passive: true });
-      node.addEventListener("touchcancel", onTouchEnd, { passive: true });
-
-      return () => {
-        node.removeEventListener("wheel", onWheel);
-        node.removeEventListener("touchstart", onTouchStart);
-        node.removeEventListener("touchmove", onTouchMove);
-        node.removeEventListener("touchend", onTouchEnd);
-        node.removeEventListener("touchcancel", onTouchEnd);
-      };
-    }, [applyDelta, maxOffset]);
+    useLayoutEffect(() => {
+      const root = scrollRootRef?.current;
+      if (!root) return;
+      return bindScrollInput(root, { bandOnly: true, capture: true });
+    }, [bindScrollInput, scrollRootRef]);
 
     const stageStyle = {
       "--home-card-step-y": `${STEP_Y}px`,
@@ -302,7 +447,7 @@ const HomePageCardCarousel = forwardRef<HomePageCardCarouselHandle, HomePageCard
             return (
               <article
                 key={release.id}
-                className="home-page-card home-page-card-carousel__card"
+                className="home-page-card-carousel__card"
                 style={{
                   top: index * STEP_Y,
                   zIndex: motion.zIndex,
@@ -313,27 +458,66 @@ const HomePageCardCarousel = forwardRef<HomePageCardCarouselHandle, HomePageCard
                   pointerEvents: motion.pointerEvents,
                 }}
               >
-                <div className="home-page-card-metadata">
-                  <img
-                    src={getReleaseCoverArt(release)}
-                    alt=""
-                    className="h-[88px] w-[88px] shrink-0 rounded-[6px] object-cover"
-                  />
-                  <div className="home-page-card-text">
-                    <h2 className="home-page-card-title">{release.title}</h2>
-                    <p className="home-page-card-meta">
-                      {release.type} &bull; {release.year} &bull; {songCount} song
-                      {songCount === 1 ? "" : "s"}
-                    </p>
-                  </div>
-                </div>
-                <Link
-                  to={`/release/${release.id}`}
-                  className="home-page-card-play"
-                  aria-label={`Open ${release.title}`}
+                <div
+                  className="home-page-card"
+                  onPointerEnter={(event) =>
+                    handleCardPointerEnter(event.pointerType, event.currentTarget)
+                  }
+                  onPointerLeave={(event) => handleCardPointerLeave(event.currentTarget)}
                 >
-                  <img src={figmaAssets.homePagePlay} alt="" className="h-[44px] w-[44px] max-w-none" />
-                </Link>
+                  <div className="home-page-card-metadata">
+                    {release.spotifyUrl ? (
+                      <a
+                        href={release.spotifyUrl}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        className="home-page-card-cover"
+                        aria-label={`Open ${release.title} on Spotify`}
+                      >
+                        <img
+                          src={getReleaseCoverArt(release)}
+                          alt=""
+                          className="h-[88px] w-[88px] shrink-0 rounded-[6px] object-cover"
+                        />
+                      </a>
+                    ) : (
+                      <img
+                        src={getReleaseCoverArt(release)}
+                        alt=""
+                        className="h-[88px] w-[88px] shrink-0 rounded-[6px] object-cover"
+                      />
+                    )}
+                    <div className="home-page-card-text">
+                      <h2 className="home-page-card-title">{release.title}</h2>
+                      <p className="home-page-card-meta">
+                        {release.type} &bull; {release.year} &bull; {songCount} song
+                        {songCount === 1 ? "" : "s"}
+                      </p>
+                    </div>
+                  </div>
+                  <Link
+                    to={`/release/${release.id}`}
+                    className="home-page-card-play"
+                    aria-label={`Play ${release.title}`}
+                    onMouseEnter={() => setPlayTooltipReleaseId(release.id)}
+                    onMouseLeave={() => setPlayTooltipReleaseId(null)}
+                    onFocus={() => setPlayTooltipReleaseId(release.id)}
+                    onBlur={() => setPlayTooltipReleaseId(null)}
+                  >
+                    <span
+                      role="status"
+                      aria-live="polite"
+                      className={`home-page-card-play__tooltip${
+                        playTooltipReleaseId === release.id
+                          ? " home-page-card-play__tooltip--visible"
+                          : ""
+                      }`}
+                    >
+                      Play {release.title}
+                    </span>
+                    <img src={figmaAssets.homePagePlay} alt="" className="h-[44px] w-[44px] max-w-none" />
+                  </Link>
+                </div>
               </article>
             );
           })}
