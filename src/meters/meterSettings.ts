@@ -11,7 +11,7 @@ export const METER_SETTINGS = {
   /** Minimeters Main → Smoothing 90% (AnalyserNode smoothingTimeConstant) */
   spectrumSmoothing: 0.9,
   /** Display tilt (dB/oct @ 1 kHz). */
-  spectrumTiltDbPerOct: 2,
+  spectrumTiltDbPerOct: 1.5,
   spectrumRangeDb: 70,
   spectrumCenterDb: -55,
   spectrumDisplayScale: 1,
@@ -72,7 +72,7 @@ export const METER_PLOT_LABELS = {
   },
   spectrum: {
     title: "Spectrum",
-    subtitle: `Mel scale · ${METER_SETTINGS.spectrumTiltDbPerOct} dB/oct`,
+    subtitle: `Log · 1 kHz center · ${METER_SETTINGS.spectrumTiltDbPerOct} dB/oct`,
   },
   stereometer: {
     title: "Stereometer",

@@ -6,7 +6,7 @@ import {
   splitTitleGlyphs,
   type CoolTitleStyle,
 } from "./coolTitleStyle";
-import { displayTrackTitle } from "../utils/displayTrackTitle";
+import { displayStemPlayerTitle, displayTrackTitle } from "../utils/displayTrackTitle";
 
 const FIXED_SUPERNATURAL_DISPLAY_TITLE = "Supernatural";
 
@@ -90,7 +90,7 @@ function cacheKey(displayTitle: string): string {
 
 /** Deterministic per-title glyph class list (cached). */
 export function getTitleGlyphClasses(title: string): string[] {
-  const displayTitle = displayTrackTitle(title);
+  const displayTitle = displayStemPlayerTitle(title);
   const key = cacheKey(displayTitle);
   const cached = assignmentCache.get(key);
   if (cached) return cached;
@@ -111,7 +111,7 @@ export function getTitleGlyphClasses(title: string): string[] {
 
 /** Grapheme split paired with deterministic glyph classes for rendering. */
 export function getTitleGlyphRenderData(title: string): { glyph: string; className: string }[] {
-  const displayTitle = displayTrackTitle(title);
+  const displayTitle = displayStemPlayerTitle(title);
   const glyphs = splitTitleGlyphs(displayTitle);
   const classes = getTitleGlyphClasses(title);
 

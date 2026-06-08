@@ -6,9 +6,10 @@ import {
 } from "./meterStore";
 import {
   applyDisplayGamma,
+  hzToSpectrumNorm,
   interpolateSpectrumAtHz,
-  melNormToHz,
   softCompressDisplay,
+  spectrumNormToHz,
 } from "./dsp";
 import {
   clipMeterPlotRegion,
@@ -299,6 +300,52 @@ function mixHex(a: string, b: string, t: number): string {
   return `rgb(${r},${g},${bch})`;
 }
 
+const SPECTRUM_GRID_MARKERS_HZ = [100, 200, 500, 1000, 2000, 5000, 10_000] as const;
+const SPECTRUM_GRID_LABELS: readonly { hz: number; label: string }[] = [
+  { hz: 100, label: "100Hz" },
+  { hz: 1000, label: "1kHz" },
+  { hz: 10_000, label: "10kHz" },
+];
+
+function drawSpectrumFrequencyGrid(
+  ctx: CanvasRenderingContext2D,
+  plotX: number,
+  plotY: number,
+  plotW: number,
+  plotH: number,
+  minHz: number,
+  maxHz: number,
+  theme: MeterVisualTokens,
+): void {
+  const major = new Set<number>([100, 1000, 10_000]);
+  const bright = METER_SETTINGS.spectrumFrequencyLinesBright;
+
+  ctx.save();
+  ctx.lineWidth = 1;
+
+  for (const hz of SPECTRUM_GRID_MARKERS_HZ) {
+    if (hz < minHz || hz > maxHz) continue;
+    const x = snapStrokeCoord(plotX + hzToSpectrumNorm(hz, minHz, maxHz) * plotW);
+    ctx.strokeStyle = bright && major.has(hz) ? theme.gridStrong : theme.grid;
+    ctx.globalAlpha = bright && major.has(hz) ? 0.95 : 0.55;
+    ctx.beginPath();
+    ctx.moveTo(x, plotY);
+    ctx.lineTo(x, plotY + plotH);
+    ctx.stroke();
+  }
+
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = theme.textMuted;
+  ctx.font = `normal 8px ${theme.fontRegular}`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "alphabetic";
+  for (const { hz, label } of SPECTRUM_GRID_LABELS) {
+    if (hz < minHz || hz > maxHz) continue;
+    ctx.fillText(label, plotX + hzToSpectrumNorm(hz, minHz, maxHz) * plotW, plotY + 9);
+  }
+  ctx.restore();
+}
+
 export function drawSpectrum(
   ctx: CanvasRenderingContext2D,
   w: number,
@@ -324,13 +371,15 @@ export function drawSpectrum(
   const displayScale = METER_SETTINGS.spectrumDisplayScale;
 
   const spectrumNormAt = (t: number): number => {
-    const hzAt = melNormToHz(t, minHz, maxHz);
+    const hzAt = spectrumNormToHz(t, minHz, maxHz);
     const raw = interpolateSpectrumAtHz(snap.spectrum, hzAt, snap.sampleRate, snap.spectrumFftSize);
     return softCompressDisplay(raw, 0.5) * displayScale;
   };
 
   ctx.save();
   clipMeterPlotRegion(ctx, plotX, plotY, plotW, plotH, plotRadius);
+
+  drawSpectrumFrequencyGrid(ctx, plotX, plotY, plotW, plotH, minHz, maxHz, theme);
 
   /** Style "Both" — thin bars; color from horizontal freq gradient (kept from minimeters bar pass). */
   if (METER_SETTINGS.spectrumStyleBoth) {
@@ -624,7 +673,7 @@ function drawBipolarBandWave(
 ): void {
   const scale = (plotH * METER_SETTINGS.waveformBandAmplitude) / peak;
 
-  ctx.fillStyle = theme.text;
+  ctx.fillStyle = theme.textMuted;
   ctx.font = `normal 9px ${theme.fontMedium}`;
   ctx.textAlign = "left";
   ctx.fillText(label, plotX + 4, plotY + 11);

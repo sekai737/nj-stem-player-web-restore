@@ -53,6 +53,15 @@ export function useSmoothScrollContainer(
 
   const updateScrolledUp = useCallback(
     (scrollTop: number, container: HTMLElement) => {
+      // Programmatic follow — don't flash the jump-to-current-lyric control mid-scroll.
+      if (trackElementRef.current) {
+        if (isScrolledUpRef.current) {
+          isScrolledUpRef.current = false;
+          setIsScrolledUp(false);
+        }
+        return;
+      }
+
       const syncEl = getSyncElementRef.current?.();
       if (!syncEl) {
         if (isScrolledUpRef.current) {

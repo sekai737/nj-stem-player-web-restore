@@ -1,43 +1,43 @@
-﻿albumName,discNumber,trackNumber,name,artists,type,releaseDate
-Supernatural,1,1,Supernatural,NewJeans,EP,2024-06-21T00:00:00Z
-Supernatural,1,2,Right Now,NewJeans,EP,2024-06-21T00:00:00Z
-Supernatural,1,3,Supernatural (Instrumental),NewJeans,EP,2024-06-21T00:00:00Z
-Supernatural,1,4,Right Now (Instrumental),NewJeans,EP,2024-06-21T00:00:00Z
-How Sweet,1,1,How Sweet,NewJeans,EP,2024-05-24T00:00:00Z
-How Sweet,1,2,Bubble Gum,NewJeans,EP,2024-05-24T00:00:00Z
-How Sweet,1,3,How Sweet (Instrumental),NewJeans,EP,2024-05-24T00:00:00Z
-How Sweet,1,4,Bubble Gum (Instrumental),NewJeans,EP,2024-05-24T00:00:00Z
-NJWMX,1,1,Ditto (250 Remix),NewJeans,ALBUM,2023-12-19T00:00:00Z
-NJWMX,1,2,OMG (FRNK Remix),NewJeans,ALBUM,2023-12-19T00:00:00Z
-NJWMX,1,3,Attention (250 Remix),NewJeans,ALBUM,2023-12-19T00:00:00Z
-NJWMX,1,4,Hype Boy (250 Remix),NewJeans,ALBUM,2023-12-19T00:00:00Z
-NJWMX,1,5,Cookie (FRNK Remix),NewJeans,ALBUM,2023-12-19T00:00:00Z
-NJWMX,1,6,Hurt (250 Remix),NewJeans,ALBUM,2023-12-19T00:00:00Z
-NJWMX,1,7,Ditto (250 Remix) (Instrumental),NewJeans,ALBUM,2023-12-19T00:00:00Z
-NJWMX,1,8,OMG (FRNK Remix) (Instrumental),NewJeans,ALBUM,2023-12-19T00:00:00Z
-NJWMX,1,9,Attention (250 Remix) (Instrumental),NewJeans,ALBUM,2023-12-19T00:00:00Z
-NJWMX,1,10,Hype Boy (250 Remix) (Instrumental),NewJeans,ALBUM,2023-12-19T00:00:00Z
-NJWMX,1,11,Cookie (FRNK Remix) (Instrumental),NewJeans,ALBUM,2023-12-19T00:00:00Z
-NJWMX,1,12,Hurt (250 Remix) (Instrumental),NewJeans,ALBUM,2023-12-19T00:00:00Z
-NewJeans X MY DEMON,1,1,Our Night is more beautiful than your Day,NewJeans,SINGLE,2023-11-24T00:00:00Z
-NewJeans X MY DEMON,1,2,Our Night is more beautiful than your Day (Inst.),NewJeans,SINGLE,2023-11-24T00:00:00Z
-GODS,1,1,GODS,League of Legends; NewJeans,SINGLE,2023-10-04T00:00:00Z
-A Time Called You (Original Soundtrack from the Netflix Series),1,1,Beautiful Restriction,NewJeans,SINGLE,2023-09-01T00:00:00Z
-NewJeans 2nd EP 'Get Up',1,1,New Jeans,NewJeans,EP,2023-07-21T00:00:00Z
-NewJeans 2nd EP 'Get Up',1,2,Super Shy,NewJeans,EP,2023-07-21T00:00:00Z
-NewJeans 2nd EP 'Get Up',1,3,ETA,NewJeans,EP,2023-07-21T00:00:00Z
-NewJeans 2nd EP 'Get Up',1,4,Cool With You,NewJeans,EP,2023-07-21T00:00:00Z
-NewJeans 2nd EP 'Get Up',1,5,Get Up,NewJeans,EP,2023-07-21T00:00:00Z
-NewJeans 2nd EP 'Get Up',1,6,ASAP,NewJeans,EP,2023-07-21T00:00:00Z
-NewJeans 'Super Shy',1,1,New Jeans,NewJeans,SINGLE,2023-07-07T00:00:00Z
-NewJeans 'Super Shy',1,2,Super Shy,NewJeans,SINGLE,2023-07-07T00:00:00Z
-Zero (J.I.D Remix),1,1,Zero (J.I.D Remix),NewJeans; JID,SINGLE,2023-06-20T00:00:00Z
-Be Who You Are (Real Magic),1,1,"Be Who You Are (Real Magic) (feat. JID, NewJeans & Camilo)",Jon Batiste; JID; NewJeans; Camilo,SINGLE,2023-05-31T00:00:00Z
-Zero,1,1,Zero,NewJeans,SINGLE,2023-04-03T00:00:00Z
-NewJeans 'OMG',1,1,OMG,NewJeans,SINGLE,2023-01-02T00:00:00Z
-NewJeans 'OMG',1,2,Ditto,NewJeans,SINGLE,2023-01-02T00:00:00Z
-Ditto,1,1,Ditto,NewJeans,SINGLE,2022-12-19T00:00:00Z
-NewJeans 1st EP 'New Jeans',1,1,Attention,NewJeans,EP,2022-08-01T00:00:00Z
-NewJeans 1st EP 'New Jeans',1,2,Hype Boy,NewJeans,EP,2022-08-01T00:00:00Z
-NewJeans 1st EP 'New Jeans',1,3,Cookie,NewJeans,EP,2022-08-01T00:00:00Z
-NewJeans 1st EP 'New Jeans',1,4,Hurt,NewJeans,EP,2022-08-01T00:00:00Z
+albumName,discNumber,trackNumber,name,artists,type,releaseDate,key,bpm
+Supernatural,1,1,Supernatural,NewJeans,EP,2024-06-21T00:00:00Z,Bbm,109
+Supernatural,1,2,Right Now,NewJeans,EP,2024-06-21T00:00:00Z,Ebm,172
+Supernatural,1,3,Supernatural (Instrumental),NewJeans,EP,2024-06-21T00:00:00Z,Bbm,109
+Supernatural,1,4,Right Now (Instrumental),NewJeans,EP,2024-06-21T00:00:00Z,F#,172
+How Sweet,1,1,How Sweet,NewJeans,EP,2024-05-24T00:00:00Z,Db,125
+How Sweet,1,2,Bubble Gum,NewJeans,EP,2024-05-24T00:00:00Z,A,105
+How Sweet,1,3,How Sweet (Instrumental),NewJeans,EP,2024-05-24T00:00:00Z,Db,125
+How Sweet,1,4,Bubble Gum (Instrumental),NewJeans,EP,2024-05-24T00:00:00Z,F#m,105
+NJWMX,1,1,Ditto (250 Remix),NewJeans,ALBUM,2023-12-19T00:00:00Z,A,134
+NJWMX,1,2,OMG (FRNK Remix),NewJeans,ALBUM,2023-12-19T00:00:00Z,Bb,129
+NJWMX,1,3,Attention (250 Remix),NewJeans,ALBUM,2023-12-19T00:00:00Z,Bb,105
+NJWMX,1,4,Hype Boy (250 Remix),NewJeans,ALBUM,2023-12-19T00:00:00Z,C,86
+NJWMX,1,5,Cookie (FRNK Remix),NewJeans,ALBUM,2023-12-19T00:00:00Z,Em,80
+NJWMX,1,6,Hurt (250 Remix),NewJeans,ALBUM,2023-12-19T00:00:00Z,Bb,90
+NJWMX,1,7,Ditto (250 Remix) (Instrumental),NewJeans,ALBUM,2023-12-19T00:00:00Z,A,134
+NJWMX,1,8,OMG (FRNK Remix) (Instrumental),NewJeans,ALBUM,2023-12-19T00:00:00Z,Bb,129
+NJWMX,1,9,Attention (250 Remix) (Instrumental),NewJeans,ALBUM,2023-12-19T00:00:00Z,Bb,105
+NJWMX,1,10,Hype Boy (250 Remix) (Instrumental),NewJeans,ALBUM,2023-12-19T00:00:00Z,C,86
+NJWMX,1,11,Cookie (FRNK Remix) (Instrumental),NewJeans,ALBUM,2023-12-19T00:00:00Z,Em,80
+NJWMX,1,12,Hurt (250 Remix) (Instrumental),NewJeans,ALBUM,2023-12-19T00:00:00Z,Bb,90
+NewJeans X MY DEMON,1,1,Our Night is more beautiful than your Day,NewJeans,SINGLE,2023-11-24T00:00:00Z,Bb,105
+NewJeans X MY DEMON,1,2,Our Night is more beautiful than your Day (Inst.),NewJeans,SINGLE,2023-11-24T00:00:00Z,Bb,105
+GODS,1,1,GODS,"League of Legends; NewJeans",SINGLE,2023-10-04T00:00:00Z,Ebm,146
+A Time Called You (Original Soundtrack from the Netflix Series),1,1,Beautiful Restriction,NewJeans,SINGLE,2023-09-01T00:00:00Z,Eb,125
+NewJeans 2nd EP 'Get Up',1,1,New Jeans,NewJeans,EP,2023-07-21T00:00:00Z,Em,134
+NewJeans 2nd EP 'Get Up',1,2,Super Shy,NewJeans,EP,2023-07-21T00:00:00Z,Fm,150
+NewJeans 2nd EP 'Get Up',1,3,ETA,NewJeans,EP,2023-07-21T00:00:00Z,Bbm,135
+NewJeans 2nd EP 'Get Up',1,4,Cool With You,NewJeans,EP,2023-07-21T00:00:00Z,Fm,135
+NewJeans 2nd EP 'Get Up',1,5,Get Up,NewJeans,EP,2023-07-21T00:00:00Z,F,85
+NewJeans 2nd EP 'Get Up',1,6,ASAP,NewJeans,EP,2023-07-21T00:00:00Z,Cm,130
+NewJeans 'Super Shy',1,1,New Jeans,NewJeans,SINGLE,2023-07-07T00:00:00Z,Em,134
+NewJeans 'Super Shy',1,2,Super Shy,NewJeans,SINGLE,2023-07-07T00:00:00Z,Fm,150
+Zero (J.I.D Remix),1,1,Zero (J.I.D Remix),"NewJeans; JID",SINGLE,2023-06-20T00:00:00Z,Dbm,172
+Be Who You Are (Real Magic),1,1,"Be Who You Are (Real Magic) (feat. JID, NewJeans & Camilo)","Jon Batiste; JID; NewJeans; Camilo",SINGLE,2023-05-31T00:00:00Z,D,144
+Zero,1,1,Zero,NewJeans,SINGLE,2023-04-03T00:00:00Z,Dbm,172
+NewJeans 'OMG',1,1,OMG,NewJeans,SINGLE,2023-01-02T00:00:00Z,Am,127
+NewJeans 'OMG',1,2,Ditto,NewJeans,SINGLE,2023-01-02T00:00:00Z,F#m,134
+Ditto,1,1,Ditto,NewJeans,SINGLE,2022-12-19T00:00:00Z,F#m,134
+NewJeans 1st EP 'New Jeans',1,1,Attention,NewJeans,EP,2022-08-01T00:00:00Z,Bbm,105
+NewJeans 1st EP 'New Jeans',1,2,Hype Boy,NewJeans,EP,2022-08-01T00:00:00Z,Em,100
+NewJeans 1st EP 'New Jeans',1,3,Cookie,NewJeans,EP,2022-08-01T00:00:00Z,C,157
+NewJeans 1st EP 'New Jeans',1,4,Hurt,NewJeans,EP,2022-08-01T00:00:00Z,Bbm,180

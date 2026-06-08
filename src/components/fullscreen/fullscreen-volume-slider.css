@@ -4,14 +4,10 @@
   --fs-volume-scale: var(--fs-ui-scale, 1);
   --fs-volume-layout-w: calc(var(--fs-volume-design-w, 68px) * var(--fs-volume-scale));
   --fs-volume-layout-h: calc(var(--fs-volume-design-h, 404px) * var(--fs-volume-scale));
-  /* y=118 in 640px cluster — aligns with card top (121:299 y=0) */
-  --fs-volume-offset: calc(var(--fs-volume-offset-top, 118px) * var(--fs-volume-scale));
 
   flex-shrink: 0;
-  align-self: flex-start;
   width: var(--fs-volume-layout-w);
   height: var(--fs-volume-layout-h);
-  margin-top: var(--fs-volume-offset);
   overflow: hidden;
   box-sizing: border-box;
 }

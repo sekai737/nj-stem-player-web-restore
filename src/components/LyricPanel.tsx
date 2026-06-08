@@ -20,6 +20,8 @@ interface LyricPanelProps {
   lrc?: SongLrcFiles;
   fontsReady?: boolean;
   onSeek?: (time: number) => void;
+  lyricsWidth?: number;
+  lyricsMarginLeft?: number;
 }
 
 function findNextSungTime(lyrics: LyricLine[], fromIndex: number): number | null {
@@ -33,7 +35,13 @@ function findNextSungTime(lyrics: LyricLine[], fromIndex: number): number | null
  * Figma lyrics column (node 26:214) — active line + one preview below.
  * Carousel motion on line advance; fadeDo on first paint / seek snap.
  */
-export default function LyricPanel({ lrc, fontsReady = true, onSeek }: LyricPanelProps) {
+export default function LyricPanel({
+  lrc,
+  fontsReady = true,
+  onSeek,
+  lyricsWidth = FIGMA.titleRow.lyricsWidth,
+  lyricsMarginLeft = -FIGMA.titleRow.titleLyricsOverlap,
+}: LyricPanelProps) {
   const currentTime = usePlayerStore((s) => s.currentTime);
   const { lines, loading, error } = useLyrics(lrc);
 
@@ -67,8 +75,9 @@ export default function LyricPanel({ lrc, fontsReady = true, onSeek }: LyricPane
     <section
       className="figma-surface flex shrink-0 items-center overflow-visible"
       style={{
-        width: FIGMA.titleRow.lyricsWidth,
+        width: lyricsWidth,
         height: FIGMA.titleRow.lyricsHeight,
+        marginLeft: lyricsMarginLeft,
         gap: LYRICS_FIGMA.container.gap,
         paddingLeft: LYRICS_FIGMA.container.paddingX,
         paddingRight: LYRICS_FIGMA.container.paddingX,

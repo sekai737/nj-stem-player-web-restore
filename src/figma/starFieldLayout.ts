@@ -14,7 +14,10 @@ export const STAR_FIELD_REFERENCE = { width: 1920, height: 1080 } as const;
 export const STAR_FIELD_TINT = "#FFDB4D";
 
 /** Stable seed — identical layout per (size, options) on every load. */
-const LAYOUT_SEED = 0x4e_4a_5f_33;
+export const STAR_FIELD_SEED = 0x4e_4a_5f_33;
+
+/** Stem player — distinct shuffle from home / song select. */
+export const STEM_PLAYER_STAR_FIELD_SEED = 0x53_54_5f_50;
 
 /** Denser than the small-stars.svg reference (~one per 80k px²). */
 const REFERENCE_AREA_PER_STAR = 80_000;
@@ -96,7 +99,7 @@ export function buildStarFieldLayout(
   const rows = clamp(Math.round(Math.sqrt(count / aspect)), 1, count);
 
   const cellH = height / rows;
-  const rng = mulberry32((options.seed ?? LAYOUT_SEED) + count * 131 + rows * 17);
+  const rng = mulberry32((options.seed ?? STAR_FIELD_SEED) + count * 131 + rows * 17);
   const variety = shuffledOrder(assetCount, rng);
 
   const basePerRow = Math.floor(count / rows);

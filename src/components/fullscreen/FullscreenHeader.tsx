@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { figmaAssets } from "../../figma/assets";
-import { FIGMA } from "../../figma/layout";
+import { FIGMA_FULLSCREEN as FS } from "../../figma/fullscreenLayout";
 import type { SongLrcFiles } from "../../types";
 import FigmaIconButton from "../stem-player/FigmaIconButton";
 import LyricsConversionPanel from "./LyricsConversionPanel";
@@ -23,7 +23,7 @@ export default function FullscreenHeader({
   masterMixAvailable,
 }: FullscreenHeaderProps) {
   const menuRef = useRef<HTMLDivElement>(null);
-  const iconSize = FIGMA.header.icon;
+  const iconSize = FS.header.iconSize;
 
   useEffect(() => {
     if (!conversionsOpen) return;

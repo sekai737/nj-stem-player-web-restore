@@ -53,7 +53,7 @@ export default function StemsLoadingOverlay({ songTitle }: StemsLoadingOverlayPr
             style={{ width: `${pct}%` }}
           />
         </div>
-        <p className="mt-2 text-xs tabular-nums text-text-secondary">{pct}%</p>
+        <p className="mt-2 text-xs tabular-nums text-content-secondary">{pct}%</p>
       </div>
     </div>
   );

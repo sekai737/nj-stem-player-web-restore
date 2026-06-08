@@ -1,3 +1,4 @@
+import { type Ref } from "react";
 import { figmaAssets } from "../../figma/assets";
 import { FIGMA } from "../../figma/layout";
 import { trackTitleSuffixes } from "../../utils/displayTrackTitle";
@@ -7,37 +8,38 @@ import CoolTitleDisplay from "./CoolTitleDisplay";
 import "../selectable-copy-stem.css";
 
 interface SongTitleBlockProps {
-  releaseId: string;
-  songId: string;
   title: string;
   durationSec: number;
-  keyLabel: string;
-  bpm: number;
+  keyLabel?: string;
+  bpm?: number;
+  titleBlockRef?: Ref<HTMLDivElement>;
+  titleCoolLineRef?: Ref<HTMLParagraphElement>;
 }
 
 /**
  * Figma Title (26:216) — flex-col items-start; Title mr-[-16px] toward lyrics.
  */
 export default function SongTitleBlock({
-  releaseId: _releaseId,
-  songId,
   title,
   durationSec,
   keyLabel,
   bpm,
+  titleBlockRef,
+  titleCoolLineRef,
 }: SongTitleBlockProps) {
   const stack = FIGMA.titleRow.titleStack;
   const titleSuffixes = trackTitleSuffixes(title);
 
   return (
     <div
+      ref={titleBlockRef}
       className="flex shrink-0 flex-col items-start justify-start"
       data-node-id="26:216"
       data-name="Title"
       style={{
-        width: FIGMA.titleRow.titleWidth,
+        width: "max-content",
+        maxWidth: FIGMA.titleRow.titleWidth,
         height: FIGMA.titleRow.titleHeight,
-        marginRight: -FIGMA.titleRow.titleLyricsOverlap,
       }}
     >
       <img
@@ -57,7 +59,7 @@ export default function SongTitleBlock({
         data-node-id="3:282"
         data-name="Title display name"
       >
-        <CoolTitleDisplay title={title} />
+        <CoolTitleDisplay title={title} titleCoolLineRef={titleCoolLineRef} />
       </div>
 
       <SelectableCopyRegion
@@ -69,7 +71,9 @@ export default function SongTitleBlock({
       >
         <div className="title-metadata-block">
           <p className="title-track-metadata text-content-primary" data-copy-block>
-            {formatTrackMetadata(durationSec, keyLabel, bpm, { titleSuffixes })}
+            {formatTrackMetadata(durationSec, keyLabel, bpm, {
+              titleSuffixes,
+            })}
           </p>
         </div>
       </SelectableCopyRegion>

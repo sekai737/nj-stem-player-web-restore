@@ -1,10 +1,12 @@
 import { contextBridge, ipcRenderer, type IpcRendererEvent } from "electron";
+import type { SpotifyEnrichmentPayload, TrackMetadataRequest } from "./metadataTypes.js";
 
 interface ElectronAPI {
   isDesktop: true;
   getLibraryPath: () => Promise<string | null>;
   selectLibraryFolder: () => Promise<string | null>;
   onLibraryPathChanged: (callback: (libraryRoot: string) => void) => () => void;
+  fetchTrackMetadata: (request: TrackMetadataRequest) => Promise<SpotifyEnrichmentPayload | null>;
 }
 
 const electronAPI: ElectronAPI = {
@@ -20,6 +22,7 @@ const electronAPI: ElectronAPI = {
       ipcRenderer.removeListener("library:pathChanged", listener);
     };
   },
+  fetchTrackMetadata: (request) => ipcRenderer.invoke("metadata:fetch", request),
 };
 
 contextBridge.exposeInMainWorld("electronAPI", electronAPI);

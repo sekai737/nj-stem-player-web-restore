@@ -71,6 +71,8 @@ export interface Song {
   isRemix?: boolean;
   /** Remix variants associated with this base track. */
   remixes?: RemixItem[];
+  /** Optional Spotify track id for metadata enrichment. */
+  spotifyTrackId?: string;
 }
 
 export interface Release {

@@ -1,7 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { getSongArtwork, getSongIndex } from "../../data/catalog";
 import { useFullscreenKeyboard } from "../../hooks/useFullscreenKeyboard";
+import { useFullscreenScale } from "../../hooks/useFullscreenScale";
 import { useMergedLyrics } from "../../hooks/useMergedLyrics";
 import { usePlayerStore } from "../../store/playerStore";
 import type { Release, Song } from "../../types";
@@ -43,6 +44,9 @@ export default function FullscreenPlayer({
   hasPrevious,
   hasNext,
 }: FullscreenPlayerProps) {
+  const rootRef = useRef<HTMLDivElement>(null);
+  useFullscreenScale(rootRef, open);
+
   const isPlaying = usePlayerStore((s) => s.isPlaying);
   const currentTime = usePlayerStore((s) => s.currentTime);
   const showConversion = usePlayerStore((s) => s.fullscreenShowConversionPanel);
@@ -93,21 +97,22 @@ export default function FullscreenPlayer({
 
   return createPortal(
     <div
+      ref={rootRef}
       className="fs-player"
       role="dialog"
       aria-modal="true"
       aria-label={`Full screen: ${song.title}`}
     >
-      <FullscreenHeader
-        onBack={onClose}
-        conversionsOpen={showConversion}
-        onToggleConversions={toggleConversions}
-        onCloseConversions={() => usePlayerStore.setState({ fullscreenShowConversionPanel: false })}
-        lrc={song.lrc}
-        masterMixAvailable={masterMixAvailable}
-      />
+      <div className="fs-player__stage">
+        <FullscreenHeader
+          onBack={onClose}
+          conversionsOpen={showConversion}
+          onToggleConversions={toggleConversions}
+          onCloseConversions={() => usePlayerStore.setState({ fullscreenShowConversionPanel: false })}
+          lrc={song.lrc}
+          masterMixAvailable={masterMixAvailable}
+        />
 
-      <main className="fs-player__main">
         <div className="fs-player__lyrics-col">
           <ChatLyricFeed
             key={song.id}
@@ -120,16 +125,16 @@ export default function FullscreenPlayer({
           />
         </div>
 
-        <div className="fs-player__controls-col">
-          <div className="fs-player__cluster">
-            <div className="fs-player__cluster-rail">
-              <div
-                className={
-                  fullscreenUseStems
-                    ? "fs-player__cluster-playback"
-                    : "fs-player__cluster-playback fs-player__cluster-playback--master"
-                }
-              >
+        <div className="fs-player__cluster" data-node-id="127:194">
+          <div className="fs-player__cluster-rail" data-node-id="161:152">
+            <div
+              className={
+                fullscreenUseStems
+                  ? "fs-player__cluster-playback"
+                  : "fs-player__cluster-playback fs-player__cluster-playback--master"
+              }
+              data-node-id="161:151"
+            >
               <FullscreenPlayerCard
                 artwork={getSongArtwork(song, release)}
                 title={song.title}
@@ -148,20 +153,19 @@ export default function FullscreenPlayer({
                 hasNext={hasNext}
               />
               {fullscreenUseStems ? <FullscreenStemStack /> : null}
-              </div>
-              <FullscreenVolumeSlider />
             </div>
+            <FullscreenVolumeSlider />
           </div>
         </div>
-      </main>
 
-      <FullscreenBottomBar
-        label={trackLabel}
-        onPrevious={onPrevious}
-        onNext={onNext}
-        hasPrevious={hasPrevious}
-        hasNext={hasNext}
-      />
+        <FullscreenBottomBar
+          label={trackLabel}
+          onPrevious={onPrevious}
+          onNext={onNext}
+          hasPrevious={hasPrevious}
+          hasNext={hasNext}
+        />
+      </div>
     </div>,
     document.body,
   );

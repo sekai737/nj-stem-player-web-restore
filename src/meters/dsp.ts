@@ -57,6 +57,62 @@ export function freqToLogNorm(hz: number, minHz: number, maxHz: number): number 
   return Math.max(0, Math.min(1, (Math.log10(hz) - logMin) / Math.max(1e-6, logMax - logMin)));
 }
 
+/** Visual center for the spectrum x-axis (reference: 1 kHz at horizontal midpoint). */
+export const SPECTRUM_VISUAL_CENTER_HZ = 1000;
+
+/**
+ * Split-log visual mapping: each half of the plot gets equal width with 1 kHz at t = 0.5.
+ * Display-only — does not alter FFT bins or stored spectrum data.
+ */
+export function hzToSpectrumNorm(
+  hz: number,
+  minHz: number,
+  maxHz: number,
+  centerHz = SPECTRUM_VISUAL_CENTER_HZ,
+): number {
+  const clamped = Math.max(minHz, Math.min(maxHz, hz));
+  if (centerHz <= minHz || centerHz >= maxHz) {
+    return freqToLogNorm(clamped, minHz, maxHz);
+  }
+
+  const logMin = Math.log10(minHz);
+  const logCenter = Math.log10(centerHz);
+  const logMax = Math.log10(maxHz);
+
+  if (clamped <= centerHz) {
+    return (
+      0.5 * (Math.log10(clamped) - logMin) / Math.max(1e-6, logCenter - logMin)
+    );
+  }
+  return (
+    0.5 + 0.5 * (Math.log10(clamped) - logCenter) / Math.max(1e-6, logMax - logCenter)
+  );
+}
+
+/** Inverse of hzToSpectrumNorm — maps horizontal position to analysis frequency. */
+export function spectrumNormToHz(
+  t: number,
+  minHz: number,
+  maxHz: number,
+  centerHz = SPECTRUM_VISUAL_CENTER_HZ,
+): number {
+  const tn = Math.max(0, Math.min(1, t));
+  if (centerHz <= minHz || centerHz >= maxHz) {
+    const logMin = Math.log10(minHz);
+    const logMax = Math.log10(maxHz);
+    return 10 ** (logMin + tn * (logMax - logMin));
+  }
+
+  const logMin = Math.log10(minHz);
+  const logCenter = Math.log10(centerHz);
+  const logMax = Math.log10(maxHz);
+
+  if (tn <= 0.5) {
+    return 10 ** (logMin + (tn / 0.5) * (logCenter - logMin));
+  }
+  return 10 ** (logCenter + ((tn - 0.5) / 0.5) * (logMax - logCenter));
+}
+
 export function freqToLogY(
   freq: number,
   height: number,

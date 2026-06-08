@@ -55,6 +55,15 @@ function usesStemPlayback(): boolean {
   return !fullscreenOpen || fullscreenUseStems;
 }
 
+function playbackEndSec(
+  engine: { playbackDurationSec: number },
+  catalogSec: number,
+): number {
+  const decoded = engine.playbackDurationSec;
+  if (decoded > 0) return decoded;
+  return catalogSec;
+}
+
 export function useStemEngine(song: Song | undefined, releaseId?: string) {
   const audioRef = useRef<{
     ctx: AudioContext;
@@ -65,6 +74,8 @@ export function useStemEngine(song: Song | undefined, releaseId?: string) {
     startTime: number;
     offset: number;
     raf: number;
+    /** Decoded stem/master length — used for end-of-track instead of catalog duration. */
+    playbackDurationSec: number;
   } | null>(null);
   const loadIdRef = useRef(0);
   const loadStateRef = useRef<{ songLoadKey: string; stemPlayback: boolean } | null>(
@@ -134,6 +145,7 @@ export function useStemEngine(song: Song | undefined, releaseId?: string) {
         startTime: 0,
         offset: 0,
         raf: 0,
+        playbackDurationSec: 0,
       };
     }
     const engine = audioRef.current;
@@ -264,9 +276,10 @@ export function useStemEngine(song: Song | undefined, releaseId?: string) {
           return;
         }
         const t = engine.offset + (engine.ctx.currentTime - engine.startTime);
-        const clamped = Math.min(t, song.durationSec);
+        const endSec = playbackEndSec(engine, song.durationSec);
+        const clamped = Math.min(t, endSec);
         advanceCurrentTime(clamped, transportSeq);
-        if (t >= song.durationSec) {
+        if (t >= endSec) {
           invalidatePlaybackSession();
           setPlaying(false);
           stopSources();
@@ -316,8 +329,10 @@ export function useStemEngine(song: Song | undefined, releaseId?: string) {
     engine.stems = {};
     engine.mix = null;
 
+    engine.playbackDurationSec = 0;
+
     if (preservePlayback) {
-      engine.offset = Math.min(savedOffset, song.durationSec);
+      engine.offset = Math.min(savedOffset, playbackEndSec(engine, song.durationSec));
       setCurrentTime(engine.offset);
     } else {
       resetMeterStore();
@@ -385,6 +400,7 @@ export function useStemEngine(song: Song | undefined, releaseId?: string) {
           setStemsLoadError(`Some stems failed to load (${loadErrors.length}). Playback uses loaded stems only.`);
         }
 
+        engine.playbackDurationSec = maxDuration;
         setDuration(maxDuration || song.durationSec);
         applyGains();
         return;
@@ -413,6 +429,7 @@ export function useStemEngine(song: Song | undefined, releaseId?: string) {
         const gain = ctx.createGain();
         gain.connect(master);
         engine.mix = { buffer, source: null, gain };
+        engine.playbackDurationSec = buffer.duration;
         setDuration(buffer.duration || song.durationSec);
         applyGains();
       } catch (err) {
@@ -550,7 +567,7 @@ export function useStemEngine(song: Song | undefined, releaseId?: string) {
       if (!song) return;
       const engine = ensureContext();
       const wasPlaying = usePlayerStore.getState().isPlaying;
-      engine.offset = Math.max(0, Math.min(time, song.durationSec));
+      engine.offset = Math.max(0, Math.min(time, playbackEndSec(engine, song.durationSec)));
       setCurrentTime(engine.offset);
       if (wasPlaying) {
         stopSources();

@@ -65,8 +65,8 @@
           "id": "right-now",
           "title": "Right Now",
           "durationSec": 160,
-          "bpm": 86,
-          "key": "Bbm",
+          "bpm": 172,
+          "key": "Ebm",
           "stems": [
             {
               "id": "vocals",
@@ -85,7 +85,12 @@
               "label": "Bass"
             }
           ],
-          "stemSlug": "right-now"
+          "stemSlug": "right-now",
+          "lrc": {
+            "org": "/lyrics/right-now-org.lrc",
+            "rom": "/lyrics/right-now-rom.lrc",
+            "en": "/lyrics/right-now-en.lrc"
+          }
         },
         {
           "id": "supernatural-instrumental",
@@ -117,8 +122,8 @@
           "id": "right-now-instrumental",
           "title": "Right Now (Instrumental)",
           "durationSec": 160,
-          "bpm": 86,
-          "key": "Bbm",
+          "bpm": 172,
+          "key": "F#",
           "stems": [
             {
               "id": "vocals",
@@ -214,9 +219,9 @@
         {
           "id": "how-sweet-title",
           "title": "How Sweet",
-          "durationSec": 210,
-          "bpm": 118,
-          "key": "A major",
+          "durationSec": 219,
+          "bpm": 125,
+          "key": "Db",
           "stems": [
             {
               "id": "vocals",
@@ -235,22 +240,18 @@
               "label": "Bass"
             }
           ],
-          "lyrics": [
-            {
-              "time": 0,
-              "en": "How Sweet — add timed lyrics per language here.",
-              "ko": "How Sweet — 가사 타임스탬프를 추가하세요.",
-              "rom": "How Sweet — gasa taimseutaempeureul chugahaseyo.",
-              "member": "group"
-            }
-          ]
+          "lrc": {
+            "org": "/lyrics/how-sweet-org.lrc",
+            "rom": "/lyrics/how-sweet-rom.lrc",
+            "en": "/lyrics/how-sweet-en.lrc"
+          }
         },
         {
           "id": "bubble-gum",
           "title": "Bubble Gum",
           "durationSec": 205,
-          "bpm": 120,
-          "key": "G major",
+          "bpm": 105,
+          "key": "A",
           "stems": [
             {
               "id": "vocals",
@@ -283,9 +284,9 @@
         {
           "id": "how-sweet-title-instrumental",
           "title": "How Sweet (Instrumental)",
-          "durationSec": 210,
-          "bpm": 118,
-          "key": "A major",
+          "durationSec": 219,
+          "bpm": 125,
+          "key": "Db",
           "stems": [
             {
               "id": "vocals",
@@ -310,8 +311,8 @@
           "id": "bubble-gum-instrumental",
           "title": "Bubble Gum (Instrumental)",
           "durationSec": 205,
-          "bpm": 120,
-          "key": "G major",
+          "bpm": 105,
+          "key": "F#m",
           "stems": [
             {
               "id": "vocals",
@@ -346,8 +347,8 @@
           "id": "ditto-250-remix",
           "title": "Ditto (250 Remix)",
           "durationSec": 200,
-          "bpm": 120,
-          "key": "—",
+          "bpm": 134,
+          "key": "A",
           "stems": [
             {
               "id": "vocals",
@@ -375,8 +376,8 @@
           "id": "omg-frnk-remix",
           "title": "OMG (FRNK Remix)",
           "durationSec": 200,
-          "bpm": 120,
-          "key": "—",
+          "bpm": 129,
+          "key": "Bb",
           "stems": [
             {
               "id": "vocals",
@@ -404,8 +405,8 @@
           "id": "attention-250-remix",
           "title": "Attention (250 Remix)",
           "durationSec": 200,
-          "bpm": 120,
-          "key": "—",
+          "bpm": 105,
+          "key": "Bb",
           "stems": [
             {
               "id": "vocals",
@@ -433,8 +434,8 @@
           "id": "hype-boy-250-remix",
           "title": "Hype Boy (250 Remix)",
           "durationSec": 200,
-          "bpm": 120,
-          "key": "—",
+          "bpm": 86,
+          "key": "C",
           "stems": [
             {
               "id": "vocals",
@@ -462,8 +463,8 @@
           "id": "cookie-frnk-remix",
           "title": "Cookie (FRNK Remix)",
           "durationSec": 200,
-          "bpm": 120,
-          "key": "—",
+          "bpm": 80,
+          "key": "Em",
           "stems": [
             {
               "id": "vocals",
@@ -491,8 +492,8 @@
           "id": "hurt-250-remix",
           "title": "Hurt (250 Remix)",
           "durationSec": 200,
-          "bpm": 120,
-          "key": "—",
+          "bpm": 90,
+          "key": "Bb",
           "stems": [
             {
               "id": "vocals",
@@ -520,8 +521,8 @@
           "id": "ditto-250-remix-instrumental",
           "title": "Ditto (250 Remix) (Instrumental)",
           "durationSec": 200,
-          "bpm": 120,
-          "key": "—",
+          "bpm": 134,
+          "key": "A",
           "stems": [
             {
               "id": "vocals",
@@ -549,8 +550,8 @@
           "id": "omg-frnk-remix-instrumental",
           "title": "OMG (FRNK Remix) (Instrumental)",
           "durationSec": 200,
-          "bpm": 120,
-          "key": "—",
+          "bpm": 129,
+          "key": "Bb",
           "stems": [
             {
               "id": "vocals",
@@ -578,8 +579,8 @@
           "id": "attention-250-remix-instrumental",
           "title": "Attention (250 Remix) (Instrumental)",
           "durationSec": 200,
-          "bpm": 120,
-          "key": "—",
+          "bpm": 105,
+          "key": "Bb",
           "stems": [
             {
               "id": "vocals",
@@ -607,8 +608,8 @@
           "id": "hype-boy-250-remix-instrumental",
           "title": "Hype Boy (250 Remix) (Instrumental)",
           "durationSec": 200,
-          "bpm": 120,
-          "key": "—",
+          "bpm": 86,
+          "key": "C",
           "stems": [
             {
               "id": "vocals",
@@ -636,8 +637,8 @@
           "id": "cookie-frnk-remix-instrumental",
           "title": "Cookie (FRNK Remix) (Instrumental)",
           "durationSec": 200,
-          "bpm": 120,
-          "key": "—",
+          "bpm": 80,
+          "key": "Em",
           "stems": [
             {
               "id": "vocals",
@@ -665,8 +666,8 @@
           "id": "hurt-250-remix-instrumental",
           "title": "Hurt (250 Remix) (Instrumental)",
           "durationSec": 200,
-          "bpm": 120,
-          "key": "—",
+          "bpm": 90,
+          "key": "Bb",
           "stems": [
             {
               "id": "vocals",
@@ -704,8 +705,8 @@
           "id": "our-night-is-more-beautiful-than-your-day",
           "title": "Our Night is more beautiful than your Day",
           "durationSec": 200,
-          "bpm": 120,
-          "key": "—",
+          "bpm": 105,
+          "key": "Bb",
           "stems": [
             {
               "id": "vocals",
@@ -733,8 +734,8 @@
           "id": "our-night-is-more-beautiful-than-your-day-instrumental",
           "title": "Our Night is more beautiful than your Day (Inst.)",
           "durationSec": 200,
-          "bpm": 120,
-          "key": "—",
+          "bpm": 105,
+          "key": "Bb",
           "stems": [
             {
               "id": "vocals",
@@ -772,8 +773,8 @@
           "id": "gods",
           "title": "GODS",
           "durationSec": 200,
-          "bpm": 120,
-          "key": "—",
+          "bpm": 146,
+          "key": "Ebm",
           "stems": [
             {
               "id": "vocals",
@@ -811,8 +812,8 @@
           "id": "beautiful-restriction",
           "title": "Beautiful Restriction",
           "durationSec": 200,
-          "bpm": 120,
-          "key": "—",
+          "bpm": 125,
+          "key": "Eb",
           "stems": [
             {
               "id": "vocals",
@@ -850,8 +851,8 @@
           "id": "new-jeans",
           "title": "New Jeans",
           "durationSec": 185,
-          "bpm": 130,
-          "key": "D major",
+          "bpm": 134,
+          "key": "Em",
           "stems": [
             {
               "id": "vocals",
@@ -888,8 +889,8 @@
           "id": "super-shy",
           "title": "Super Shy",
           "durationSec": 175,
-          "bpm": 125,
-          "key": "E minor",
+          "bpm": 150,
+          "key": "Fm",
           "stems": [
             {
               "id": "vocals",
@@ -926,8 +927,8 @@
           "id": "eta",
           "title": "ETA",
           "durationSec": 200,
-          "bpm": 120,
-          "key": "—",
+          "bpm": 135,
+          "key": "Bbm",
           "stems": [
             {
               "id": "vocals",
@@ -955,8 +956,8 @@
           "id": "cool-with-you",
           "title": "Cool With You",
           "durationSec": 200,
-          "bpm": 120,
-          "key": "—",
+          "bpm": 135,
+          "key": "Fm",
           "stems": [
             {
               "id": "vocals",
@@ -984,8 +985,8 @@
           "id": "get-up-track",
           "title": "Get Up",
           "durationSec": 200,
-          "bpm": 120,
-          "key": "—",
+          "bpm": 85,
+          "key": "F",
           "stems": [
             {
               "id": "vocals",
@@ -1013,8 +1014,8 @@
           "id": "asap",
           "title": "ASAP",
           "durationSec": 200,
-          "bpm": 120,
-          "key": "—",
+          "bpm": 130,
+          "key": "Cm",
           "stems": [
             {
               "id": "vocals",
@@ -1052,8 +1053,8 @@
           "id": "be-who-you-are-real-magic-feat-jid-newjeans-camilo",
           "title": "Be Who You Are (Real Magic) (feat. JID, NewJeans & Camilo)",
           "durationSec": 200,
-          "bpm": 120,
-          "key": "—",
+          "bpm": 144,
+          "key": "D",
           "stems": [
             {
               "id": "vocals",
@@ -1091,8 +1092,8 @@
           "id": "zero",
           "title": "Zero",
           "durationSec": 200,
-          "bpm": 120,
-          "key": "—",
+          "bpm": 172,
+          "key": "Dbm",
           "stems": [
             {
               "id": "vocals",
@@ -1131,8 +1132,8 @@
           "id": "zero-j-i-d-remix",
           "title": "Zero (J.I.D Remix)",
           "durationSec": 200,
-          "bpm": 120,
-          "key": "—",
+          "bpm": 172,
+          "key": "Dbm",
           "artwork": "/covers/Zero%20(J.I.D%20Remix)_album_cover.jpg",
           "isRemix": true,
           "stems": [
@@ -1172,8 +1173,8 @@
           "id": "omg",
           "title": "OMG",
           "durationSec": 200,
-          "bpm": 120,
-          "key": "—",
+          "bpm": 127,
+          "key": "Am",
           "stems": [
             {
               "id": "vocals",
@@ -1201,8 +1202,8 @@
           "id": "ditto",
           "title": "Ditto",
           "durationSec": 200,
-          "bpm": 120,
-          "key": "—",
+          "bpm": 134,
+          "key": "F#m",
           "stems": [
             {
               "id": "vocals",
@@ -1240,8 +1241,8 @@
           "id": "attention",
           "title": "Attention",
           "durationSec": 200,
-          "bpm": 120,
-          "key": "—",
+          "bpm": 105,
+          "key": "Bbm",
           "stems": [
             {
               "id": "vocals",
@@ -1269,37 +1270,39 @@
           "id": "hype-boy",
           "title": "Hype Boy",
           "durationSec": 200,
-          "bpm": 120,
-          "key": "—",
+          "bpm": 100,
+          "key": "Em",
           "stems": [
             {
               "id": "vocals",
-              "label": "Vocals",
-              "src": "/stems/demo/vocals.mp3"
+              "label": "Vocals"
             },
             {
               "id": "instruments",
-              "label": "Instruments",
-              "src": "/stems/demo/instruments.mp3"
+              "label": "Other"
             },
             {
               "id": "drums",
-              "label": "Drums",
-              "src": "/stems/demo/drums.mp3"
+              "label": "Drums"
             },
             {
               "id": "bass",
-              "label": "Bass",
-              "src": "/stems/demo/bass.mp3"
+              "label": "Bass"
             }
-          ]
+          ],
+          "lrc": {
+            "org": "/lyrics/hype-boy-org.lrc",
+            "rom": "/lyrics/hype-boy-rom.lrc",
+            "en": "/lyrics/hype-boy-en.lrc"
+          },
+          "stemSlug": "hype-boy"
         },
         {
           "id": "cookie",
           "title": "Cookie",
           "durationSec": 200,
-          "bpm": 120,
-          "key": "—",
+          "bpm": 157,
+          "key": "C",
           "stems": [
             {
               "id": "vocals",
@@ -1327,8 +1330,8 @@
           "id": "hurt",
           "title": "Hurt",
           "durationSec": 200,
-          "bpm": 120,
-          "key": "—",
+          "bpm": 180,
+          "key": "Bbm",
           "stems": [
             {
               "id": "vocals",

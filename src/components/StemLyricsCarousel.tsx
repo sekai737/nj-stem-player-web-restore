@@ -18,6 +18,8 @@ import LyricText from "./LyricText";
 import "./stem-lyrics-panel.css";
 
 const STEP_Y = LYRICS_FIGMA.lyrics.mainLineHeight + LYRICS_FIGMA.lyrics.lineGap;
+/** Match --stem-lyric-duration in stem-lyrics-panel.css */
+const PUSH_ANIM_MS = 500;
 
 interface StemLyricsCarouselProps {
   lines: LyricLine[];
@@ -49,6 +51,13 @@ function seekFromPreviewKey(e: KeyboardEvent, time: number, onSeek?: (time: numb
 }
 
 type Phase = "idle" | "push" | "intro";
+
+function lineGapMs(lines: LyricLine[], fromIndex: number, toIndex: number): number {
+  const from = lines[fromIndex];
+  const to = lines[toIndex];
+  if (!from || !to) return Number.POSITIVE_INFINITY;
+  return Math.max(0, (to.time - from.time) * 1000);
+}
 
 function previewIndexFor(lines: LyricLine[], activeIndex: number, next?: LyricLine): number | null {
   if (activeIndex < 0) return null;
@@ -193,11 +202,13 @@ export default function StemLyricsCarousel({
     const outgoing = lines[prev];
     const hadVisiblePreview =
       Boolean(outgoing) && Boolean(lines[activeIndex]) && !isPauseLine(outgoing.text);
+    const tightGap = lineGapMs(lines, prev, activeIndex) < PUSH_ANIM_MS;
+    const interruptPush = pushPendingRef.current;
 
     lastIndexRef.current = activeIndex;
     const incoming = previewIndexFor(lines, activeIndex, next);
 
-    if (hadVisiblePreview) {
+    if (hadVisiblePreview && !tightGap && !interruptPush) {
       pushPendingRef.current = true;
       setInstant(true);
       setPhase("push");
@@ -207,13 +218,15 @@ export default function StemLyricsCarousel({
       setMainIndex(activeIndex);
       setPreviewIndex(incoming);
     } else {
+      if (interruptPush) pushPendingRef.current = false;
       setMainIndex(activeIndex);
       setPreviewIndex(incoming);
       setExitIndex(null);
       setInstant(true);
-      setPhase("intro");
+      setPhase(tightGap || interruptPush ? "idle" : "intro");
       setActive(false);
       setTrackY(0);
+      requestAnimationFrame(() => setInstant(false));
     }
   }, [activeIndex, lines, next]);
 

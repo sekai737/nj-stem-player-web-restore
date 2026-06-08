@@ -2,6 +2,8 @@
   "name": "nj-stem-player-web",
   "private": true,
   "version": "1.0.0",
+  "description": "Fan-made NewJeans stem player with synced lyrics, mixers, meters, and fullscreen mode.",
+  "author": "sekai737",
   "type": "module",
   "main": "dist-electron/main.js",
   "scripts": {
@@ -18,7 +20,7 @@
     "electron:dev": "npm run electron:ensure && npm run electron:compile && concurrently -k -n vite,electron -c blue,green \"cross-env ELECTRON_DEV=1 npm run dev\" \"wait-on tcp:5173 && cross-env ELECTRON_DEV=1 npx electron .\"",
     "electron:build:app": "npm run fonts:ensure && npm run electron:ensure && npm run electron:compile && cross-env ELECTRON_BUILD=1 vite build",
     "electron:start": "npm run electron:build:app && npx electron .",
-    "electron:build": "npm run electron:build:app && electron-builder"
+    "electron:build": "npm run electron:build:app && node scripts/run-electron-builder.mjs"
   },
   "dependencies": {
     "jszip": "^3.10.1",
@@ -60,8 +62,16 @@
       "target": [
         "nsis"
       ],
-      "icon": "build/icon.ico",
-      "signAndEditExecutable": false
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "uninstallDisplayName": "NewJeans Stem Player",
+      "shortcutName": "NewJeans Stem Player",
+      "artifactName": "${productName} Setup ${version}.${ext}"
     },
     "mac": {
       "target": [

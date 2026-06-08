@@ -1,29 +1,43 @@
-/* Fullscreen Mode — Figma node 120:93; tokens from figma-tokens.css */
+/* Fullscreen Mode — Figma 120:93; full-viewport shell + proportional layout */
 
 .fs-player {
+  --fs-header-h: 88px;
   --fs-footer-h: 92px;
-  --fs-header-icon-h: 44px;
-  --fs-header-h: var(--fs-footer-h);
-  --fs-header-pad-y: calc((var(--fs-header-h) - var(--fs-header-icon-h)) / 2);
-  --fs-cluster-top: 158px;
+  --fs-inset-x: 3.333%; /* 60 / 1800 */
+  --fs-cluster-right: 3.556%; /* 64 / 1800 — frame right margin */
+  --fs-lyrics-right: 40.278%; /* (1800 − 1075) / 1800 — cluster left edge */
+  --fs-cluster-below-header: 70px; /* 158 − 88 */
   --fs-cluster-shift-x: 52px;
   --fs-cluster-playback-w: 569px;
   --fs-cluster-playback-w-master: 426px;
   --fs-cluster-volume-gap: 80px;
-  /* Shared scale for right-cluster UI (card 640/772, volume 404/640 of card) */
-  --fs-usable-v: calc(100vh - var(--fs-header-h) - var(--fs-footer-h));
-  --fs-ui-scale: min(1, calc(var(--fs-usable-v) / 772px));
+  --fs-cluster-w: 661px;
+  --fs-cluster-h: 640px;
+  --fs-ui-scale: 1;
+  /** Play-card clearance — slightly under page inset (60px) so it reads even with the left margin */
+  --fs-lyric-gutter: calc(32px * var(--fs-ui-scale, 1));
+  /** Frame 24 shifts playback inward — card overlaps the lyrics column by this much */
+  --fs-lyric-cluster-overlap: calc(var(--fs-cluster-shift-x) * var(--fs-ui-scale, 1));
+  /* Figma 120:205 → 120:94 — bubble bottom to footer top (864 − 832) */
+  --fs-lyric-footer-gap: 32px;
 
   position: fixed;
   inset: 0;
   z-index: 100;
+  overflow: hidden;
   background: var(--gradient-fullscreen);
   color: var(--text-primary);
   font-family: var(--font-swiss721-regular);
-  overflow: hidden;
 }
 
-/* ── Header (120:261) ─────────────────────────────────── */
+.fs-player__stage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* ── Header (120:261) — full viewport width ───────────── */
 
 .fs-header {
   position: absolute;
@@ -33,7 +47,6 @@
   z-index: 10;
   box-sizing: border-box;
   height: var(--fs-header-h);
-  padding-block: var(--fs-header-pad-y);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -51,12 +64,11 @@
 .fs-header__inner {
   display: flex;
   width: 100%;
-  max-width: 1800px;
-  height: var(--fs-header-icon-h);
+  height: 56px;
   align-items: center;
   justify-content: space-between;
-  padding: 0 60px;
-  margin: 0 auto;
+  padding: 0 var(--fs-inset-x);
+  box-sizing: border-box;
 }
 
 .fs-header__icon-btn {
@@ -72,8 +84,8 @@
 
 .fs-header__icon-btn img {
   display: block;
-  width: var(--fs-header-icon-h);
-  height: var(--fs-header-icon-h);
+  width: 56px;
+  height: 56px;
 }
 
 .fs-header__icon-btn:hover {
@@ -83,6 +95,9 @@
 .fs-header__title {
   margin: 0;
   text-align: center;
+  font-family: var(--font-swiss721-medium);
+  font-size: 32px;
+  font-weight: normal;
 }
 
 .fs-header__menu {
@@ -123,68 +138,70 @@
   background: var(--stem-waveform-container);
 }
 
-/* ── Main layout ──────────────────────────────────────── */
-
-.fs-player__main {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  min-height: 0;
-  gap: var(--spacing-sp-24);
-  padding: var(--fs-header-h) 60px 0;
-  max-width: 1800px;
-  width: 100%;
-  margin: 0 auto;
-  box-sizing: border-box;
-}
+/* ── Lyrics column — Figma 120:170 @ y=88, x=60 → x=1075 ─ */
 
 .fs-player__lyrics-col {
-  position: relative;
+  position: absolute;
   z-index: 5;
-  flex: 1;
-  min-width: 0;
-  min-height: 0;
+  /* Figma 120:170 — column starts at header bottom (y=88) */
+  top: var(--fs-header-h);
+  bottom: var(--fs-footer-h);
+  left: var(--fs-inset-x);
+  right: var(--fs-lyrics-right);
+  /* Cluster rail shifts left — reserve overlap so gutter is measured to the play card */
+  padding-right: var(--fs-lyric-cluster-overlap);
   display: flex;
   flex-direction: column;
-  padding: 0;
-}
-
-/* Right cluster (127:194) — Figma y=158, Frame 24 shift −52px */
-.fs-player__controls-col {
-  flex-shrink: 0;
-  display: flex;
-  align-items: flex-start;
-  padding-bottom: var(--fs-footer-h);
+  justify-content: flex-end;
+  min-height: 0;
   box-sizing: border-box;
 }
 
+/* Pin short feeds to the footer band (Figma 120:205 → 120:94) */
+.fs-player__lyrics-col .fs-lyric-feed {
+  flex: 0 1 auto;
+  width: 100%;
+  max-height: 100%;
+}
+
+/* ── Right cluster — Frame 22 (127:194) ──────────────── */
+
 .fs-player__cluster {
-  flex-shrink: 0;
-  margin-top: calc((var(--fs-cluster-top) - var(--fs-header-h)) * var(--fs-ui-scale, 1));
+  position: absolute;
+  z-index: 6;
+  top: calc(var(--fs-header-h) + var(--fs-cluster-below-header) * var(--fs-ui-scale, 1));
+  right: var(--fs-cluster-right);
+  width: calc(var(--fs-cluster-w) * var(--fs-ui-scale, 1));
+  height: calc(var(--fs-cluster-h) * var(--fs-ui-scale, 1));
+  box-sizing: border-box;
 }
 
+/* Frame 24 (161:152) */
 .fs-player__cluster-rail {
+  position: absolute;
+  top: 0;
+  left: calc(-1 * var(--fs-cluster-shift-x) * var(--fs-ui-scale, 1));
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: calc(var(--fs-cluster-volume-gap) * var(--fs-ui-scale, 1));
-  margin-left: calc(-1 * var(--fs-cluster-shift-x) * var(--fs-ui-scale, 1));
-  height: calc(640px * var(--fs-ui-scale, 1));
+  width: calc(var(--fs-cluster-w) * var(--fs-ui-scale, 1));
+  height: calc(var(--fs-cluster-h) * var(--fs-ui-scale, 1));
+  box-sizing: border-box;
 }
 
-/* Frame 23 — card (0,0) + stems (450,196) */
+/* Frame 23 (161:151) */
 .fs-player__cluster-playback {
   position: relative;
   flex-shrink: 0;
   width: calc(var(--fs-cluster-playback-w) * var(--fs-ui-scale, 1));
-  height: calc(640px * var(--fs-ui-scale, 1));
+  height: calc(var(--fs-cluster-h) * var(--fs-ui-scale, 1));
 }
 
-/* Master mix — collapse stem column; card keeps 80px gap to volume (Figma Frame 24) */
 .fs-player__cluster-playback--master {
   width: calc(var(--fs-cluster-playback-w-master) * var(--fs-ui-scale, 1));
 }
 
-/* ── Footer (120:94) ─────────────────────────────────── */
+/* ── Footer (120:94) — full viewport width ────────────── */
 
 .fs-footer {
   position: absolute;
@@ -195,6 +212,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  height: var(--fs-footer-h);
   background: var(--stem-container-primary);
   border-top: var(--stroke-st-2) solid var(--stroke-primary);
   pointer-events: none;
@@ -210,7 +228,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--spacing-sp-16);
-  width: min(1494px, calc(100% - 96px));
+  width: min(1494px, calc(100% - 2 * var(--fs-inset-x)));
   background: var(--main-container-primary);
   border: var(--stroke-st-2) solid var(--stroke-primary);
 }
@@ -247,7 +265,7 @@
   opacity: 0.4;
 }
 
-/* ── Queue / conversion panels (reuse prior tokens) ─── */
+/* ── Queue / conversion panels ─────────────────────────── */
 
 .fs-panel-backdrop {
   position: fixed;
@@ -388,27 +406,4 @@
 
 .fs-queue-panel__name {
   font-size: 15px;
-}
-
-@media (max-width: 1200px) {
-  .fs-player__main {
-    flex-direction: column;
-    overflow-y: auto;
-  }
-
-  .fs-player__controls-col {
-    margin-top: 0;
-    margin-bottom: 0;
-  }
-
-  .fs-player__cluster {
-    flex-wrap: wrap;
-    justify-content: center;
-    height: auto;
-  }
-
-  .fs-player__cluster-rail {
-    margin-left: 0;
-  }
-
 }

@@ -6,8 +6,8 @@
   /* Primitives — Colors */
   --color-black: #000000;
   --color-white: #ffffff;
-  --color-gray: #999999;
   --color-gray-secondary: #666666;
+  --color-gray: var(--color-gray-secondary);
   --color-red: #f13600;
   --color-green: #58fe33;
   --color-yellow: #ffff26;

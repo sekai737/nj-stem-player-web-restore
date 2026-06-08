@@ -430,7 +430,7 @@
   font-size: 16px;
   line-height: normal;
   letter-spacing: 0;
-  color: #a1a1a6;
+  color: var(--text-secondary);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

@@ -7,6 +7,7 @@ const SP_8 = 8;
  * Keeps Meters Box (26:215) top-aligned with Lyrics container (26:214).
  */
 const CONTENT_ROW_TOP = 96;
+const CONTENT_WIDTH = 1800;
 
 /**
  * Figma Track Info Container (26:207) @ x=306 — title + lyrics in the 1800px column.
@@ -53,7 +54,7 @@ export const FIGMA = {
   },
   inset: { x: 60, y: 56 },
   /** Frame 12 (node 26:213) — 1800×956 @ content inset */
-  content: { width: 1800, height: 956 },
+  content: { width: CONTENT_WIDTH, height: 956 },
   header: { height: 44, icon: 44, iconGap: 12, fixedNavIcon: 35, fixedNavIconGap: 8 },
   /** Frame 11 (node 26:212) — 1800×860; meters top-left (0,0), stem block y=160, progress y=820 */
   main: { top: CONTENT_ROW_TOP, height: 860 },
@@ -61,6 +62,10 @@ export const FIGMA = {
   titleRow: {
     left: FRAME_10_LEFT,
     top: CONTENT_ROW_TOP,
+    /** Track Info row width — content column minus Frame 10 inset (1800 − 306). */
+    trackInfoWidth: CONTENT_WIDTH - FRAME_10_LEFT,
+    /** Figma 26:214 x within 26:207 — lyrics left when Title is w=562 mr-[-16]. */
+    lyricsLeft: TITLE_FRAME_WIDTH - TITLE_LYRICS_OVERLAP,
     /** Figma Title negative margin toward lyrics (flex gap is 0). */
     titleLyricsOverlap: TITLE_LYRICS_OVERLAP,
     titleWidth: TITLE_FRAME_WIDTH,

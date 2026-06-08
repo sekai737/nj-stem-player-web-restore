@@ -10,7 +10,7 @@ import {
 } from "electron";
 import fs from "node:fs";
 import path from "node:path";
-import { pathToFileURL } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import {
   ensureDefaultLibrary,
   normalizeLibraryRoot,
@@ -18,9 +18,69 @@ import {
   resolveStemFile,
   setLibraryRoot,
 } from "./library.js";
+import { fetchSpotifyTrackMetadata } from "./spotifyMetadata.js";
+import type { TrackMetadataRequest } from "./metadataTypes.js";
 
 const PROTOCOL = "njsp";
 const isDev = !app.isPackaged;
+
+/** Load `.env` from project root (dev) so Spotify credentials persist across sessions. */
+function loadEnvFile(): void {
+  const mainDir = path.dirname(fileURLToPath(import.meta.url));
+  const candidates = [
+    path.join(process.cwd(), ".env"),
+    path.join(mainDir, "..", ".env"),
+    path.join(app.getAppPath(), ".env"),
+  ];
+  for (const envPath of candidates) {
+    if (!fs.existsSync(envPath)) continue;
+    const text = fs.readFileSync(envPath, "utf8");
+    for (const line of text.split("\n")) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith("#")) continue;
+      const eq = trimmed.indexOf("=");
+      if (eq <= 0) continue;
+      const key = trimmed.slice(0, eq).trim();
+      let value = trimmed.slice(eq + 1).trim();
+      if (
+        (value.startsWith('"') && value.endsWith('"')) ||
+        (value.startsWith("'") && value.endsWith("'"))
+      ) {
+        value = value.slice(1, -1);
+      }
+      if (!process.env[key]) process.env[key] = value;
+    }
+    console.info(`[njsp] Loaded env from ${envPath}`);
+    return;
+  }
+  console.warn(
+    "[njsp] No .env file found — Spotify enrichment disabled. Copy .env.example to .env and add your Client ID/Secret.",
+  );
+}
+
+async function loadDevServerUrl(win: BrowserWindowType): Promise<void> {
+  const ports = [
+    Number(process.env.VITE_PORT) || 0,
+    5173,
+    5174,
+    5175,
+  ].filter((port, index, arr) => port > 0 && arr.indexOf(port) === index);
+
+  for (const port of ports) {
+    const url = `http://localhost:${port}`;
+    try {
+      const response = await fetch(url, { method: "HEAD" });
+      if (response.ok) {
+        await win.loadURL(url);
+        return;
+      }
+    } catch {
+      // try next port
+    }
+  }
+
+  await win.loadURL("http://localhost:5173");
+}
 
 protocol.registerSchemesAsPrivileged([
   {
@@ -169,7 +229,7 @@ async function createWindow(): Promise<BrowserWindowType> {
   });
 
   if (isDev) {
-    await win.loadURL("http://localhost:5173");
+    await loadDevServerUrl(win);
     win.webContents.openDevTools({ mode: "detach" });
   } else {
     await win.loadURL(`${PROTOCOL}://local/index.html`);
@@ -179,6 +239,7 @@ async function createWindow(): Promise<BrowserWindowType> {
 }
 
 app.whenReady().then(async () => {
+  loadEnvFile();
   registerProtocolHandler();
   ensureDefaultLibrary();
 
@@ -187,6 +248,9 @@ app.whenReady().then(async () => {
     const win = BrowserWindow.fromWebContents(event.sender);
     return chooseLibraryFolder(win);
   });
+  ipcMain.handle("metadata:fetch", (_event, request: TrackMetadataRequest) =>
+    fetchSpotifyTrackMetadata(request),
+  );
 
   await createWindow();
 

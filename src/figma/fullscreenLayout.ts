@@ -6,12 +6,12 @@ export const FIGMA_FULLSCREEN = {
   frame: { width: 1800, height: 956 },
   insetX: 60,
   header: {
-    /** Match footer height; icons/title match stem PlayerHeader (FIGMA.header) */
-    height: 92,
-    paddingY: 24,
-    contentHeight: 44,
-    iconSize: 44,
-    titleSize: 24,
+    /** Figma 120:261 */
+    height: 88,
+    paddingY: 16,
+    contentHeight: 56,
+    iconSize: 56,
+    titleSize: 32,
   },
   footer: {
     height: 92,
@@ -23,12 +23,15 @@ export const FIGMA_FULLSCREEN = {
     sendIconHeight: 46,
   },
   main: {
-    top: 92,
+    top: 88,
     bottom: 92,
-    /** Header bottom → footer top (Figma 120:93): 956 − 92 − 92 */
-    usableHeight: 772,
+    /** Header bottom → footer top (Figma 120:93): 956 − 88 − 92 */
+    usableHeight: 776,
+    lyricInsetLeft: 60,
   },
   lyricFeed: {
+    /** First member message frame (120:170) — y=88 within 120:93 (header bottom). */
+    columnTopPx: 88,
     avatarSize: 72,
     haerinAvatarWidth: 70,
     nameSize: 24,
@@ -42,13 +45,17 @@ export const FIGMA_FULLSCREEN = {
     rowGap: 24,
     /** Vertical gap between messages (Figma 120:170 → 120:189 ≈ 32px) */
     messageGap: 32,
+    /** Last bubble bottom → footer top (Figma 120:205 → 120:94: 864 − 832) */
+    footerGap: 32,
   },
-  /** Frame 22 (127:194) — x=1075 y=158 w=661 h=640 */
+  /** Frame 22 (127:194) — x=1075 y=158 w=661 h=640 within 120:93 */
   rightCluster: {
     left: 1075,
     top: 158,
     width: 661,
     height: 640,
+    /** Lyrics column ends before the cluster (1075 − inset 60). */
+    lyricColumnWidth: 1015,
     /** Frame 24 (161:152) — shifts playback+volume inward */
     shiftX: 52,
     /** Frame 23 (161:151) — card + stems */

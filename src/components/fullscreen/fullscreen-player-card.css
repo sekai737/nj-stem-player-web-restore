@@ -1,13 +1,13 @@
 /* Now Playing Card — Figma 121:299; scales to 640/772 of header–footer band */
 
 .fs-player-card {
-  align-self: flex-start;
   --fs-card-scale: var(--fs-ui-scale, 1);
   --fs-card-layout-w: calc(var(--fs-card-design-w, 426px) * var(--fs-card-scale));
   --fs-card-layout-h: calc(var(--fs-card-design-h, 640px) * var(--fs-card-scale));
 
-  position: relative;
-  flex-shrink: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
   width: var(--fs-card-layout-w);
   height: var(--fs-card-layout-h);
   overflow: visible;

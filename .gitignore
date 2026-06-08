@@ -11,6 +11,7 @@ fonts-source/*.OTF
 *.local
 .env
 .env.*
+!.env.example
 
 # Removed LRC builder (manual ChatGPT workflow)
 lrc-builder/

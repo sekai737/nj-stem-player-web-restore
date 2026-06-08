@@ -2,7 +2,7 @@
 
 .fs-lyric-feed {
   --fs-lyric-feed-name-size: 24px;
-  --fs-lyric-edge-inset: 60px;
+  --fs-lyric-edge-inset: var(--fs-lyric-gutter, calc(32px * var(--fs-ui-scale, 1)));
   --fs-lyric-name-inset: 96px;
 
   position: relative;
@@ -18,8 +18,8 @@
   min-height: 0;
   overflow-x: hidden;
   overflow-y: auto;
-  /* Scroll through the footer band — messages rise from beneath it */
-  padding: 0 var(--spacing-sp-4) calc(var(--fs-footer-h) + var(--spacing-sp-16)) 0;
+  /* Column already ends at footer top — only Figma 32px clearance below last bubble */
+  padding: 0 var(--spacing-sp-4) var(--fs-lyric-footer-gap, 32px) 0;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
@@ -91,7 +91,14 @@
   transform-origin: top right;
 }
 
-/* Right side (sekai opener, Pharrell Williams, etc.) — 60px gap to Now Playing card */
+/* Member lyrics — play-card clearance (matches right chat inset) */
+.fs-lyric-message:not(.fs-lyric-message--right):not(.fs-lyric-message--song-title) {
+  margin-right: var(--fs-lyric-edge-inset);
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Right side (sekai opener, Pharrell Williams, etc.) — inset before play card */
 .fs-lyric-message--right,
 .fs-lyric-message--song-title {
   display: flex;
@@ -101,6 +108,7 @@
   max-width: 100%;
   margin-right: var(--fs-lyric-edge-inset);
   margin-left: auto;
+  box-sizing: border-box;
 }
 
 .fs-lyric-message--right .fs-lyric-message__sender,
@@ -303,11 +311,13 @@
 
 .fs-lyric-feed__resync--visible {
   opacity: 1;
+  visibility: visible;
   transform: translateX(-50%);
 }
 
 .fs-lyric-feed__resync--hidden {
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
   transform: translateX(-50%) translateY(16px);
 }

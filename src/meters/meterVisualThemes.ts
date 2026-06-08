@@ -98,7 +98,7 @@ const FONTS = {
 const WELL_RGB: [number, number, number] = [240, 240, 240];
 const PLOT_WELL = "rgb(240 240 240)";
 const TEXT = "#000000";
-const TEXT_MUTED = "#999999";
+const TEXT_MUTED = "#666666";
 const CORR_TROUGH = "rgba(0, 0, 0, 0.08)";
 
 /** Magma-style heatmap (original dark spectrogram) */

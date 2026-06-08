@@ -38,6 +38,8 @@ npm run dev
 
 Open the URL Vite prints (usually `http://localhost:5173`).
 
+Command cheat sheet: [`docs/terminal-commands.md`](docs/terminal-commands.md).
+
 ### Build & preview
 
 ```bash
@@ -55,7 +57,7 @@ The web app can run as a desktop shell with native stem-library folder selection
 npm run electron:ensure   # download/extract Electron binary (auto-run by electron:dev)
 npm run electron:dev     # Vite + Electron window (uses public/ as library in dev when present)
 npm run electron:start   # Production-like local run (dist/ + njsp:// protocol)
-npm run electron:build   # Package installer → release/
+npm run electron:build   # Package installer → release/ (Windows: Setup + Uninstall exes)
 ```
 
 Use **File → Choose Stem Library…** to point at your library root (e.g. the repo’s `public/` folder or a copy that contains `stems/`). The choice is saved under the app user-data directory.

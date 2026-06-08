@@ -5,7 +5,6 @@ import FixedPageNav from "../components/layout/FixedPageNav";
 import LyricPanel from "../components/LyricPanel";
 import MeterPanel from "../components/meters/MeterPanel";
 import SongNavMenu from "../components/SongNavMenu";
-import PlayerBackground from "../components/stem-player/PlayerBackground";
 import PlayerViewportBackground from "../components/stem-player/PlayerViewportBackground";
 import PlayerHeader from "../components/stem-player/PlayerHeader";
 import FixedNavIconButton from "../components/layout/FixedNavIconButton";
@@ -25,6 +24,9 @@ import { useAudioAnalysis } from "../hooks/useAudioAnalysis";
 import { usePlayerScale } from "../hooks/usePlayerScale";
 import { useStemEngine } from "../hooks/useStemEngine";
 import { useKeyboardPlayPause } from "../hooks/useKeyboardPlayPause";
+import { useTrackMetadata } from "../hooks/useTrackMetadata";
+import { useTitleLyricsGapLayout } from "../hooks/useTitleLyricsGapLayout";
+import { getDisplayMetadataFields } from "../metadata/displayFields";
 import { useWebFontsReady } from "../hooks/useWebFontsReady";
 import { usePlayerStore } from "../store/playerStore";
 
@@ -39,10 +41,19 @@ export default function StemPlayerPage() {
   const scale = usePlayerScale();
   const fontsReady = useWebFontsReady();
   const scaledContentRef = useRef<HTMLDivElement>(null);
+  const titleBlockRef = useRef<HTMLDivElement>(null);
+  const titleCoolLineRef = useRef<HTMLParagraphElement>(null);
 
   const duration = usePlayerStore((s) => s.duration);
   const stemsLoading = usePlayerStore((s) => s.stemsLoading);
   const { fullscreenOpen, setFullscreenOpen } = usePlayerFullscreen(Boolean(song));
+  const trackMetadata = useTrackMetadata(releaseId, songId, duration || song?.durationSec);
+  const titleLyricsLayout = useTitleLyricsGapLayout(
+    song?.title ?? "",
+    fontsReady,
+    titleCoolLineRef,
+    titleBlockRef,
+  );
 
   useLayoutEffect(() => {
     usePlayerStore.getState().resetTransportForSong();
@@ -79,6 +90,12 @@ export default function StemPlayerPage() {
   }, [fontsReady]);
 
   if (!release || !song || !releaseId || !songId) return <Navigate to="/" replace />;
+
+  const displayMetadata = getDisplayMetadataFields(
+    trackMetadata,
+    song,
+    duration || song.durationSec,
+  );
 
   const goToAdjacent = (direction: "next" | "previous") => {
     const loc = getAdjacentSong(releaseId, songId, direction);
@@ -145,8 +162,6 @@ export default function StemPlayerPage() {
         aria-hidden={fullscreenOpen}
         style={fullscreenOpen ? { visibility: "hidden" } : undefined}
       >
-        <PlayerBackground />
-
         <div
           className="relative z-[1] flex h-full w-full items-start justify-center overflow-hidden"
           style={{
@@ -183,21 +198,24 @@ export default function StemPlayerPage() {
               style={{
                 left: FIGMA.titleRow.left,
                 top: 0,
+                width: FIGMA.titleRow.trackInfoWidth,
               }}
             >
               <SongTitleBlock
-                releaseId={release.id}
-                songId={song.id}
                 title={song.title}
-                durationSec={duration || song.durationSec}
-                keyLabel={song.key}
-                bpm={song.bpm}
+                durationSec={displayMetadata.durationSec}
+                keyLabel={displayMetadata.keyLabel ?? undefined}
+                bpm={displayMetadata.bpm ?? undefined}
+                titleBlockRef={titleBlockRef}
+                titleCoolLineRef={titleCoolLineRef}
               />
               <LyricPanel
                 key={`${releaseId}-${songId}`}
                 lrc={song.lrc}
                 fontsReady={fontsReady}
                 onSeek={seek}
+                lyricsWidth={titleLyricsLayout.lyricsWidth}
+                lyricsMarginLeft={titleLyricsLayout.lyricsMarginLeft}
               />
             </div>
 

@@ -4,7 +4,7 @@
  *
  *   node scripts/build-catalog-from-csv.mjs
  */
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -110,7 +110,8 @@ function parseCsv(text) {
       cur += ch;
     }
     fields.push(cur);
-    const [albumName, discNumber, trackNumber, name, artists, type, releaseDate] = fields;
+    const [albumName, discNumber, trackNumber, name, artists, type, releaseDate, key, bpm] =
+      fields;
     rows.push({
       albumName,
       discNumber: Number(discNumber),
@@ -120,6 +121,8 @@ function parseCsv(text) {
       type,
       releaseDate,
       year: Number(releaseDate?.slice(0, 4) ?? 0),
+      key: key?.trim() ?? "",
+      bpm: bpm != null && bpm !== "" ? Number(bpm) : undefined,
     });
   }
   return rows;
@@ -187,14 +190,82 @@ function applyFlacStemSlug(releaseId, song) {
   song.stemSlug = song.id;
 }
 
+function applyCsvMetadata(song, row) {
+  if (row.key) song.key = row.key;
+  if (row.bpm != null && !Number.isNaN(row.bpm) && row.bpm > 0) song.bpm = row.bpm;
+}
+
+const LRC_LANG_SUFFIX = {
+  org: "-org.lrc",
+  rom: "-rom.lrc",
+  en: "-en.lrc",
+};
+
+/** Title tracks share LRC filename prefix with release id (e.g. how-sweet-org.lrc). */
+function lrcSlugFor(song, releaseId) {
+  if (RELEASE_ID_STEM_SLUG_SONG_IDS.has(song.id)) return releaseId;
+  return song.id;
+}
+
+/** Attach lrc paths when matching files exist under public/lyrics/{slug}-*.lrc */
+function discoverLrc(slug) {
+  /** @type {Record<string, string>} */
+  const lrc = {};
+  for (const [lang, suffix] of Object.entries(LRC_LANG_SUFFIX)) {
+    const file = resolve(ROOT, "public/lyrics", `${slug}${suffix}`);
+    if (existsSync(file)) lrc[lang] = `/lyrics/${slug}${suffix}`;
+  }
+  return Object.keys(lrc).length ? lrc : undefined;
+}
+
+function stemFlacExists(releaseId, slug, segment) {
+  return existsSync(
+    resolve(ROOT, "public/stems", releaseId, `${slug}-${segment}.flac`),
+  );
+}
+
+function effectiveStemSlug(song, releaseId) {
+  if (song.stemSlug) return song.stemSlug;
+  if (RELEASE_ID_STEM_SLUG_SONG_IDS.has(song.id)) return releaseId;
+  return song.id;
+}
+
+/** Switch to FLAC stem convention when separated stems exist on disk. */
+function applyDiscoveredAssets(releaseId, song) {
+  const lrc = discoverLrc(lrcSlugFor(song, releaseId));
+  if (lrc) {
+    song.lrc = lrc;
+    delete song.lyrics;
+  }
+
+  const slug = effectiveStemSlug(song, releaseId);
+  if (stemFlacExists(releaseId, slug, "vocals")) {
+    song.stems = FLAC_STEMS.map((s) => ({ ...s }));
+    if (!RELEASE_ID_STEM_SLUG_SONG_IDS.has(song.id) && slug !== releaseId) {
+      song.stemSlug = slug;
+    }
+    applyFlacStemSlug(releaseId, song);
+  }
+}
+
+/** Match remix/extra songs to CSV rows by title (covers alternate album names). */
+function buildTitleMetadataIndex(rows) {
+  /** @type {Map<string, { key: string; bpm?: number }>} */
+  const index = new Map();
+  for (const row of rows) {
+    index.set(row.name.trim().toLowerCase(), row);
+  }
+  return index;
+}
+
 function newSongFromCsv(releaseId, row) {
   const id = songIdFor(releaseId, row.name);
   const song = {
     id,
     title: row.name,
     durationSec: DEFAULT_SONG.durationSec,
-    bpm: DEFAULT_SONG.bpm,
-    key: DEFAULT_SONG.key,
+    bpm: row.bpm ?? DEFAULT_SONG.bpm,
+    key: row.key || DEFAULT_SONG.key,
     stems: defaultStemsFor(releaseId),
   };
   applyFlacStemSlug(releaseId, song);
@@ -220,15 +291,18 @@ function mergeSong(releaseId, row, existingIndex) {
   const id = songIdFor(releaseId, row.name);
   const key = `${releaseId}|${id}`;
   const existing = existingIndex.get(key);
-  if (existing) {
-    return JSON.parse(JSON.stringify(existing));
-  }
-  return newSongFromCsv(releaseId, row);
+  const song = existing
+    ? JSON.parse(JSON.stringify(existing))
+    : newSongFromCsv(releaseId, row);
+  applyCsvMetadata(song, row);
+  applyDiscoveredAssets(releaseId, song);
+  return song;
 }
 
 function main() {
   const csv = readFileSync(CSV_PATH, "utf8");
   const rows = parseCsv(csv);
+  const titleMetadata = buildTitleMetadataIndex(rows);
   const catalog = loadExistingCatalog();
   const existingIndex = buildSongIndex(catalog);
 
@@ -254,7 +328,18 @@ function main() {
       (byRelease.get(release.id)?.rows ?? []).map((r) => songIdFor(release.id, r.name)),
     );
     const extras = release.songs.filter((s) => s.isRemix && !csvIds.has(s.id));
-    if (extras.length) extraSongsByRelease.set(release.id, extras);
+    if (extras.length) {
+      extraSongsByRelease.set(
+        release.id,
+        extras.map((s) => {
+          const copy = JSON.parse(JSON.stringify(s));
+          const row = titleMetadata.get(s.title.trim().toLowerCase());
+          if (row) applyCsvMetadata(copy, row);
+          applyDiscoveredAssets(release.id, copy);
+          return copy;
+        }),
+      );
+    }
   }
 
   const releases = [...byRelease.entries()]

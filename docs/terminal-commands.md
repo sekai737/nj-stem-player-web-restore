@@ -1,0 +1,72 @@
+# Terminal commands
+
+Quick reference for common commands in this repo. Run everything from the project root:
+
+```powershell
+cd "g:\1 - Work\NJ Stem Player"
+```
+
+## Daily dev
+
+| Command | What it does |
+|--------|----------------|
+| `npm run dev` | Web app only (Vite at `http://localhost:5173`) |
+| `npm run electron:dev` | **Main one** — Vite + Electron desktop app |
+| `npm install` | Install or update dependencies (run after pulling changes) |
+
+## After you change code
+
+| Command | When to use |
+|--------|-------------|
+| `npm run build` | Typecheck + production web build — good sanity check |
+| `npm run electron:compile` | Recompile Electron main process only (if you edited `electron/`) |
+| `npm run preview` | Serve the built web app locally |
+
+## Catalog, lyrics & stems
+
+| Command | When to use |
+|--------|-------------|
+| `npm run catalog:sync` | After editing `NewJeans.csv` — rebuilds `src/data/catalog.json`, discovers LRC + stems |
+| `npm run stems:placeholder` | Generate demo/placeholder stem files under `public/stems/demo/` |
+| `npm run analyze:stems` | Check stem duration/format alignment (needs external analyzer binary) |
+
+## Fonts
+
+| Command | When to use |
+|--------|-------------|
+| `npm run fonts:ensure` | Ensure required WOFF2 fonts exist (also runs automatically on `dev` / `build`) |
+| `npm run fonts:build` | Rebuild fonts from source in `fonts-source/` |
+
+## Electron packaging
+
+| Command | When to use |
+|--------|-------------|
+| `npm run electron:ensure` | Download Electron binary if the desktop app won’t start |
+| `npm run electron:start` | Run a production-like local build |
+| `npm run electron:build` | Build installer → `release/` (Windows also writes `NewJeans Stem Player Uninstall {version}.exe`) |
+
+## Git (quick reference)
+
+```powershell
+git status
+git diff
+git add .
+git commit -m "your message"
+git pull
+git push
+```
+
+## Suggested workflow
+
+1. **Start work:** `npm run electron:dev`
+2. **Add or edit lyrics/stems:** drop files in `public/lyrics/` or `public/stems/`, then `npm run catalog:sync` if the CSV or catalog changed
+3. **Before sharing/building:** `npm run build`
+4. **Desktop build:** `npm run electron:build`
+
+Most of the time you only need **`npm run electron:dev`** day to day, plus **`npm run catalog:sync`** when you update the song list or add new LRC/stem files.
+
+## Related docs
+
+- [README](../README.md) — setup, project layout, stems & LRC format
+- [LRC alignment rules](./lrc-alignment-rules.md)
+- [LRC builder reference](./newjeans-lrc-builder-reference.md)
