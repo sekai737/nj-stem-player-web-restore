@@ -1,9 +1,8 @@
 /**
  * Run electron-builder and keep the Windows NSIS uninstaller in release/.
  *
- * electron-builder generates `__uninstaller-*.exe` during the NSIS build, embeds
- * it in the Setup exe, then deletes the standalone file. We copy it only after
- * the file is fully written (stable size + valid PE header).
+ * Stages the uninstaller only after a successful build so we never touch release/
+ * while NSIS is mmap-ing the app archive (avoids EBUSY / mmap failures on Windows).
  */
 import { spawn } from "node:child_process";
 import fs from "node:fs";
@@ -18,11 +17,7 @@ const productName = pkg.build?.productName ?? pkg.name;
 const version = pkg.version ?? "0.0.0";
 const uninstallerName = `${productName} Uninstall ${version}.exe`;
 
-/** NSIS uninstallers are never tiny — reject partial/empty copies. */
 const MIN_UNINSTALLER_BYTES = 128 * 1024;
-
-let staged = false;
-let staging = null;
 
 function findUninstallerSource() {
   if (!fs.existsSync(releaseDir)) return null;
@@ -41,15 +36,6 @@ function isValidPeExecutable(filePath) {
     fs.readSync(fd, header, 0, 2, 0);
     fs.closeSync(fd);
     return header[0] === 0x4d && header[1] === 0x5a;
-  } catch {
-    return false;
-  }
-}
-
-function isReadyUninstaller(filePath) {
-  try {
-    const { size } = fs.statSync(filePath);
-    return size >= MIN_UNINSTALLER_BYTES && isValidPeExecutable(filePath);
   } catch {
     return false;
   }
@@ -109,13 +95,28 @@ function removeIfExists(filePath) {
   }
 }
 
-async function stageUninstaller({ attempts, delayMs, quiet = false } = {}) {
-  if (staged) return true;
+/** Drop stale NSIS intermediates that can break mmap on the next build. */
+function cleanStaleNsisArtifactsIn(dir) {
+  if (!fs.existsSync(dir)) return;
+  for (const name of fs.readdirSync(dir)) {
+    if (name.endsWith(".nsis.7z") || name.endsWith(".nsis.7z.tmp")) {
+      try {
+        fs.unlinkSync(path.join(dir, name));
+        console.info(`[release] Removed stale ${path.join(dir, name)}`);
+      } catch {
+        /* locked or already gone */
+      }
+    }
+  }
+}
 
-  const src = findUninstallerSource();
-  if (!src) return false;
+function cleanStaleNsisArtifacts() {
+  cleanStaleNsisArtifactsIn(releaseDir);
+  cleanStaleNsisArtifactsIn(path.join(projectRoot, "dist"));
+}
 
-  const expectedSize = await waitForReadySource(src, { attempts, delayMs });
+async function stageUninstallerFrom(src) {
+  const expectedSize = await waitForReadySource(src);
   if (!expectedSize) return false;
 
   const dest = path.join(releaseDir, uninstallerName);
@@ -123,76 +124,87 @@ async function stageUninstaller({ attempts, delayMs, quiet = false } = {}) {
   await copyWithRetry(src, dest);
 
   const destSize = fs.statSync(dest).size;
-  if (destSize !== expectedSize || !isReadyUninstaller(dest)) {
+  if (destSize !== expectedSize || !isValidPeExecutable(dest)) {
     removeIfExists(dest);
     throw new Error(
       `Uninstaller copy invalid (dest ${destSize} bytes, expected ${expectedSize})`,
     );
   }
 
-  staged = true;
-  if (!quiet) {
-    console.log(
-      `[release] Staged uninstaller → ${uninstallerName} (${(destSize / 1024 / 1024).toFixed(2)} MB)`,
-    );
-  }
+  console.log(
+    `[release] Staged uninstaller → ${uninstallerName} (${(destSize / 1024 / 1024).toFixed(2)} MB)`,
+  );
   return true;
 }
 
-function requestStage() {
-  if (staged || staging) return;
-  staging = stageUninstaller()
-    .catch((error) => {
-      if (error?.code !== "ENOENT") {
-        console.warn(`[release] Uninstaller staging deferred: ${error.message}`);
-      }
-    })
-    .finally(() => {
-      staging = null;
-    });
+async function stageUninstaller() {
+  const src = findUninstallerSource();
+  if (!src) return false;
+  return stageUninstallerFrom(src);
+}
+
+/** Copy __uninstaller while NSIS still has it — electron-builder deletes it after the Setup exe is built. */
+function watchForUninstallerDuringBuild() {
+  let copied = false;
+
+  const timer = setInterval(async () => {
+    if (copied) return;
+
+    const src = findUninstallerSource();
+    if (!src) return;
+
+    try {
+      copied = await stageUninstallerFrom(src);
+    } catch (error) {
+      console.warn(`[release] Uninstaller staging retry: ${error.message}`);
+    }
+  }, 500);
+
+  return () => clearInterval(timer);
 }
 
 fs.mkdirSync(releaseDir, { recursive: true });
-
-// Remove any broken uninstaller left from a prior failed build.
 removeIfExists(path.join(releaseDir, uninstallerName));
+cleanStaleNsisArtifacts();
 
-const watcher = fs.watch(releaseDir, (event, filename) => {
-  if (filename?.startsWith("__uninstaller-")) requestStage();
-});
+const stopUninstallerWatch = watchForUninstallerDuringBuild();
 
-const poll = setInterval(requestStage, 500);
+const combinedRelease = process.env.COMBINED_RELEASE === "1";
+const builderArgs = combinedRelease ? ["--config", "electron-builder.release.json"] : [];
 
-const child = spawn("electron-builder", {
+if (combinedRelease) {
+  console.info("[release] Building Windows installer (player + optional stem download)…");
+}
+
+const child = spawn("electron-builder", builderArgs, {
   cwd: projectRoot,
   stdio: "inherit",
   shell: true,
 });
 
 child.on("close", async (code) => {
-  clearInterval(poll);
-  watcher.close();
+  stopUninstallerWatch();
 
-  if (!staged) {
+  if (code === 0) {
     try {
-      await stageUninstaller({ attempts: 120, delayMs: 300, quiet: false });
+      const dest = path.join(releaseDir, uninstallerName);
+      if (!fs.existsSync(dest)) {
+        const staged = await stageUninstaller();
+        if (!staged) {
+          console.warn(
+            `[release] No standalone uninstaller was staged. Use Add/Remove Programs or reinstall via the Setup exe.`,
+          );
+        }
+      }
     } catch (error) {
       console.warn(`[release] Could not stage uninstaller: ${error.message}`);
     }
   }
 
-  if (!staged) {
-    console.warn(
-      `[release] No standalone uninstaller was staged. Use Add/Remove Programs or reinstall via the Setup exe.`,
-    );
-  }
-
   process.exit(code ?? 1);
 });
 
-child.on("error", async (error) => {
-  clearInterval(poll);
-  watcher.close();
+child.on("error", (error) => {
   console.error(error);
   process.exit(1);
 });

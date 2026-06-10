@@ -1,0 +1,123 @@
+.stems-not-found {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-sp-24);
+  background: var(--gradient-page);
+}
+
+.stems-not-found__card {
+  width: min(560px, 100%);
+  padding: var(--spacing-sp-32);
+  border-radius: var(--radius-cr-16);
+}
+
+.stems-not-found__title {
+  margin: 0 0 var(--spacing-sp-16);
+  font-family: var(--font-swiss721-medium);
+  font-size: 32px;
+  font-weight: normal;
+  line-height: 1.2;
+  color: var(--text-primary);
+}
+
+.stems-not-found__lead {
+  margin: 0 0 var(--spacing-sp-24);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.stems-not-found__path-block {
+  margin-bottom: var(--spacing-sp-24);
+}
+
+.stems-not-found__path-label {
+  margin: 0 0 var(--spacing-sp-8);
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.stems-not-found__path {
+  display: block;
+  padding: var(--spacing-sp-12) var(--spacing-sp-16);
+  border-radius: var(--spacing-sp-8);
+  border: var(--stroke-st-1) solid var(--stroke-primary);
+  background: var(--stem-waveform-container);
+  font-family: ui-monospace, "Cascadia Code", "Consolas", monospace;
+  font-size: 13px;
+  line-height: 1.4;
+  word-break: break-all;
+  color: var(--text-primary);
+}
+
+.stems-not-found__error {
+  margin: 0 0 var(--spacing-sp-16);
+  font-family: var(--font-swiss721-regular);
+  font-size: 14px;
+  color: var(--color-red);
+}
+
+.stems-not-found__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sp-12);
+  margin-bottom: var(--spacing-sp-24);
+}
+
+.stems-not-found__btn {
+  padding: var(--spacing-sp-12) var(--spacing-sp-24);
+  border-radius: 999px;
+  border: var(--stroke-st-2) solid var(--stroke-primary);
+  background: var(--main-container-primary);
+  font-size: 16px;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.stems-not-found__btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.stems-not-found__btn--primary {
+  background: var(--gradient-language-selected);
+}
+
+.stems-not-found__btn--continue {
+  margin-left: auto;
+}
+
+.stems-not-found__hint {
+  margin: 0 0 var(--spacing-sp-12);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.stems-not-found__hint-path {
+  display: block;
+  margin-top: var(--spacing-sp-8);
+  font-family: ui-monospace, "Cascadia Code", "Consolas", monospace;
+  font-size: 12px;
+  word-break: break-all;
+  color: var(--text-primary);
+}
+
+.stems-not-found__archive {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.stems-not-found__archive a {
+  color: var(--bg-primary);
+  text-decoration: underline;
+}
+
+.stems-not-found__archive a:hover {
+  opacity: 0.85;
+}

@@ -6,6 +6,7 @@ import {
   ipcMain,
   net,
   protocol,
+  shell,
   type BrowserWindow as BrowserWindowType,
 } from "electron";
 import fs from "node:fs";
@@ -20,9 +21,27 @@ import {
 } from "./library.js";
 import { fetchSpotifyTrackMetadata } from "./spotifyMetadata.js";
 import type { TrackMetadataRequest } from "./metadataTypes.js";
+import {
+  STEMS_ARCHIVE_URL,
+  STEMS_MAGNET_LINK,
+  confirmStemsFolder,
+  findInstalledStemsFolder,
+  folderHasStemFiles,
+  getDefaultStemsPath,
+  getStemsSearchPaths,
+} from "./stemsDistribution.js";
+import { WINDOWS_PATHS } from "./windowsPaths.js";
 
 const PROTOCOL = "njsp";
 const isDev = !app.isPackaged;
+
+/** Packaged builds use a separate profile from `electron:dev` so uninstall does not wipe dev data. */
+if (app.isPackaged) {
+  app.setPath(
+    "userData",
+    path.join(app.getPath("appData"), WINDOWS_PATHS.packagedUserDataFolderName),
+  );
+}
 
 /** Load `.env` from project root (dev) so Spotify credentials persist across sessions. */
 function loadEnvFile(): void {
@@ -248,9 +267,45 @@ app.whenReady().then(async () => {
     const win = BrowserWindow.fromWebContents(event.sender);
     return chooseLibraryFolder(win);
   });
+  ipcMain.handle("library:confirmStemsPath", (_event, folderPath: string) => {
+    const ok = confirmStemsFolder(folderPath);
+    if (ok) {
+      const root = readLibraryRoot();
+      if (root) {
+        for (const window of BrowserWindow.getAllWindows()) {
+          window.webContents.send("library:pathChanged", root);
+        }
+      }
+    }
+    return ok;
+  });
   ipcMain.handle("metadata:fetch", (_event, request: TrackMetadataRequest) =>
     fetchSpotifyTrackMetadata(request),
   );
+
+  ipcMain.handle("get-stems-path", () => getDefaultStemsPath());
+  ipcMain.handle("get-stems-search-paths", () => getStemsSearchPaths());
+  ipcMain.handle("find-installed-stems", () => findInstalledStemsFolder());
+  ipcMain.handle("check-stems-path", (_event, folderPath: string) =>
+    folderHasStemFiles(folderPath),
+  );
+  ipcMain.handle("open-folder-picker", async (event) => {
+    const win = BrowserWindow.fromWebContents(event.sender);
+    const dialogOptions = {
+      title: "Select stem files folder",
+      properties: ["openDirectory"] as ("openDirectory")[],
+    };
+    const result = win
+      ? await dialog.showOpenDialog(win, dialogOptions)
+      : await dialog.showOpenDialog(dialogOptions);
+    return result.canceled ? null : (result.filePaths[0] ?? null);
+  });
+  ipcMain.handle("open-magnet-link", () => {
+    void shell.openExternal(STEMS_MAGNET_LINK);
+  });
+  ipcMain.handle("open-archive-page", () => {
+    void shell.openExternal(STEMS_ARCHIVE_URL);
+  });
 
   await createWindow();
 

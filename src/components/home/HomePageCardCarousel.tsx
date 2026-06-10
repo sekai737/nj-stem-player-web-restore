@@ -158,6 +158,13 @@ function resetCardHoverTransform(el: HTMLDivElement | null): void {
   el.style.transform = "translate3d(0, 0, 0) scale3d(1, 1, 1)";
 }
 
+function readHomeScale(node: HTMLElement | null): number {
+  const root = node?.closest(".home-page-root") ?? node;
+  if (!root) return 1;
+  const scale = Number.parseFloat(getComputedStyle(root).getPropertyValue("--home-scale"));
+  return Number.isFinite(scale) && scale > 0 ? scale : 1;
+}
+
 const HomePageCardCarousel = forwardRef<HomePageCardCarouselHandle, HomePageCardCarouselProps>(
   function HomePageCardCarousel({ releases, onScrolledChange, scrollRootRef }, ref) {
     const viewportRef = useRef<HTMLDivElement>(null);
@@ -296,7 +303,7 @@ const HomePageCardCarousel = forwardRef<HomePageCardCarouselHandle, HomePageCard
             : current + (target - current) * follow;
 
         offsetRef.current = next;
-        setOffset((prev) => (Math.abs(prev - next) < 0.05 ? prev : next));
+        setOffset((prev) => (Math.abs(prev - next) < 0.01 ? prev : next));
 
         if (running) rafRef.current = requestAnimationFrame(tick);
       };
@@ -309,15 +316,17 @@ const HomePageCardCarousel = forwardRef<HomePageCardCarouselHandle, HomePageCard
     }, [maxOffset]);
 
     const applyDelta = useCallback((delta: number) => {
-      targetRef.current = clamp(targetRef.current + delta, 0, maxOffsetRef.current);
-      velocityRef.current += delta * WHEEL_VELOCITY_GAIN;
+      const scale = readHomeScale(scrollRootRef?.current ?? viewportRef.current);
+      const designDelta = delta / scale;
+      targetRef.current = clamp(targetRef.current + designDelta, 0, maxOffsetRef.current);
+      velocityRef.current += designDelta * WHEEL_VELOCITY_GAIN;
 
       if (wheelIdleRef.current) clearTimeout(wheelIdleRef.current);
       wheelIdleRef.current = setTimeout(() => {
         velocityRef.current = 0;
         wheelIdleRef.current = null;
       }, WHEEL_IDLE_MS);
-    }, []);
+    }, [scrollRootRef]);
 
     const isInCarouselBand = useCallback((clientY: number) => {
       const viewport = viewportRef.current;
@@ -326,20 +335,39 @@ const HomePageCardCarousel = forwardRef<HomePageCardCarouselHandle, HomePageCard
       return clientY >= band.top && clientY <= band.bottom;
     }, []);
 
+    const isOverCarousel = useCallback((clientX: number, clientY: number) => {
+      const viewport = viewportRef.current;
+      if (!viewport) return false;
+      const rect = viewport.getBoundingClientRect();
+      return (
+        clientX >= rect.left &&
+        clientX <= rect.right &&
+        clientY >= rect.top &&
+        clientY <= rect.bottom
+      );
+    }, []);
+
     const bindScrollInput = useCallback(
       (node: HTMLElement, options?: { bandOnly?: boolean; capture?: boolean }) => {
         const bandOnly = options?.bandOnly ?? false;
         const capture = options?.capture ?? false;
 
         const onWheel = (event: WheelEvent) => {
-          if (bandOnly && !isInCarouselBand(event.clientY)) return;
+          if (bandOnly) {
+            if (!isInCarouselBand(event.clientY)) return;
+            if (isOverCarousel(event.clientX, event.clientY)) return;
+          }
           event.preventDefault();
           applyDelta(event.deltaY);
         };
 
         const onTouchStart = (event: TouchEvent) => {
           const y = event.touches[0]?.clientY ?? 0;
-          if (bandOnly && !isInCarouselBand(y)) return;
+          const x = event.touches[0]?.clientX ?? 0;
+          if (bandOnly) {
+            if (!isInCarouselBand(y)) return;
+            if (isOverCarousel(x, y)) return;
+          }
           if (wheelIdleRef.current) {
             clearTimeout(wheelIdleRef.current);
             wheelIdleRef.current = null;
@@ -361,8 +389,9 @@ const HomePageCardCarousel = forwardRef<HomePageCardCarouselHandle, HomePageCard
           touchVelocitySampleRef.current = (touchLastYRef.current - y) / dt;
           touchLastYRef.current = y;
           touchLastTimeRef.current = now;
+          const scale = readHomeScale(scrollRootRef?.current ?? viewportRef.current);
           targetRef.current = clamp(
-            touchStartOffsetRef.current + (touchStartYRef.current - y),
+            touchStartOffsetRef.current + (touchStartYRef.current - y) / scale,
             0,
             maxOffsetRef.current,
           );
@@ -385,7 +414,7 @@ const HomePageCardCarousel = forwardRef<HomePageCardCarouselHandle, HomePageCard
           }
         };
 
-        const listenerOptions = capture ? ({ capture: true } as const) : undefined;
+        const listenerCapture = { capture } as const;
 
         node.addEventListener("wheel", onWheel, { passive: false, capture });
         node.addEventListener("touchstart", onTouchStart, { passive: true, capture });
@@ -395,14 +424,14 @@ const HomePageCardCarousel = forwardRef<HomePageCardCarouselHandle, HomePageCard
 
         return () => {
           clearWheelIdle();
-          node.removeEventListener("wheel", onWheel, listenerOptions);
-          node.removeEventListener("touchstart", onTouchStart, listenerOptions);
-          node.removeEventListener("touchmove", onTouchMove, listenerOptions);
-          node.removeEventListener("touchend", onTouchEnd, listenerOptions);
-          node.removeEventListener("touchcancel", onTouchEnd, listenerOptions);
+          node.removeEventListener("wheel", onWheel, listenerCapture);
+          node.removeEventListener("touchstart", onTouchStart, listenerCapture);
+          node.removeEventListener("touchmove", onTouchMove, listenerCapture);
+          node.removeEventListener("touchend", onTouchEnd, listenerCapture);
+          node.removeEventListener("touchcancel", onTouchEnd, listenerCapture);
         };
       },
-      [applyDelta, isInCarouselBand],
+      [applyDelta, isInCarouselBand, isOverCarousel, scrollRootRef],
     );
 
     useImperativeHandle(
@@ -410,10 +439,19 @@ const HomePageCardCarousel = forwardRef<HomePageCardCarouselHandle, HomePageCard
       () => ({
         scrollToTop: () => {
           targetRef.current = 0;
+          offsetRef.current = 0;
+          velocityRef.current = 0;
+          setOffset(0);
         },
       }),
       [],
     );
+
+    useLayoutEffect(() => {
+      const viewport = viewportRef.current;
+      if (!viewport) return;
+      return bindScrollInput(viewport);
+    }, [bindScrollInput]);
 
     useLayoutEffect(() => {
       const root = scrollRootRef?.current;

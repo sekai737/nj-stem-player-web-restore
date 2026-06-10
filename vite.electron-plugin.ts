@@ -12,6 +12,33 @@ function stemContentType(filePath: string): string {
   return "application/octet-stream";
 }
 
+/** Remove bundled stem audio from dist — stems ship via torrent, not the installer. */
+export function electronExcludeStemsPlugin(): Plugin {
+  return {
+    name: "electron-exclude-stems",
+    apply: "build",
+    closeBundle() {
+      const distDir = path.join(process.cwd(), "dist");
+      const stemsDir = path.join(distDir, "stems");
+      const stemsZip = path.join(distDir, "stems.zip");
+      let excluded = false;
+
+      if (fs.existsSync(stemsDir)) {
+        fs.rmSync(stemsDir, { recursive: true, force: true });
+        excluded = true;
+      }
+      if (fs.existsSync(stemsZip)) {
+        fs.unlinkSync(stemsZip);
+        excluded = true;
+      }
+
+      if (excluded) {
+        console.info("[electron] Excluded dist/stems from desktop bundle");
+      }
+    },
+  };
+}
+
 /** Dev-only: serve `/stems/*` from the Electron library folder when `.electron-library-path` exists. */
 export function electronLibraryStemsPlugin(): Plugin {
   return {

@@ -42,6 +42,7 @@ export const figmaAssets = {
   /** Footer lit.link profile — Figma PFP (227:327). */
   homePageCreatorPfp: "/figma/creator-pfp.png",
   homePageBackUp: "/figma/back-up.svg",
+  fullscreenBackDown: "/figma/back-down.svg",
   homePageCircles: "/figma/circles.svg",
   homePageBigStars: "/figma/big-stars.svg",
   homePageHeartMinji: "/figma/heart-minji.png",

@@ -75,7 +75,7 @@ export default function ChatLyricFeed({
   const translationDisplay = usePlayerStore((s) => s.lyricsViewSettings.translationDisplay);
   const scrollRef = useRef<HTMLDivElement>(null);
   const activeRef = useRef<HTMLElement | null>(null);
-  const { scrollToElement, isScrolledUp } = useSmoothScrollContainer(scrollRef, {
+  const { scrollToElement, isUserDetached, isFollowing } = useSmoothScrollContainer(scrollRef, {
     getSyncElement: () => activeRef.current,
   });
 
@@ -107,11 +107,17 @@ export default function ChatLyricFeed({
   }, [visibleLines, currentTime, loading, error]);
 
   useEffect(() => {
-    if (!activeRef.current || !activeLineId || isScrolledUp) return;
+    if (!activeRef.current || !activeLineId || isUserDetached) return;
     scrollToElement(activeRef.current);
-  }, [activeLineId, isScrolledUp, scrollToElement]);
+  }, [activeLineId, isUserDetached, scrollToElement]);
 
-  const showResync = isScrolledUp && isPlaying && !loading && !error && lines.length > 0;
+  const showResync =
+    isUserDetached &&
+    !isFollowing &&
+    isPlaying &&
+    !loading &&
+    !error &&
+    lines.length > 0;
 
   const handleResync = () => {
     if (activeRef.current) scrollToElement(activeRef.current);
@@ -237,7 +243,7 @@ export default function ChatLyricFeed({
           showResync ? " fs-lyric-feed__resync--visible" : " fs-lyric-feed__resync--hidden"
         }`}
       >
-        <img src={figmaAssets.homePageBackUp} alt="" className="fs-lyric-feed__resync-icon" />
+        <img src={figmaAssets.fullscreenBackDown} alt="" className="fs-lyric-feed__resync-icon" />
       </button>
     </section>
   );

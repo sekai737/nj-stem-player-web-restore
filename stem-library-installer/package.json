@@ -1,0 +1,11 @@
+{
+  "name": "nj-stem-library-installer",
+  "private": true,
+  "version": "1.0.0",
+  "productName": "NewJeans Stem Library Installer",
+  "description": "NSIS installer that downloads and installs the NewJeans Stem Player stem audio library.",
+  "author": "sekai737",
+  "scripts": {
+    "build": "node scripts/build-nsis.mjs"
+  }
+}

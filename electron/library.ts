@@ -1,12 +1,14 @@
 import fs from "node:fs";
 import path from "node:path";
 import { app } from "electron";
+import { findInstalledStemsFolder } from "./stemsDistribution.js";
 
 const CONFIG_NAME = "library-config.json";
 const DEV_HINT_NAME = ".electron-library-path";
 
 export interface LibraryConfig {
-  libraryRoot: string;
+  libraryRoot?: string;
+  stemsSearchPaths?: string[];
 }
 
 function configPath(): string {
@@ -28,15 +30,19 @@ function writeDevHint(libraryRoot: string | null): void {
   }
 }
 
-export function readLibraryRoot(): string | null {
+export function readLibraryConfig(): LibraryConfig | null {
   try {
     const raw = fs.readFileSync(configPath(), "utf8");
-    const parsed = JSON.parse(raw) as LibraryConfig;
-    if (parsed.libraryRoot && fs.existsSync(parsed.libraryRoot)) {
-      return parsed.libraryRoot;
-    }
+    return JSON.parse(raw) as LibraryConfig;
   } catch {
-    /* no saved config */
+    return null;
+  }
+}
+
+export function readLibraryRoot(): string | null {
+  const parsed = readLibraryConfig();
+  if (parsed?.libraryRoot && fs.existsSync(parsed.libraryRoot)) {
+    return parsed.libraryRoot;
   }
   return null;
 }
@@ -51,10 +57,32 @@ export function normalizeLibraryRoot(selectedPath: string): string | null {
   return null;
 }
 
-export function setLibraryRoot(libraryRoot: string): void {
+export function setLibraryConfig(config: LibraryConfig): void {
   fs.mkdirSync(path.dirname(configPath()), { recursive: true });
-  fs.writeFileSync(configPath(), `${JSON.stringify({ libraryRoot }, null, 2)}\n`, "utf8");
-  writeDevHint(libraryRoot);
+  fs.writeFileSync(configPath(), `${JSON.stringify(config, null, 2)}\n`, "utf8");
+  writeDevHint(config.libraryRoot ?? null);
+}
+
+export function setLibraryRoot(libraryRoot: string, stemsSearchPaths?: string[]): void {
+  const existing = readLibraryConfig();
+  const paths = new Set(existing?.stemsSearchPaths ?? []);
+  if (stemsSearchPaths) {
+    stemsSearchPaths.forEach((entry) => paths.add(entry));
+  }
+  paths.add(path.join(libraryRoot, "stems"));
+  setLibraryConfig({
+    libraryRoot,
+    stemsSearchPaths: [...paths],
+  });
+}
+
+export function clearLibraryRoot(): void {
+  try {
+    if (fs.existsSync(configPath())) fs.unlinkSync(configPath());
+  } catch {
+    /* ignore */
+  }
+  writeDevHint(null);
 }
 
 export function resolveStemFile(libraryRoot: string, pathname: string): string | null {
@@ -69,27 +97,14 @@ export function resolveStemFile(libraryRoot: string, pathname: string): string |
 }
 
 export function ensureDefaultLibrary(): string | null {
-  const existing = readLibraryRoot();
-  if (existing) {
-    writeDevHint(existing);
-    return existing;
+  const stemsPath = findInstalledStemsFolder();
+  if (!stemsPath) {
+    return null;
   }
 
-  const candidates = app.isPackaged
-    ? [
-        path.join(path.dirname(process.execPath), "library"),
-        path.join(app.getPath("userData"), "library"),
-      ]
-    : [path.join(process.cwd(), "public")];
-
-  for (const candidate of candidates) {
-    if (fs.existsSync(path.join(candidate, "stems"))) {
-      setLibraryRoot(candidate);
-      return candidate;
-    }
-  }
-
-  return null;
+  const libraryRoot = normalizeLibraryRoot(stemsPath) ?? path.dirname(stemsPath);
+  setLibraryRoot(libraryRoot, [stemsPath]);
+  return libraryRoot;
 }
 
 export function clearDevHint(): void {

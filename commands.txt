@@ -44,6 +44,7 @@ cd "g:\1 - Work\NJ Stem Player"
 | `npm run electron:ensure` | Download Electron binary if the desktop app won’t start |
 | `npm run electron:start` | Run a production-like local build |
 | `npm run electron:build` | Build installer → `release/` |
+npm run release:build
 
 ## Git (quick reference)
 

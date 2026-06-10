@@ -1,0 +1,36 @@
+{
+  "appId": "com.sekai737.nj-stem-player",
+  "productName": "NewJeans Stem Player",
+  "directories": {
+    "output": "release"
+  },
+  "files": [
+    "dist/**/*",
+    "!dist/stems/**",
+    "!dist/stems.zip",
+    "dist-electron/**/*",
+    "package.json"
+  ],
+  "win": {
+    "target": ["nsis"],
+    "icon": "build/icon.ico"
+  },
+  "nsis": {
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": true,
+    "installerIcon": "build/icon.ico",
+    "uninstallerIcon": "build/icon.ico",
+    "uninstallDisplayName": "NewJeans Stem Player",
+    "shortcutName": "NewJeans Stem Player",
+    "artifactName": "${productName} Setup ${version}.${ext}",
+    "include": "build/installer-combined.nsh"
+  },
+  "mac": {
+    "target": ["dmg"],
+    "icon": "build/icon.icns"
+  },
+  "linux": {
+    "target": ["AppImage"],
+    "icon": "build/icon.png"
+  }
+}

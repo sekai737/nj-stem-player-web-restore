@@ -194,7 +194,7 @@ export default function StemPlayerPage() {
 
             {/* Track Info Container (Figma 26:207) — top-aligned with Meters Box */}
             <div
-              className="pointer-events-auto absolute z-10 flex items-start"
+              className="pointer-events-auto absolute z-10 flex min-w-0 items-start overflow-visible"
               style={{
                 left: FIGMA.titleRow.left,
                 top: 0,

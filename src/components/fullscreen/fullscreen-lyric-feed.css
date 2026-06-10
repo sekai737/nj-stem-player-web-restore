@@ -283,12 +283,12 @@
   }
 }
 
-/* Re-sync — home page back-up (227:446) rotated to point at current lyric */
+/* Re-sync — back-down.svg, centered above footer */
 .fs-lyric-feed__resync {
-  position: absolute;
+  position: fixed;
   left: 50%;
   bottom: calc(var(--fs-footer-h) + var(--spacing-sp-16));
-  z-index: 12;
+  z-index: 25;
   display: inline-flex;
   flex-shrink: 0;
   width: 56px;
@@ -306,7 +306,6 @@
   display: block;
   width: 100%;
   height: 100%;
-  transform: rotate(180deg);
 }
 
 .fs-lyric-feed__resync--visible {

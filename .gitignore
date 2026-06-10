@@ -15,3 +15,12 @@ fonts-source/*.OTF
 
 # Removed LRC builder (manual ChatGPT workflow)
 lrc-builder/
+
+# Stem audio — distributed via torrent, not bundled in git
+public/stems/
+public/stems.zip
+
+build/bundled-stem-library-installer/
+
+# Stem library installer sub-project
+stem-library-installer/release

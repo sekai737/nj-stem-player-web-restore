@@ -5,6 +5,9 @@ import { displayStemPlayerTitle } from "../utils/displayTrackTitle";
 /** Figma Title (3:282) slot width — fallback until Supernatural is measured in-browser. */
 const SUPERNATURAL_TITLE_TEXT_WIDTH_FALLBACK = FIGMA.titleRow.titleStack.trackTitle.width;
 
+/** `--shadow-pop-4` offset — keep lyrics box inset so the hard shadow is not clipped. */
+const POP_SHADOW_PAD = 4;
+
 let cachedSupernaturalTitleTextWidth: number | null = null;
 
 function supernaturalReferenceTextWidth(): number {
@@ -41,8 +44,10 @@ export function useTitleLyricsGapLayout(
     if (!coolLine || !titleBlock) return;
 
     const measure = () => {
-      const titleTextWidth = coolLine.getBoundingClientRect().width;
-      const titleBlockWidth = titleBlock.getBoundingClientRect().width;
+      // offsetWidth — layout px in the scaled content frame; getBoundingClientRect is
+      // post-transform screen px and shrinks with scale(), inflating lyricsWidth.
+      const titleTextWidth = coolLine.offsetWidth;
+      const titleBlockWidth = titleBlock.offsetWidth;
 
       if (displayStemPlayerTitle(title) === "Supernatural" && titleTextWidth > 0) {
         cachedSupernaturalTitleTextWidth = titleTextWidth;
@@ -50,8 +55,14 @@ export function useTitleLyricsGapLayout(
 
       const referenceTextWidth = supernaturalReferenceTextWidth();
       const gap = FIGMA.titleRow.lyricsLeft - referenceTextWidth;
-      const lyricsLeft = titleTextWidth + gap;
-      const lyricsWidth = Math.max(0, FIGMA.titleRow.trackInfoWidth - lyricsLeft);
+      const lyricsLeft = Math.min(
+        FIGMA.titleRow.trackInfoWidth,
+        Math.max(0, titleTextWidth + gap),
+      );
+      const lyricsWidth = Math.max(
+        0,
+        FIGMA.titleRow.trackInfoWidth - lyricsLeft - POP_SHADOW_PAD,
+      );
       const lyricsMarginLeft = lyricsLeft - titleBlockWidth;
 
       setLayout({ lyricsMarginLeft, lyricsWidth });

@@ -1,0 +1,19 @@
+{
+  "appId": "com.sekai737.nj-stem-player",
+  "packageName": "nj-stem-player-web",
+  "productName": "NewJeans Stem Player",
+  "uninstallRegistryGuid": "802e0b04-8492-56f0-bc69-5346a73bbbcd",
+  "defaultStemsDir": "C:\\Program Files\\NewJeans Stem Player\\stems",
+  "defaultProgramFilesParent": "C:\\Program Files\\NewJeans Stem Player",
+  "registryKey": "Software\\com.sekai737.nj-stem-player",
+  "legacyStemLibraryUninstallKey": "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\NewJeansStemLibrary",
+  "packagedUserDataFolderName": "NewJeans Stem Player",
+  "devUserDataFolderName": "nj-stem-player-web",
+  "updaterFolderName": "nj-stem-player-web-updater",
+  "startMenuFolderName": "NewJeans Stem Player",
+  "desktopShortcutName": "NewJeans Stem Player.lnk",
+  "legacyStemInstallerShortcutName": "Stem Library Installer.lnk",
+  "tempZipFileName": "nj-stems-stems.zip",
+  "tempExtractPrefix": "nj-stems-extract-",
+  "legacyStemUninstallerName": "Uninstall Stem Library.exe"
+}

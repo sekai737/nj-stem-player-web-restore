@@ -11,7 +11,7 @@ const MOMENTUM_THRESHOLD = 0.05;
 const WHEEL_IDLE_MS = 120;
 const MAX_FRAME_DT = 0.032;
 const MAX_FLICK_VELOCITY = 2400;
-/** Scroll more than this above the sync target counts as "scrolled up". */
+/** scrollTop below sync target by this much = user scrolled up to older lyrics. */
 const SCROLL_UP_THRESHOLD = 32;
 
 function clamp(value: number, min: number, max: number): number {
@@ -21,7 +21,7 @@ function clamp(value: number, min: number, max: number): number {
 export interface UseSmoothScrollContainerOptions {
   /** Lower-third anchor for programmatic scroll-to-element (0–1). */
   anchorRatio?: number;
-  /** Active lyric — scroll-up vs at-bottom is measured against this element. */
+  /** Active lyric — used when re-syncing to the current line. */
   getSyncElement?: () => HTMLElement | null;
 }
 
@@ -48,54 +48,60 @@ export function useSmoothScrollContainer(
   const touchStartOffsetRef = useRef(0);
   const wheelIdleRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const trackElementRef = useRef<HTMLElement | null>(null);
-  const isScrolledUpRef = useRef(false);
-  const [isScrolledUp, setIsScrolledUp] = useState(false);
+  const userDetachedRef = useRef(false);
+  const isFollowingRef = useRef(false);
+  const [isUserDetached, setIsUserDetached] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false);
 
-  const updateScrolledUp = useCallback(
-    (scrollTop: number, container: HTMLElement) => {
-      // Programmatic follow — don't flash the jump-to-current-lyric control mid-scroll.
-      if (trackElementRef.current) {
-        if (isScrolledUpRef.current) {
-          isScrolledUpRef.current = false;
-          setIsScrolledUp(false);
-        }
-        return;
-      }
+  const setUserDetached = useCallback((detached: boolean) => {
+    if (userDetachedRef.current === detached) return;
+    userDetachedRef.current = detached;
+    setIsUserDetached(detached);
+  }, []);
 
-      const syncEl = getSyncElementRef.current?.();
-      if (!syncEl) {
-        if (isScrolledUpRef.current) {
-          isScrolledUpRef.current = false;
-          setIsScrolledUp(false);
-        }
-        return;
-      }
-
-      const syncTarget = computeChatScrollTarget(container, syncEl, anchorRatio);
-      const scrolledUp = scrollTop < syncTarget - SCROLL_UP_THRESHOLD;
-
-      if (scrolledUp !== isScrolledUpRef.current) {
-        isScrolledUpRef.current = scrolledUp;
-        setIsScrolledUp(scrolledUp);
-      }
-    },
-    [anchorRatio],
-  );
+  const setFollowing = useCallback((following: boolean) => {
+    if (isFollowingRef.current === following) return;
+    isFollowingRef.current = following;
+    setIsFollowing(following);
+  }, []);
 
   const stopTracking = useCallback(() => {
     trackElementRef.current = null;
-  }, []);
+    setFollowing(false);
+  }, [setFollowing]);
 
   const scrollToElement = useCallback(
     (element: HTMLElement) => {
       const container = scrollRef.current;
       if (!container) return;
 
+      setUserDetached(false);
       trackElementRef.current = element;
+      setFollowing(true);
       velocityRef.current = 0;
       targetRef.current = computeChatScrollTarget(container, element, anchorRatio);
     },
-    [anchorRatio, scrollRef],
+    [anchorRatio, scrollRef, setFollowing, setUserDetached],
+  );
+
+  const updateScrolledUp = useCallback(
+    (scrollTop: number, container: HTMLElement) => {
+      if (trackElementRef.current || isFollowingRef.current) {
+        if (userDetachedRef.current) setUserDetached(false);
+        return;
+      }
+
+      const syncEl = getSyncElementRef.current?.();
+      if (!syncEl) {
+        setUserDetached(false);
+        return;
+      }
+
+      const syncTarget = computeChatScrollTarget(container, syncEl, anchorRatio);
+      const scrolledUp = scrollTop < syncTarget - SCROLL_UP_THRESHOLD;
+      setUserDetached(scrolledUp);
+    },
+    [anchorRatio, setUserDetached],
   );
 
   useLayoutEffect(() => {
@@ -152,11 +158,12 @@ export function useSmoothScrollContainer(
       offsetRef.current = next;
       node.scrollTop = next;
 
-      updateScrolledUp(next, node);
-
       if (tracked && Math.abs(next - target) < SETTLE_EPS) {
         trackElementRef.current = null;
+        setFollowing(false);
       }
+
+      updateScrolledUp(next, node);
 
       if (running) requestAnimationFrame(tick);
     };
@@ -227,7 +234,7 @@ export function useSmoothScrollContainer(
       node.removeEventListener("touchend", onTouchEnd);
       node.removeEventListener("touchcancel", onTouchEnd);
     };
-  }, [anchorRatio, scrollRef, stopTracking, updateScrolledUp]);
+  }, [anchorRatio, scrollRef, setFollowing, stopTracking, updateScrolledUp]);
 
-  return { scrollToElement, isScrolledUp };
+  return { scrollToElement, isUserDetached, isFollowing };
 }

@@ -72,7 +72,8 @@ async function main() {
 
   console.log(`Extracting ${zipPath}…`);
   await extractZip(zipPath, distDir);
-  await fs.promises.writeFile(pathTxt, `${platformPath}\n`, "utf8");
+  // No trailing newline — electron's index.js joins path.txt without trimming.
+  await fs.promises.writeFile(pathTxt, platformPath, "utf8");
 
   if (!fs.existsSync(executable)) {
     throw new Error(`Electron executable missing after extract: ${executable}`);
